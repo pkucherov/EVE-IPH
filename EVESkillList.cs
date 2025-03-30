@@ -193,7 +193,6 @@ namespace EVE_Isk_per_Hour
                     if ((Skills[i].Name ?? "") == (SkillName ?? ""))
                     {
                         return Skills[i].TypeID;
-                        return default;
                     }
                 }
             }
@@ -215,7 +214,6 @@ namespace EVE_Isk_per_Hour
                     if ((Skills[i].Name ?? "") == (SkillName ?? ""))
                     {
                         return Skills[i];
-                        return default;
                     }
                 }
             }
@@ -292,7 +290,6 @@ namespace EVE_Isk_per_Hour
                     if (Skills[i].TypeID == SkillTypeID)
                     {
                         return Skills[i].SkillPoints;
-                        return default;
                     }
                 }
             }

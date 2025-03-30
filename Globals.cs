@@ -2863,9 +2863,6 @@ namespace EVE_Isk_per_Hour
             {
                 return "";
             }
-
-            rsLookup.Close();
-
         }
 
         // Updates the shopping list with new prices

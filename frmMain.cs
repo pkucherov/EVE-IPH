@@ -1360,9 +1360,6 @@ namespace EVE_Isk_per_Hour
                 // Since 0.00 SVR is possible, return nothing instead
                 return "-";
             }
-
-            readerAverage.Close();
-
         }
 
         // Updates the SVR value and then returns it as a string for the item associated with the Selected BP
@@ -8469,10 +8466,6 @@ namespace EVE_Isk_per_Hour
             // Finally Update the labels
             UpdateBPPriceLabels();
 
-        ExitForm:
-            ;
-
-
             // If the bp was updated (not new, then save any changes to the history - e.g. facility changes)
             if (!NewBPSelection & SentFrom == Public_Variables.SentFromLocation.BlueprintTab)
             {
@@ -11036,10 +11029,6 @@ namespace EVE_Isk_per_Hour
 
             // Load the prices
             LoadPrices(Items, BlueprintItems, BPRegionID);
-
-        UpdateProgramPrices:
-            ;
-
 
             // Update all the prices in the program
             Public_Variables.UpdateProgramPrices();
@@ -19020,10 +19009,6 @@ namespace EVE_Isk_per_Hour
         // **********************************************************************
         // *** Display results in grid - use for both calcuations and preview ***
         // **********************************************************************
-        DisplayResults:
-            ;
-
-
             // Reset the columns before processing data
             RefreshManufacturingTabColumns();
 
@@ -20803,7 +20788,7 @@ namespace EVE_Isk_per_Hour
             SentItem.ListID = ListIDIterator;
 
             // If not blank, does it meet the threshold? If nothing, then we want to include it, so skip
-            if (SentItem.SVR != "-" & !(SVRThreshold == null))
+            if (SentItem.SVR != "-")
             {
                 // It's below the threshold, so don't insert
                 if (Conversions.ToDouble(SentItem.SVR) < SVRThreshold)
@@ -27589,7 +27574,6 @@ namespace EVE_Isk_per_Hour
                 default:
                     {
                         goto ProcExit;
-                        break;
                     }
             }
 

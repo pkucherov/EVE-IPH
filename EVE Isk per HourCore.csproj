@@ -64,15 +64,19 @@
     <Company>EVE IPH</Company>
     <Product>EVE Isk per Hour</Product>
     <Copyright>Copyright © EVE IPH 2016</Copyright>
+    <GenerateDocumentationFile>False</GenerateDocumentationFile>
+    <ProduceReferenceAssembly>False</ProduceReferenceAssembly>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
     <DocumentationFile>bin\Debug\EVE Isk per Hour.xml</DocumentationFile>
     <CodeAnalysisIgnoreBuiltInRuleSets>false</CodeAnalysisIgnoreBuiltInRuleSets>
     <CodeAnalysisIgnoreBuiltInRules>false</CodeAnalysisIgnoreBuiltInRules>
+    <NoWarn>1701;1702;CS0168;CS0219;CA1416;CS0414;CS0169;CS0649;</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
     <DocumentationFile>bin\Release\EVE Isk per Hour.xml</DocumentationFile>
     <CodeAnalysisIgnoreBuiltInRules>false</CodeAnalysisIgnoreBuiltInRules>
+    <NoWarn>1701;1702;CS0168;CS0219;CA1416;CS0414;CS0169;CS0649;</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|Itanium'">
     <OutputPath>bin\Itanium\Debug\</OutputPath>

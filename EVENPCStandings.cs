@@ -38,7 +38,6 @@ namespace EVE_Isk_per_Hour
                     if (NPCStandings[i].NPCID == NPCID)
                     {
                         return NPCStandings[i].Standing;
-                        return default;
                     }
                 }
             }
@@ -60,7 +59,6 @@ namespace EVE_Isk_per_Hour
                     if ((NPCStandings[i].NPCName ?? "") == (NPCName ?? ""))
                     {
                         return NPCStandings[i].Standing;
-                        return default;
                     }
                 }
             }
@@ -82,7 +80,6 @@ namespace EVE_Isk_per_Hour
                     if (NPCStandings[i].NPCID == NPCID)
                     {
                         return CalcEffectiveStanding(NPCStandings[i].Standing, SentConnections, SentDiplomacy);
-                        return default;
                     }
                 }
             }
@@ -104,7 +101,6 @@ namespace EVE_Isk_per_Hour
                     if ((NPCStandings[i].NPCName ?? "") == (NPCName ?? ""))
                     {
                         return CalcEffectiveStanding(NPCStandings[i].Standing, SentConnections, SentDiplomacy);
-                        return default;
                     }
                 }
             }

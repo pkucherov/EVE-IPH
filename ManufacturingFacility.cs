@@ -4531,9 +4531,6 @@ namespace EVE_Isk_per_Hour
                         return null;
                     }
             }
-
-            return null;
-
         }
 
         // Gets the facility for manufacturing based on the bp data on initialization or sent bp data

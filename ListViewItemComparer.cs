@@ -87,8 +87,6 @@ namespace EVE_Isk_per_Hour
                     // Return '0' to indicate that they are equal.
                     return 0;
                 }
-
-                return result;
             }
 
             catch (Exception ex)

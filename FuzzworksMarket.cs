@@ -216,9 +216,6 @@ namespace EVE_Isk_per_Hour
             }
 
             return PriceRecords;
-
-            return default;
-
         }
 
         // Allow the users to access the error data returned if an error occurs for processing outside class

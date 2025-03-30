@@ -94,8 +94,8 @@ namespace EVE_Isk_per_Hour
         // esi-markets.structure_markets.v1: Allows reading of markets for structures the character can use
 
         /// <summary>
-    /// Initialize the class variables as needed
-    /// </summary>
+        /// Initialize the class variables as needed
+        /// </summary>
         public ESI()
         {
             AuthorizationToken = "";
@@ -104,9 +104,9 @@ namespace EVE_Isk_per_Hour
         }
 
         /// <summary>
-    /// Opens a connection to EVE SSO server and gets an authorization token to get an access token
-    /// </summary>
-    /// <returns>Authorization Token</returns>
+        /// Opens a connection to EVE SSO server and gets an authorization token to get an access token
+        /// </summary>
+        /// <returns>Authorization Token</returns>
         private string GetAuthorizationToken()
         {
 
@@ -181,8 +181,8 @@ namespace EVE_Isk_per_Hour
         }
 
         /// <summary>
-    /// Opens the login for EVE SSO and returns the data stream from a successful log in
-    /// </summary>
+        /// Opens the login for EVE SSO and returns the data stream from a successful log in
+        /// </summary>
         private void GetAuthorizationfromWeb(string MyURL = "")
         {
             try
@@ -272,11 +272,11 @@ namespace EVE_Isk_per_Hour
         }
 
         /// <summary>
-    /// Gets the Access Token data from the EVE server for authorization or refresh tokens.
-    /// </summary>
-    /// <param name="Token">An Authorization or Refresh Token</param>
-    /// <param name="Refresh">If the token is Authorization or Refresh</param>
-    /// <returns>Access Token Data object</returns>
+        /// Gets the Access Token data from the EVE server for authorization or refresh tokens.
+        /// </summary>
+        /// <param name="Token">An Authorization or Refresh Token</param>
+        /// <param name="Refresh">If the token is Authorization or Refresh</param>
+        /// <returns>Access Token Data object</returns>
         private ESITokenData GetAccessToken(string Token, bool Refresh, ref long TokenCharacterID, ref string TokenScopes)
         {
 
@@ -457,10 +457,10 @@ namespace EVE_Isk_per_Hour
         }
 
         /// <summary>
-    /// Queries the server for public data for the URL sent. If not found, returns nothing
-    /// </summary>
-    /// <param name="URL">Full public data URL as a string</param>
-    /// <returns>Byte Array of response or nothing if call fails</returns>
+        /// Queries the server for public data for the URL sent. If not found, returns nothing
+        /// </summary>
+        /// <param name="URL">Full public data URL as a string</param>
+        /// <returns>Byte Array of response or nothing if call fails</returns>
         private string GetPublicData(string URL, ref DateTime CacheDate, string BodyData = "")
         {
             string Response = "";
@@ -508,17 +508,15 @@ namespace EVE_Isk_per_Hour
                     CacheDate = Public_Variables.NoExpiry;
                 }
 
-                if (!(Pages == null))
+
+                if (Pages > 1)
                 {
-                    if (Pages > 1)
+                    string TempResponse = "";
+                    for (int i = 2, loopTo = Pages; i <= loopTo; i++)
                     {
-                        string TempResponse = "";
-                        for (int i = 2, loopTo = Pages; i <= loopTo; i++)
-                        {
-                            TempResponse = WC.DownloadString(URL + "&page=" + i.ToString());
-                            // Combine with the original response - strip the end and leading brackets
-                            Response = Response.Substring(0, Strings.Len(Response) - 1) + "," + TempResponse.Substring(1);
-                        }
+                        TempResponse = WC.DownloadString(URL + "&page=" + i.ToString());
+                        // Combine with the original response - strip the end and leading brackets
+                        Response = Response.Substring(0, Strings.Len(Response) - 1) + "," + TempResponse.Substring(1);
                     }
                 }
 
@@ -564,10 +562,10 @@ namespace EVE_Isk_per_Hour
         }
 
         /// <summary>
-    /// Queries the server for private, authorized data for data sent. Function will check the 
-    /// authorization token and update the sent variable and DB data if expired.
-    /// </summary>
-    /// <returns>Returns data response as a string</returns>
+        /// Queries the server for private, authorized data for data sent. Function will check the 
+        /// authorization token and update the sent variable and DB data if expired.
+        /// </summary>
+        /// <returns>Returns data response as a string</returns>
         private string GetPrivateAuthorizedData(string URL, ESITokenData TokenData, DateTime TokenExpiration, ref DateTime CacheDate, long CharacterID, bool SupressErrorMsgs = false, bool SinglePage = false)
         {
             var WC = new WebClient();
@@ -646,20 +644,17 @@ namespace EVE_Isk_per_Hour
                     CacheDate = Public_Variables.NoExpiry;
                 }
 
-                if (!(Pages == null))
+                if (Pages > 1)
                 {
-                    if (Pages > 1)
+                    string TempResponse = "";
+                    for (int i = 2, loopTo = Pages; i <= loopTo; i++)
                     {
-                        string TempResponse = "";
-                        for (int i = 2, loopTo = Pages; i <= loopTo; i++)
+                        TempResponse = WC.DownloadString(URL + "&page=" + i.ToString());
+                        // Combine with the original response - strip the end and leading brackets
+                        Response = Response.Substring(0, Strings.Len(Response) - 1) + "," + TempResponse.Substring(1);
+                        if (SinglePage)
                         {
-                            TempResponse = WC.DownloadString(URL + "&page=" + i.ToString());
-                            // Combine with the original response - strip the end and leading brackets
-                            Response = Response.Substring(0, Strings.Len(Response) - 1) + "," + TempResponse.Substring(1);
-                            if (SinglePage)
-                            {
-                                break;
-                            }
+                            break;
                         }
                     }
                 }
@@ -699,10 +694,10 @@ namespace EVE_Isk_per_Hour
         }
 
         /// <summary>
-    /// Formats a SavedTokenData object to ESITokenData
-    /// </summary>
-    /// <param name="TokenData">SavedTokenData object</param>
-    /// <returns>the ESITokenData object</returns>
+        /// Formats a SavedTokenData object to ESITokenData
+        /// </summary>
+        /// <param name="TokenData">SavedTokenData object</param>
+        /// <returns>the ESITokenData object</returns>
         private ESITokenData FormatTokenData(SavedTokenData TokenData)
         {
             var TempTokenData = new ESITokenData();
@@ -716,10 +711,10 @@ namespace EVE_Isk_per_Hour
         }
 
         /// <summary>
-    /// Formats string dates returned from the ESI server into a date object
-    /// </summary>
-    /// <param name="OriginalDate">ESI date value as a string</param>
-    /// <returns>Date object of the sent date as a string</returns>
+        /// Formats string dates returned from the ESI server into a date object
+        /// </summary>
+        /// <param name="OriginalDate">ESI date value as a string</param>
+        /// <returns>Date object of the sent date as a string</returns>
         public DateTime FormatESIDate(string OriginalDate)
         {
             if (!(OriginalDate == null))
@@ -735,10 +730,10 @@ namespace EVE_Isk_per_Hour
         #region Load Character Data
 
         /// <summary>
-    /// Gets verification and public data about the character returned from logging into the EVE SSO and authorizing 
-    /// access for a new character first logging in. If the character has already been loaded, then update the data.
-    /// </summary>
-    /// <returns>Returns boolean if the function was successful in setting character data.</returns>
+        /// Gets verification and public data about the character returned from logging into the EVE SSO and authorizing 
+        /// access for a new character first logging in. If the character has already been loaded, then update the data.
+        /// </summary>
+        /// <returns>Returns boolean if the function was successful in setting character data.</returns>
         public bool SetCharacterData(bool AccountRefresh, [Optional] ref SavedTokenData CharacterTokenData, [Optional, DefaultParameterValue("")] string ManualAuthToken, [Optional, DefaultParameterValue(false)] bool IgnoreCacheDate, [Optional, DefaultParameterValue(false)] bool SupressMessages, [Optional, DefaultParameterValue(-1)] ref long CorporationID)
         {
             ESITokenData TokenData;
@@ -887,10 +882,10 @@ namespace EVE_Isk_per_Hour
         }
 
         /// <summary>
-    /// Retrieves the public data about the character ID sent
-    /// </summary>
-    /// <param name="CharacterID">CharacterID you want public data for</param>
-    /// <returns>Returns data in the ESICharacterPublicData JSON property class</returns>
+        /// Retrieves the public data about the character ID sent
+        /// </summary>
+        /// <param name="CharacterID">CharacterID you want public data for</param>
+        /// <returns>Returns data in the ESICharacterPublicData JSON property class</returns>
         public ESICharacterPublicData GetCharacterPublicData(long CharacterID, ref DateTime DataCacheDate)
         {
             ESICharacterPublicData CharacterData;
@@ -1657,9 +1652,6 @@ namespace EVE_Isk_per_Hour
             {
                 return false;
             }
-
-            return true;
-
         }
 
         // Just tries to download market prices - if it gets prices, then returns true else false
@@ -1900,9 +1892,6 @@ namespace EVE_Isk_per_Hour
             {
                 return false;
             }
-
-            return true;
-
         }
 
         // Provides per day summary of market activity for 13 months for the region_id and type_id sent. (cache: 23 hours)
@@ -1965,8 +1954,6 @@ namespace EVE_Isk_per_Hour
                 {
                     return false;
                 }
-
-                return true;
             }
             catch (Exception ex)
             {
