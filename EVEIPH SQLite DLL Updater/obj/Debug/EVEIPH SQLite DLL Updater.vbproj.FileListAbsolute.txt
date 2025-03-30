@@ -35,3 +35,16 @@ C:\Users\brian\OneDrive\EVE Stuff\EVE IPH Projects\EVE-IPH\EVEIPH SQLite DLL Upd
 C:\Users\brian\OneDrive\EVE Stuff\EVE IPH Projects\EVE-IPH\EVEIPH SQLite DLL Updater\obj\Debug\EVEIPH SQLite DLL Updater.xml
 C:\Users\brian\OneDrive\EVE Stuff\EVE IPH Projects\EVE-IPH\EVEIPH SQLite DLL Updater\obj\Debug\EVEIPH SQLite DLL Updater.pdb
 C:\Users\brian\OneDrive\EVE Stuff\EVE IPH Projects\EVE-IPH\EVEIPH SQLite DLL Updater\obj\Debug\EVEIPH SQLite DLL Updater.vbproj.CopyComplete
+H:\evetools\EVE-IPH\Root Directory\EVEIPH SQLite DLL Updater.exe.config
+H:\evetools\EVE-IPH\Root Directory\EVEIPH SQLite DLL Updater.exe
+H:\evetools\EVE-IPH\Root Directory\EVEIPH SQLite DLL Updater.pdb
+H:\evetools\EVE-IPH\Root Directory\EVEIPH SQLite DLL Updater.xml
+H:\evetools\EVE-IPH\EVEIPH SQLite DLL Updater\obj\Debug\EVEIPH SQLite DLL Updater.vbproj.AssemblyReference.cache
+H:\evetools\EVE-IPH\EVEIPH SQLite DLL Updater\obj\Debug\EVEIPH_SQLite_DLL_Updater.frmSQLiteDLLMain.resources
+H:\evetools\EVE-IPH\EVEIPH SQLite DLL Updater\obj\Debug\EVEIPH_SQLite_DLL_Updater.Resources.resources
+H:\evetools\EVE-IPH\EVEIPH SQLite DLL Updater\obj\Debug\EVEIPH SQLite DLL Updater.vbproj.GenerateResource.cache
+H:\evetools\EVE-IPH\EVEIPH SQLite DLL Updater\obj\Debug\EVEIPH SQLite DLL Updater.vbproj.CoreCompileInputs.cache
+H:\evetools\EVE-IPH\EVEIPH SQLite DLL Updater\obj\Debug\EVEIPH S.87C46223.Up2Date
+H:\evetools\EVE-IPH\EVEIPH SQLite DLL Updater\obj\Debug\EVEIPH SQLite DLL Updater.exe
+H:\evetools\EVE-IPH\EVEIPH SQLite DLL Updater\obj\Debug\EVEIPH SQLite DLL Updater.xml
+H:\evetools\EVE-IPH\EVEIPH SQLite DLL Updater\obj\Debug\EVEIPH SQLite DLL Updater.pdb

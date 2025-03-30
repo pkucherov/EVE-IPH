@@ -1,36 +1,45 @@
 {
   "Version": 1,
-  "WorkspaceRootPath": "C:\\Users\\brian\\OneDrive\\EVE Stuff\\EVE IPH Projects\\EVE-IPH\\",
+  "WorkspaceRootPath": "H:\\evetools\\EVE-IPH\\",
   "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{E3D9EDB2-4883-0763-0257-843BD570A9F7}|EVE Isk per Hour.csproj|H:\\evetools\\EVE-IPH\\esi.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{E3D9EDB2-4883-0763-0257-843BD570A9F7}|EVE Isk per Hour.csproj|solutionrelative:esi.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E3D9EDB2-4883-0763-0257-843BD570A9F7}|EVE Isk per Hour.csproj|h:\\evetools\\eve-iph\\timepicker.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{E3D9EDB2-4883-0763-0257-843BD570A9F7}|EVE Isk per Hour.csproj|solutionrelative:timepicker.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E3D9EDB2-4883-0763-0257-843BD570A9F7}|EVE Isk per Hour.csproj|h:\\evetools\\eve-iph\\frmmain.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{E3D9EDB2-4883-0763-0257-843BD570A9F7}|EVE Isk per Hour.csproj|solutionrelative:frmmain.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E3D9EDB2-4883-0763-0257-843BD570A9F7}|EVE Isk per Hour.csproj|H:\\evetools\\EVE-IPH\\frmindustryjobsviewer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{E3D9EDB2-4883-0763-0257-843BD570A9F7}|EVE Isk per Hour.csproj|solutionrelative:frmindustryjobsviewer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E3D9EDB2-4883-0763-0257-843BD570A9F7}|EVE Isk per Hour.csproj|H:\\evetools\\EVE-IPH\\programupdater.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{E3D9EDB2-4883-0763-0257-843BD570A9F7}|EVE Isk per Hour.csproj|solutionrelative:programupdater.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E3D9EDB2-4883-0763-0257-843BD570A9F7}|EVE Isk per Hour.csproj|H:\\evetools\\EVE-IPH\\globals.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{E3D9EDB2-4883-0763-0257-843BD570A9F7}|EVE Isk per Hour.csproj|solutionrelative:globals.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E3D9EDB2-4883-0763-0257-843BD570A9F7}|EVE Isk per Hour.csproj|H:\\evetools\\EVE-IPH\\dbconnection.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{E3D9EDB2-4883-0763-0257-843BD570A9F7}|EVE Isk per Hour.csproj|solutionrelative:dbconnection.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E3D9EDB2-4883-0763-0257-843BD570A9F7}|EVE Isk per Hour.csproj|H:\\evetools\\EVE-IPH\\manufacturingfacility.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{E3D9EDB2-4883-0763-0257-843BD570A9F7}|EVE Isk per Hour.csproj|solutionrelative:manufacturingfacility.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
     {
       "AbsoluteMoniker": "D:0:0:{00000000-0000-0000-0000-000000000000}|\u003CSolution\u003E|EVE Isk per Hour||{04B8AB82-A572-4FEF-95CE-5222444B6B64}|"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{51FD6CD9-84DB-4892-800F-4E45B7E79D57}|EVE Isk per Hour.vbproj|c:\\users\\brian\\onedrive\\eve stuff\\eve iph projects\\eve-iph\\globals.vb||{2C015C70-C72C-11D0-88C3-00A0C9110049}",
-      "RelativeMoniker": "D:0:0:{51FD6CD9-84DB-4892-800F-4E45B7E79D57}|EVE Isk per Hour.vbproj|solutionrelative:globals.vb||{2C015C70-C72C-11D0-88C3-00A0C9110049}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{51FD6CD9-84DB-4892-800F-4E45B7E79D57}|EVE Isk per Hour.vbproj|c:\\users\\brian\\onedrive\\eve stuff\\eve iph projects\\eve-iph\\frmsettings.vb||{2C015C70-C72C-11D0-88C3-00A0C9110049}",
-      "RelativeMoniker": "D:0:0:{51FD6CD9-84DB-4892-800F-4E45B7E79D57}|EVE Isk per Hour.vbproj|solutionrelative:frmsettings.vb||{2C015C70-C72C-11D0-88C3-00A0C9110049}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{51FD6CD9-84DB-4892-800F-4E45B7E79D57}|EVE Isk per Hour.vbproj|C:\\Users\\brian\\OneDrive\\EVE Stuff\\EVE IPH Projects\\EVE-IPH\\frmsettings.designer.vb||{2C015C70-C72C-11D0-88C3-00A0C9110049}",
-      "RelativeMoniker": "D:0:0:{51FD6CD9-84DB-4892-800F-4E45B7E79D57}|EVE Isk per Hour.vbproj|solutionrelative:frmsettings.designer.vb||{2C015C70-C72C-11D0-88C3-00A0C9110049}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{51FD6CD9-84DB-4892-800F-4E45B7E79D57}|EVE Isk per Hour.vbproj|C:\\Users\\brian\\OneDrive\\EVE Stuff\\EVE IPH Projects\\EVE-IPH\\frmmain.vb||{2C015C70-C72C-11D0-88C3-00A0C9110049}",
-      "RelativeMoniker": "D:0:0:{51FD6CD9-84DB-4892-800F-4E45B7E79D57}|EVE Isk per Hour.vbproj|solutionrelative:frmmain.vb||{2C015C70-C72C-11D0-88C3-00A0C9110049}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{51FD6CD9-84DB-4892-800F-4E45B7E79D57}|EVE Isk per Hour.vbproj|C:\\Users\\brian\\OneDrive\\EVE Stuff\\EVE IPH Projects\\EVE-IPH\\frmmain.vb||{2C015C70-C72C-11D0-88C3-00A0C9110049}|Form",
-      "RelativeMoniker": "D:0:0:{51FD6CD9-84DB-4892-800F-4E45B7E79D57}|EVE Isk per Hour.vbproj|solutionrelative:frmmain.vb||{2C015C70-C72C-11D0-88C3-00A0C9110049}|Form"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{51FD6CD9-84DB-4892-800F-4E45B7E79D57}|EVE Isk per Hour.vbproj|C:\\Users\\brian\\OneDrive\\EVE Stuff\\EVE IPH Projects\\EVE-IPH\\eveassets.vb||{2C015C70-C72C-11D0-88C3-00A0C9110049}",
-      "RelativeMoniker": "D:0:0:{51FD6CD9-84DB-4892-800F-4E45B7E79D57}|EVE Isk per Hour.vbproj|solutionrelative:eveassets.vb||{2C015C70-C72C-11D0-88C3-00A0C9110049}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{51FD6CD9-84DB-4892-800F-4E45B7E79D57}|EVE Isk per Hour.vbproj|c:\\users\\brian\\onedrive\\eve stuff\\eve iph projects\\eve-iph\\||{B270807C-D8C6-49EB-8EBE-8E8D566637A1}|8998e48e-b89a-4034-b66e-353d8c1fdc2e"
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|H:\\evetools\\EVE-IPH\\Blueprint.vb||{2C015C70-C72C-11D0-88C3-00A0C9110049}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Blueprint.vb||{2C015C70-C72C-11D0-88C3-00A0C9110049}"
     }
   ],
   "DocumentGroupContainers": [
@@ -40,104 +49,141 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 2,
+          "SelectedChildIndex": 4,
           "Children": [
-            {
-              "$type": "Bookmark",
-              "Name": "ST:0:0:{3ae79031-e1bc-11d0-8f78-00a0c9110057}"
-            },
             {
               "$type": "Bookmark",
               "Name": "ST:0:0:{1c4feeaa-4718-4aa9-859d-94ce25d182ba}"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "EVE Isk per Hour",
-              "DocumentMoniker": "C:\\Users\\brian\\OneDrive\\EVE Stuff\\EVE IPH Projects\\EVE-IPH\\EVE Isk per Hour.vbproj",
-              "RelativeDocumentMoniker": "EVE Isk per Hour.vbproj",
-              "ToolTip": "C:\\Users\\brian\\OneDrive\\EVE Stuff\\EVE IPH Projects\\EVE-IPH\\EVE Isk per Hour.vbproj",
-              "RelativeToolTip": "EVE Isk per Hour.vbproj",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
-              "WhenOpened": "2024-02-25T17:36:21.793Z",
+              "DocumentIndex": 1,
+              "Title": "TimePicker.cs",
+              "DocumentMoniker": "H:\\evetools\\EVE-IPH\\TimePicker.cs",
+              "RelativeDocumentMoniker": "TimePicker.cs",
+              "ToolTip": "H:\\evetools\\EVE-IPH\\TimePicker.cs",
+              "RelativeToolTip": "TimePicker.cs",
+              "ViewState": "AgIAACwAAAAAAAAAAAD4v0IAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-03-30T07:58:04.46Z",
               "EditorCaption": ""
             },
             {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{d84ee353-0bef-5a41-a649-8f89aca5d84d}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{cce594b6-0c39-4442-ba28-10c64ac7e89f}"
+            },
+            {
               "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "Globals.vb",
-              "DocumentMoniker": "C:\\Users\\brian\\OneDrive\\EVE Stuff\\EVE IPH Projects\\EVE-IPH\\Globals.vb",
-              "RelativeDocumentMoniker": "Globals.vb",
-              "ToolTip": "C:\\Users\\brian\\OneDrive\\EVE Stuff\\EVE IPH Projects\\EVE-IPH\\Globals.vb",
-              "RelativeToolTip": "Globals.vb",
-              "ViewState": "AQIAACgBAAAAAAAAAAAmwD0BAAAnAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003361|",
-              "WhenOpened": "2024-02-25T17:35:04.718Z",
+              "DocumentIndex": 0,
+              "Title": "ESI.cs",
+              "DocumentMoniker": "H:\\evetools\\EVE-IPH\\ESI.cs",
+              "RelativeDocumentMoniker": "ESI.cs",
+              "ToolTip": "H:\\evetools\\EVE-IPH\\ESI.cs",
+              "RelativeToolTip": "ESI.cs",
+              "ViewState": "AgIAALQFAAAAAAAAAAAswMoFAAA4AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-03-29T14:04:39.603Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 2,
-              "Title": "frmSettings.vb",
-              "DocumentMoniker": "C:\\Users\\brian\\OneDrive\\EVE Stuff\\EVE IPH Projects\\EVE-IPH\\frmSettings.vb",
-              "RelativeDocumentMoniker": "frmSettings.vb",
-              "ToolTip": "C:\\Users\\brian\\OneDrive\\EVE Stuff\\EVE IPH Projects\\EVE-IPH\\frmSettings.vb",
-              "RelativeToolTip": "frmSettings.vb",
-              "ViewState": "AQIAADQCAAAAAAAAAAAzwEwCAAARAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003361|",
-              "WhenOpened": "2024-02-25T17:33:47.406Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "frmSettings.Designer.vb",
-              "DocumentMoniker": "C:\\Users\\brian\\OneDrive\\EVE Stuff\\EVE IPH Projects\\EVE-IPH\\frmSettings.Designer.vb",
-              "RelativeDocumentMoniker": "frmSettings.Designer.vb",
-              "ToolTip": "C:\\Users\\brian\\OneDrive\\EVE Stuff\\EVE IPH Projects\\EVE-IPH\\frmSettings.Designer.vb",
-              "RelativeToolTip": "frmSettings.Designer.vb",
-              "ViewState": "AQIAANEAAAAAAAAAAABOwNQAAAAwAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003361|",
-              "WhenOpened": "2024-02-25T17:33:45.4Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 5,
-              "Title": "frmMain.vb [Design]",
-              "DocumentMoniker": "C:\\Users\\brian\\OneDrive\\EVE Stuff\\EVE IPH Projects\\EVE-IPH\\frmMain.vb",
-              "RelativeDocumentMoniker": "frmMain.vb",
-              "ToolTip": "C:\\Users\\brian\\OneDrive\\EVE Stuff\\EVE IPH Projects\\EVE-IPH\\frmMain.vb [Design]",
-              "RelativeToolTip": "frmMain.vb [Design]",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003361|",
-              "WhenOpened": "2024-02-21T01:02:11.811Z",
-              "EditorCaption": " [Design]"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 6,
-              "Title": "EVEAssets.vb",
-              "DocumentMoniker": "C:\\Users\\brian\\OneDrive\\EVE Stuff\\EVE IPH Projects\\EVE-IPH\\EVEAssets.vb",
-              "RelativeDocumentMoniker": "EVEAssets.vb",
-              "ToolTip": "C:\\Users\\brian\\OneDrive\\EVE Stuff\\EVE IPH Projects\\EVE-IPH\\EVEAssets.vb",
-              "RelativeToolTip": "EVEAssets.vb",
-              "ViewState": "AQIAAMkAAAAAAAAAAABewNsAAAAAAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003361|",
-              "WhenOpened": "2024-02-21T00:44:34.874Z",
+              "Title": "frmMain.cs",
+              "DocumentMoniker": "H:\\evetools\\EVE-IPH\\frmMain.cs",
+              "RelativeDocumentMoniker": "frmMain.cs",
+              "ToolTip": "H:\\evetools\\EVE-IPH\\frmMain.cs",
+              "RelativeToolTip": "frmMain.cs",
+              "ViewState": "AgIAAHtjAAAAAAAAAAD4v4JjAAA7AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-03-29T13:58:59.967Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 4,
-              "Title": "frmMain.vb",
-              "DocumentMoniker": "C:\\Users\\brian\\OneDrive\\EVE Stuff\\EVE IPH Projects\\EVE-IPH\\frmMain.vb",
-              "RelativeDocumentMoniker": "frmMain.vb",
-              "ToolTip": "C:\\Users\\brian\\OneDrive\\EVE Stuff\\EVE IPH Projects\\EVE-IPH\\frmMain.vb",
-              "RelativeToolTip": "frmMain.vb",
-              "ViewState": "AQIAAN8iAAAAAAAAAABUwOIiAAA8AAAA",
+              "Title": "ProgramUpdater.cs",
+              "DocumentMoniker": "H:\\evetools\\EVE-IPH\\ProgramUpdater.cs",
+              "RelativeDocumentMoniker": "ProgramUpdater.cs",
+              "ToolTip": "H:\\evetools\\EVE-IPH\\ProgramUpdater.cs",
+              "RelativeToolTip": "ProgramUpdater.cs",
+              "ViewState": "AgIAAHkAAAAAAAAAAAAlwIEAAAARAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-03-29T13:50:46.28Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "Globals.cs",
+              "DocumentMoniker": "H:\\evetools\\EVE-IPH\\Globals.cs",
+              "RelativeDocumentMoniker": "Globals.cs",
+              "ToolTip": "H:\\evetools\\EVE-IPH\\Globals.cs",
+              "RelativeToolTip": "Globals.cs",
+              "ViewState": "AgIAAHIDAAAAAAAAAIAwwIQDAAARAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-03-29T13:46:02.705Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "ManufacturingFacility.cs",
+              "DocumentMoniker": "H:\\evetools\\EVE-IPH\\ManufacturingFacility.cs",
+              "RelativeDocumentMoniker": "ManufacturingFacility.cs",
+              "ToolTip": "H:\\evetools\\EVE-IPH\\ManufacturingFacility.cs",
+              "RelativeToolTip": "ManufacturingFacility.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-03-29T13:42:00.722Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "DBConnection.cs",
+              "DocumentMoniker": "H:\\evetools\\EVE-IPH\\DBConnection.cs",
+              "RelativeDocumentMoniker": "DBConnection.cs",
+              "ToolTip": "H:\\evetools\\EVE-IPH\\DBConnection.cs",
+              "RelativeToolTip": "DBConnection.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-03-29T13:37:01.094Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "frmIndustryJobsViewer.cs",
+              "DocumentMoniker": "H:\\evetools\\EVE-IPH\\frmIndustryJobsViewer.cs",
+              "RelativeDocumentMoniker": "frmIndustryJobsViewer.cs",
+              "ToolTip": "H:\\evetools\\EVE-IPH\\frmIndustryJobsViewer.cs",
+              "RelativeToolTip": "frmIndustryJobsViewer.cs",
+              "ViewState": "AgIAAOsAAAAAAAAAAAAEwPgAAABbAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-03-29T13:24:58.527Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "Blueprint.vb",
+              "DocumentMoniker": "H:\\evetools\\EVE-IPH\\Blueprint.vb",
+              "RelativeDocumentMoniker": "Blueprint.vb",
+              "ToolTip": "H:\\evetools\\EVE-IPH\\Blueprint.vb",
+              "RelativeToolTip": "Blueprint.vb",
+              "ViewState": "AgIAADABAAAAAAAAAAAgwAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003361|",
-              "WhenOpened": "2024-02-21T00:37:38.013Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-03-29T12:32:37.874Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "EVE Isk per Hour",
+              "DocumentMoniker": "H:\\evetools\\EVE-IPH\\EVE Isk per Hour.csproj",
+              "RelativeDocumentMoniker": "EVE Isk per Hour.csproj",
+              "ToolTip": "H:\\evetools\\EVE-IPH\\EVE Isk per Hour.csproj",
+              "RelativeToolTip": "EVE Isk per Hour.csproj",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
+              "WhenOpened": "2025-03-29T12:33:28.909Z"
             }
           ]
         }

@@ -1,3 +1,7 @@
+# Visual Studio  user specific files
+.vs/
+.vsconfig
+
 bin/*
 obj/*
 Service References/*
@@ -7,6 +11,8 @@ EVE Isk per Hour.vbproj
 *.vsidx
 *.json
 *.json
+*.cache
+EVE-IPH-Update-Program/obj/x86/Debug/*
 EVE-IPH-Update-Program/obj/x86/Debug/EVEIPH Updater.exe
 EVE-IPH-Update-Program/obj/x86/Debug/EVEIPH Updater.pdb
 EVE-IPH-Update-Program/obj/x86/Debug/EVEIPH Updater.vbproj.AssemblyReference.cache
@@ -24,3 +30,4 @@ EVEIPH SQLite DLL Updater/obj/Debug/EVEIPH SQLite DLL Updater.vbproj.AssemblyRef
 EVEIPH SQLite DLL Updater/obj/Debug/EVEIPH SQLite DLL Updater.vbproj.AssemblyReference.cache
 EVE-IPH-Update-Program/obj/x86/Debug/DesignTimeResolveAssemblyReferencesInput.cache
 EVEIPH SQLite DLL Updater/obj/Debug/DesignTimeResolveAssemblyReferencesInput.cache
+EVEIPH SQLite DLL Updater/obj/*
