@@ -3,15 +3,15 @@
   "WorkspaceRootPath": "H:\\evetools\\EVE-IPH\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{E3D9EDB2-4883-0763-0257-843BD570A9F7}|EVE Isk per Hour.csproj|H:\\evetools\\EVE-IPH\\esi.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{E3D9EDB2-4883-0763-0257-843BD570A9F7}|EVE Isk per Hour.csproj|h:\\evetools\\eve-iph\\esi.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{E3D9EDB2-4883-0763-0257-843BD570A9F7}|EVE Isk per Hour.csproj|solutionrelative:esi.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{E3D9EDB2-4883-0763-0257-843BD570A9F7}|EVE Isk per Hour.csproj|h:\\evetools\\eve-iph\\timepicker.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{E3D9EDB2-4883-0763-0257-843BD570A9F7}|EVE Isk per Hour.csproj|H:\\evetools\\EVE-IPH\\timepicker.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{E3D9EDB2-4883-0763-0257-843BD570A9F7}|EVE Isk per Hour.csproj|solutionrelative:timepicker.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{E3D9EDB2-4883-0763-0257-843BD570A9F7}|EVE Isk per Hour.csproj|h:\\evetools\\eve-iph\\frmmain.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{E3D9EDB2-4883-0763-0257-843BD570A9F7}|EVE Isk per Hour.csproj|H:\\evetools\\EVE-IPH\\frmmain.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{E3D9EDB2-4883-0763-0257-843BD570A9F7}|EVE Isk per Hour.csproj|solutionrelative:frmmain.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
@@ -56,19 +56,6 @@
               "Name": "ST:0:0:{1c4feeaa-4718-4aa9-859d-94ce25d182ba}"
             },
             {
-              "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "TimePicker.cs",
-              "DocumentMoniker": "H:\\evetools\\EVE-IPH\\TimePicker.cs",
-              "RelativeDocumentMoniker": "TimePicker.cs",
-              "ToolTip": "H:\\evetools\\EVE-IPH\\TimePicker.cs",
-              "RelativeToolTip": "TimePicker.cs",
-              "ViewState": "AgIAACwAAAAAAAAAAAD4v0IAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-03-30T07:58:04.46Z",
-              "EditorCaption": ""
-            },
-            {
               "$type": "Bookmark",
               "Name": "ST:0:0:{d84ee353-0bef-5a41-a649-8f89aca5d84d}"
             },
@@ -78,13 +65,25 @@
             },
             {
               "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "TimePicker.cs",
+              "DocumentMoniker": "H:\\evetools\\EVE-IPH\\TimePicker.cs",
+              "RelativeDocumentMoniker": "TimePicker.cs",
+              "ToolTip": "H:\\evetools\\EVE-IPH\\TimePicker.cs",
+              "RelativeToolTip": "TimePicker.cs",
+              "ViewState": "AgIAACwAAAAAAAAAAAD4v0IAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-03-30T07:58:04.46Z"
+            },
+            {
+              "$type": "Document",
               "DocumentIndex": 0,
               "Title": "ESI.cs",
               "DocumentMoniker": "H:\\evetools\\EVE-IPH\\ESI.cs",
               "RelativeDocumentMoniker": "ESI.cs",
               "ToolTip": "H:\\evetools\\EVE-IPH\\ESI.cs",
               "RelativeToolTip": "ESI.cs",
-              "ViewState": "AgIAALQFAAAAAAAAAAAswMoFAAA4AAAAAAAAAA==",
+              "ViewState": "AgIAALAFAAAAAAAAAAAcwMoFAAA4AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-03-29T14:04:39.603Z",
               "EditorCaption": ""
@@ -99,8 +98,7 @@
               "RelativeToolTip": "frmMain.cs",
               "ViewState": "AgIAAHtjAAAAAAAAAAD4v4JjAAA7AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-03-29T13:58:59.967Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-03-29T13:58:59.967Z"
             },
             {
               "$type": "Document",
