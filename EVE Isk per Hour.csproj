@@ -3,7 +3,8 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
-    <ProductVersion></ProductVersion>
+    <ProductVersion>
+    </ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{E3D9EDB2-4883-0763-0257-843BD570A9F7}</ProjectGuid>
     <OutputType>WinExe</OutputType>
@@ -13,9 +14,11 @@
     <FileAlignment>512</FileAlignment>
     <MyType>WindowsForms</MyType>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
-    <TargetFrameworkProfile></TargetFrameworkProfile>
+    <TargetFrameworkProfile>
+    </TargetFrameworkProfile>
     <IsWebBootstrapper>false</IsWebBootstrapper>
-    <NuGetPackageImportStamp></NuGetPackageImportStamp>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -39,7 +42,8 @@
     <DebugType>full</DebugType>
     <OutputPath>..\Root Directory\</OutputPath>
     <DocumentationFile>..\Root Directory\EVE Isk per Hour.xml</DocumentationFile>
-    <NoWarn></NoWarn>
+    <NoWarn>
+    </NoWarn>
     <UseVSHostingProcess>true</UseVSHostingProcess>
     <RunCodeAnalysis>false</RunCodeAnalysis>
     <Prefer32Bit>false</Prefer32Bit>
@@ -51,7 +55,8 @@
     <Optimize>true</Optimize>
     <OutputPath>..\Root Directory\</OutputPath>
     <DocumentationFile>..\Root Directory\EVE Isk per Hour.xml</DocumentationFile>
-    <NoWarn></NoWarn>
+    <NoWarn>
+    </NoWarn>
     <UseVSHostingProcess>true</UseVSHostingProcess>
     <Prefer32Bit>false</Prefer32Bit>
     <DefineConstants>TRACE</DefineConstants>
@@ -310,12 +315,6 @@
     <Compile Include="DBConnection.cs" />
     <Compile Include="DoubleTrackBar - No designer.cs">
       <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="frmMarketHistoryViewer.Designer.cs">
-      <DependentUpon>frmMarketHistoryViewer.cs</DependentUpon>
-    </Compile>
-    <Compile Include="frmMarketHistoryViewer.cs">
-      <SubType>Form</SubType>
     </Compile>
     <Compile Include="frmReqSkills.Designer.cs">
       <DependentUpon>frmReqSkills.cs</DependentUpon>
@@ -583,9 +582,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="frmUpwellStructureFitting.resx">
       <DependentUpon>frmUpwellStructureFitting.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="frmMarketHistoryViewer.resx">
-      <DependentUpon>frmMarketHistoryViewer.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="frmReqSkills.resx">
       <DependentUpon>frmReqSkills.cs</DependentUpon>

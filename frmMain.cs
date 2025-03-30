@@ -21625,9 +21625,7 @@ namespace EVE_Isk_per_Hour
                     {
                         RegionID = Public_Variables.TheForgeTypeID;
                     }
-
-                    var f1 = new frmMarketHistoryViewer(FoundItem.ItemTypeID, FoundItem.ItemName, RegionID, cmbCalcHistoryRegion.Text, Conversions.ToInteger(cmbCalcAvgPriceDuration.Text));
-                    f1.Show();
+                    Interaction.MsgBox("Removed Market history Viewer", Constants.vbInformation, Application.ProductName);
                 }
 
                 else
