@@ -64,14 +64,6 @@ namespace EVE_Isk_per_Hour
             ResetHours = true;
             ResetMinutes = true;
             ResetSeconds = true;
-            Text = _Text;
-            Text = _Text;
-            Text = _Text;
-            Text = _Text;
-            Text = _Text;
-            Text = _Text;
-            Text = _Text;
-
         }
 
         public override string Text

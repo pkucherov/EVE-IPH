@@ -1479,7 +1479,7 @@ namespace EVE_Isk_per_Hour
                     // Call each thread for the pairs
                     for (int i = 0, loopTo = ThreadPairs.Count - 1; i <= loopTo; i++)
                     {
-                        var UPHThread = new Thread((_) => this.LoadStructureMarketOrders());
+                        var UPHThread = new Thread((pairs) => this.LoadStructureMarketOrders(pairs));
                         UPHThread.Start(ThreadPairs[i]);
                         // Save the thread if we need to kill it
                         Threads.AddThread(UPHThread);

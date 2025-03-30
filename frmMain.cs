@@ -25472,7 +25472,7 @@ namespace EVE_Isk_per_Hour
                     {
                         // Add the type of moon this comes from
                         {
-                            ref var withBlock = ref OreList[i].OreName;
+                            var withBlock = OreList[i].OreName;
                             if (withBlock.Contains("Bitumens") | withBlock.Contains("Coesite") | withBlock.Contains("Sylvite") | withBlock.Contains("Zeolites"))
                             {
                                 MoonType = " (R4)";
