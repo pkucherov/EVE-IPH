@@ -9674,7 +9674,7 @@ namespace EVE_Isk_per_Hour
             {
                 var loopTo = SystemCheckBoxes.Length - 1;
                 for (i = 1; i <= loopTo; i++)
-                    SystemCheckBoxes[i].Checked = false;
+                    if (SystemCheckBoxes[i] != null) { SystemCheckBoxes[i].Checked = false; }
             }
         }
 

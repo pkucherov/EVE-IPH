@@ -61,7 +61,7 @@ namespace EVE_Isk_per_Hour
             try
             {
                 DB.Open();
-                ExecuteNonQuerySQL("PRAGMA auto_vacuum = FULL; PRAGMA synchronous = NORMAL; PRAGMA locking_mode = NORMAL; PRAGMA cache_size = 10000; PRAGMA page_size = 4096; PRAGMA temp_store = DEFAULT; PRAGMA journal_mode = WAL; PRAGMA count_changes = OFF");
+                ExecuteNonQuerySQL("PRAGMA auto_vacuum = FULL; PRAGMA synchronous = NORMAL; PRAGMA locking_mode = NORMAL; PRAGMA cache_size = -1000000; PRAGMA page_size = 4096; PRAGMA temp_store = DEFAULT; PRAGMA journal_mode = WAL; PRAGMA count_changes = OFF; pragma journal_size_limit = 6144000;");
             }
             catch (Exception)
             {
