@@ -41,13 +41,14 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <OutputPath>..\Root Directory\</OutputPath>
-    <DocumentationFile>..\Root Directory\EVE Isk per Hour.xml</DocumentationFile>
-    <NoWarn>
-    </NoWarn>
+    <DocumentationFile>
+    </DocumentationFile>
+    <NoWarn>CS0219;CS0414;CS0169;CS0168;</NoWarn>
     <UseVSHostingProcess>true</UseVSHostingProcess>
     <RunCodeAnalysis>false</RunCodeAnalysis>
     <Prefer32Bit>false</Prefer32Bit>
     <DefineConstants>TRACE;DEBUG</DefineConstants>
+    <WarningLevel>3</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
     <PlatformTarget>x86</PlatformTarget>

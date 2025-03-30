@@ -5,7 +5,7 @@ using System.Windows.Forms;
 
 namespace EVE_Isk_per_Hour
 {
-    [Microsoft.VisualBasic.CompilerServices.DesignerGenerated()]
+    
     public partial class frmCostSplitViewer : Form
     {
 
