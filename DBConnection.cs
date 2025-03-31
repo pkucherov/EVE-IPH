@@ -7,7 +7,7 @@ using Microsoft.VisualBasic;
 namespace EVE_Isk_per_Hour
 {
 
-    public class DBConnection
+    public partial class DBConnection
     {
 
         private SQLiteConnection DB;
@@ -31,6 +31,7 @@ namespace EVE_Isk_per_Hour
             try
             {
                 OpenDB();
+                DB = CopyDBToMemory(DB);
             }
             catch (Exception ex)
             {
