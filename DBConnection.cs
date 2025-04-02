@@ -31,7 +31,7 @@ namespace EVE_Isk_per_Hour
             try
             {
                 OpenDB();
-                DB = CopyDBToMemory(DB);
+                // DB = CopyDBToMemory(DB);
             }
             catch (Exception ex)
             {
@@ -62,7 +62,8 @@ namespace EVE_Isk_per_Hour
             try
             {
                 DB.Open();
-                ExecuteNonQuerySQL("PRAGMA auto_vacuum = FULL; PRAGMA synchronous = NORMAL; PRAGMA locking_mode = NORMAL; PRAGMA cache_size = -1000000; PRAGMA page_size = 4096; PRAGMA temp_store = DEFAULT; PRAGMA journal_mode = WAL; PRAGMA count_changes = OFF; pragma journal_size_limit = 6144000;");
+                //ExecuteNonQuerySQL("PRAGMA auto_vacuum = FULL; PRAGMA synchronous = NORMAL; PRAGMA locking_mode = NORMAL; PRAGMA cache_size = -1000000; PRAGMA page_size = 32768; PRAGMA temp_store = memory; PRAGMA journal_mode = WAL; PRAGMA count_changes = OFF; pragma journal_size_limit = 6144000;pragma mmap_size = 30000000000;");
+                ExecuteNonQuerySQL("PRAGMA synchronous = NORMAL; PRAGMA locking_mode = NORMAL; PRAGMA cache_size = -1000000; PRAGMA page_size = 32768; PRAGMA temp_store = memory; PRAGMA journal_mode = WAL; PRAGMA count_changes = OFF; pragma journal_size_limit = 6144000;pragma mmap_size = 30000000000;");
             }
             catch (Exception)
             {

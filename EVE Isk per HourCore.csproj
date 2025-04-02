@@ -165,14 +165,12 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
     <PackageReference Include="Microsoft.VisualBasic" Version="10.3.0" />
-    <PackageReference Include="System.Management" Version="9.0.3" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="LpSolveDotNet" Version="4.0.0" />
     <PackageReference Include="LpSolveDotNet.Native.win-x86" Version="4.0.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-    <PackageReference Include="Stub.System.Data.SQLite.Core.NetFramework" Version="1.0.116.0" />
-    <PackageReference Include="System.Data.SQLite.Core" Version="1.0.116.0" />
+    <PackageReference Include="System.Data.SQLite.Core" Version="1.0.119" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Remove="EVE-IPH-Update-Program\frmErrorDB.resx" />
