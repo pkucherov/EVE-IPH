@@ -13,6 +13,8 @@ using System.Threading;
 using System.Windows.Forms;
 using Microsoft.VisualBasic;
 using Microsoft.VisualBasic.CompilerServices;
+using System.Collections.Concurrent;
+using System.Threading.Tasks;
 
 namespace EVE_Isk_per_Hour
 {
@@ -86,6 +88,14 @@ namespace EVE_Isk_per_Hour
 
         private List<Public_Variables.BuildBuyItem> BBItems = new List<Public_Variables.BuildBuyItem>(); // Just the list of itemid and preference for check
         private long BBItemtoFind = new long();
+
+        int CalcAvgPriceDuration;
+        string CalcPriceTrend;
+        bool CalcMinBuildTimeFilter;
+        bool CalcMaxBuildTimeFilter;
+        bool CalcIPHThreshold;
+        bool CalcVolumeThreshold;
+        CheckState CalcProfitThreshold;
 
         public struct BPBBItem
         {
@@ -17586,7 +17596,8 @@ namespace EVE_Isk_per_Hour
             var AveragePriceDays = default(int);
 
             var BaseItems = new List<ManufacturingItem>(); // Holds all the items and their decryptors, relics, meta etc for initial list
-            var ManufacturingList = new List<ManufacturingItem>(); // List of all the items we manufactured - may be different than the item list
+            //var ManufacturingList = new List<ManufacturingItem>(); // List of all the items we manufactured - may be different than the item list
+            var ManufacturingList = new ConcurrentBag<ManufacturingItem>();
             var FinalItemList = new List<ManufacturingItem>(); // Final list of data
 
             var InsertItem = new ManufacturingItem();
@@ -17629,7 +17640,7 @@ namespace EVE_Isk_per_Hour
             bool OriginalBPOwnedFlag;
 
             // For the optimal decryptor checking
-            var OptimalDecryptorItems = new List<OptimalDecryptorItem>();
+            var OptimalDecryptorItems = new ConcurrentBag<OptimalDecryptorItem>();
 
             bool ItemIsReaction;
 
@@ -17836,7 +17847,8 @@ namespace EVE_Isk_per_Hour
                     // No valid query so just show nothing
                     lstManufacturing.Items.Clear();
                     FinalManufacturingItemList = null;
-                    goto ExitCalc;
+                    ExitCalculation(Calculate);
+                    return;
                 }
 
                 // Get data
@@ -17851,7 +17863,8 @@ namespace EVE_Isk_per_Hour
                     lstManufacturing.Items.Clear();
                     // Clear list of data
                     FinalManufacturingItemList = null;
-                    goto ExitCalc;
+                    ExitCalculation(Calculate);
+                    return;
                 }
 
                 // Me.Cursor = Cursors.WaitCursor
@@ -17873,7 +17886,8 @@ namespace EVE_Isk_per_Hour
                     // If they cancel the calc
                     if (Public_Variables.CancelManufacturingTabCalc)
                     {
-                        goto ExitCalc;
+                        ExitCalculation(Calculate);
+                        return;
                     }
 
                     // 0-BP_ID, 1-BLUEPRINT_GROUP, 2-BLUEPRINT_NAME, 3-ITEM_GROUP_ID, 4-ITEM_GROUP, 5-ITEM_CATEGORY_ID, 
@@ -18461,537 +18475,42 @@ namespace EVE_Isk_per_Hour
                     pnlProgressBar.Visible = true;
 
                     Application.DoEvents();
+                    CalcAvgPriceDuration = Conversions.ToInteger(cmbCalcAvgPriceDuration.Text);
+                    CalcPriceTrend = cmbCalcPriceTrend.Text;
 
+                    CalcMinBuildTimeFilter = chkCalcMinBuildTimeFilter.Checked;
+                    CalcMaxBuildTimeFilter = chkCalcMaxBuildTimeFilter.Checked;
+                    CalcIPHThreshold = chkCalcIPHThreshold.Checked;
+                    CalcVolumeThreshold = chkCalcVolumeThreshold.Checked;
+                    CalcProfitThreshold = chkCalcProfitThreshold.CheckState;
+
+                    List<Task> CalculationTasks = new List<Task>();
                     // Loop through the item list and calculate data
                     var loopTo3 = BaseItems.Count - 1;
+                    ThreadPool.SetMinThreads(4, 4); // Set the minimum threads to 1
                     for (i = 0; i <= loopTo3; i++)
                     {
-
-                        Application.DoEvents();
-
-                        InsertItem = BaseItems[i];
-
-                        // If they cancel the calc
-                        if (Public_Variables.CancelManufacturingTabCalc)
+                        var resStep = Task<(bool CancelProcess, List<ManufacturingItem> ManufacturingItems)>.Run(() =>
                         {
-                            goto ExitCalc;
-                        }
+                            return ProcessCalculationStep(BaseItems[i], PolarizedWeapon, InventionDecryptors,
+                                MarketRegionID, AveragePriceDays, SVRThresholdValue, OptimalDecryptorItems);
+                        });
 
-                        // Set the number of BPs
-                        if ((InsertItem.TechLevel == "T2" | InsertItem.TechLevel == "T3") & chkCalcAutoCalcT2NumBPs.Checked == true & (InsertItem.BlueprintType == Public_Variables.BPType.InventedBPC | InsertItem.BlueprintType == Public_Variables.BPType.NotOwned) & !PolarizedWeapon)
+                        if (resStep.Result.CancelProcess)
                         {
-                            // For T3 or if they have calc checked, we will never have a BPO so determine the number of BPs
-                            NumberofBlueprints = GetUsedNumBPs(InsertItem.BPID, Conversions.ToInteger(InsertItem.TechLevel.Substring(1, 1)), InsertItem.Runs, InsertItem.ProductionLines, InsertItem.NumBPs, InsertItem.Decryptor.RunMod);
+                            ExitCalculation(Calculate);
+                            return;
                         }
                         else
                         {
-                            NumberofBlueprints = Conversions.ToInteger(txtCalcNumBPs.Text);
+                            resStep.Result.ManufacturingItems.ForEach(ManufacturingList.Add);
+                            // For each record, update the progress bar
+                            var argPG1 = pnlProgressBar;
+                            Public_Variables.IncrementToolStripProgressBar(ref argPG1);
+                            pnlProgressBar = argPG1;
                         }
-
-                        // Construct the BP
-                        List<Public_Variables.BuildBuyItem> argBuildBuyList = null;
-                        IndustryFacility argBPReprocessingFacility = null;
-                        ManufacturingBlueprint = new Blueprint(InsertItem.BPID, Conversions.ToInteger(txtCalcRuns.Text), InsertItem.BPME, InsertItem.BPTE, NumberofBlueprints, Conversions.ToInteger(txtCalcProdLines.Text), Public_Variables.SelectedCharacter, SettingsVariables.UserApplicationSettings, rbtnCalcCompareBuildBuy.Checked, InsertItem.AddlCosts, InsertItem.BuildFacility, InsertItem.ComponentManufacturingFacility, InsertItem.CapComponentManufacturingFacility, InsertItem.ReactionFacility, chkCalcSellExessItems.Checked, SettingsVariables.UserManufacturingTabSettings.BuildT2T3Materials, true, BuildBuyList: ref argBuildBuyList, BPReprocessingFacility: ref argBPReprocessingFacility);
-
-                        // Set the T2 and T3 inputs if necessary
-                        if ((InsertItem.TechLevel == "T2" | InsertItem.TechLevel == "T3") & InsertItem.BlueprintType == Public_Variables.BPType.InventedBPC & chkCalcIgnoreInvention.Checked == false & !PolarizedWeapon)
-                        {
-
-                            // Strip off the relic if in here for the decryptor
-                            if (InsertItem.Inputs.Contains("-"))
-                            {
-                                InputText = InsertItem.Inputs.Substring(0, Strings.InStr(InsertItem.Inputs, "-") - 2);
-                            }
-                            else
-                            {
-                                InputText = InsertItem.Inputs;
-                            }
-
-                            if ((InputText ?? "") == Public_Variables.None)
-                            {
-                                SelectedDecryptor = DecryptorVariables.NoDecryptor;
-                            }
-                            else // A decryptor is set
-                            {
-                                SelectedDecryptor = InventionDecryptors.GetDecryptor(InputText);
-                            }
-
-                            // Construct the T2/T3 BP
-                            ManufacturingBlueprint.InventBlueprint(Conversions.ToInteger(txtCalcLabLines.Text), SelectedDecryptor, InsertItem.InventionFacility, InsertItem.CopyFacility, Public_Variables.GetInventItemTypeID(InsertItem.BPID, InsertItem.Relic));
-
-                        }
-
-                        // Build the blueprint(s)
-                        ManufacturingBlueprint.BuildItems(chkCalcTaxes.Checked, Public_Variables.GetBrokerFeeData(chkCalcFees, txtCalcBrokerFeeRate), false, chkCalcIgnoreMinerals.Checked, chkCalcIgnoreT1Item.Checked);
-
-                        // If checked, Add the values to the array only if we can Build, Invent, or RE it
-                        AddItem = true;
-
-                        // User can Build
-                        if (chkCalcCanBuild.Checked & !ManufacturingBlueprint.UserCanBuildBlueprint())
-                        {
-                            AddItem = false;
-                        }
-
-                        // User can Invent
-                        if (chkCalcCanInvent.Checked & chkCalcCanInvent.Enabled & !ManufacturingBlueprint.UserCanInventRE() & (ManufacturingBlueprint.GetTechLevel() == 2 | ManufacturingBlueprint.GetTechLevel() == 3))
-                        {
-                            AddItem = false;
-                        }
-
-                        // Adjust the item with calculations
-                        if (AddItem)
-                        {
-                            Application.DoEvents();
-                            // Add data that will the same for all options (need to move more from the bottom but have to test)
-                            InsertItem.CanBuildBP = ManufacturingBlueprint.UserCanBuildBlueprint();
-                            InsertItem.CanInvent = ManufacturingBlueprint.UserCanInventRE();
-                            InsertItem.CanRE = ManufacturingBlueprint.UserCanInventRE();
-                            // Trend data
-                            InsertItem.PriceTrend = CalculatePriceTrend(InsertItem.ItemTypeID, MarketRegionID, Conversions.ToInteger(cmbCalcAvgPriceDuration.Text));
-                            InsertItem.ItemMarketPrice = ManufacturingBlueprint.GetItemMarketPrice();
-
-                            // Add all the volume, items on hand, etc here since they won't change
-                            InsertItem.TotalItemsSold = CalculateTotalItemsSold(InsertItem.ItemTypeID, MarketRegionID, Conversions.ToInteger(cmbCalcAvgPriceDuration.Text));
-                            InsertItem.TotalOrdersFilled = CalculateTotalOrdersFilled(InsertItem.ItemTypeID, MarketRegionID, Conversions.ToInteger(cmbCalcAvgPriceDuration.Text));
-                            InsertItem.AvgItemsperOrder = Conversions.ToDouble(Interaction.IIf(InsertItem.TotalOrdersFilled == 0L, 0, InsertItem.TotalItemsSold / (double)InsertItem.TotalOrdersFilled));
-                            GetCurrentOrders(InsertItem.ItemTypeID, MarketRegionID, ref InsertItem.CurrentBuyOrders, ref InsertItem.CurrentSellOrders);
-
-                            InsertItem.ItemsinStock = GetTotalItemsinStock(InsertItem.ItemTypeID);
-                            InsertItem.ItemsinProduction = GetTotalItemsinProduction(InsertItem.ItemTypeID);
-
-                            // Get the output data
-                            if (rbtnCalcCompareAll.Checked)
-                            {
-                                // Need to add a record for each of the three types
-
-                                // *** For components, only add if it has buildable components
-                                if (ManufacturingBlueprint.HasComponents())
-                                {
-                                    // Components first
-                                    InsertItem.ProfitPercent = ManufacturingBlueprint.GetTotalComponentProfitPercent();
-                                    InsertItem.Profit = ManufacturingBlueprint.GetTotalComponentProfit();
-                                    InsertItem.IPH = ManufacturingBlueprint.GetTotalIskperHourComponents();
-                                    InsertItem.CalcType = "Components";
-                                    InsertItem.SVR = GetItemSVR(InsertItem.ItemTypeID, MarketRegionID, AveragePriceDays, ManufacturingBlueprint.GetProductionTime(), ManufacturingBlueprint.GetTotalUnits());
-                                    if (InsertItem.SVR == "-")
-                                    {
-                                        InsertItem.SVRxIPH = "0.00";
-                                    }
-                                    else
-                                    {
-                                        InsertItem.SVRxIPH = Strings.FormatNumber(Conversions.ToDouble(InsertItem.SVR) * InsertItem.IPH, 2);
-                                    }
-                                    InsertItem.TotalCost = ManufacturingBlueprint.GetTotalComponentCost();
-                                    InsertItem.Taxes = ManufacturingBlueprint.GetSalesTaxes();
-                                    InsertItem.BrokerFees = ManufacturingBlueprint.GetSalesBrokerFees();
-                                    InsertItem.SingleInventedBPCRunsperBPC = ManufacturingBlueprint.GetSingleInventedBPCRuns();
-                                    InsertItem.BaseJobCost = ManufacturingBlueprint.GetEstimatedItemValue();
-                                    InsertItem.JobFee = ManufacturingBlueprint.GetJobFee();
-                                    InsertItem.NumBPs = ManufacturingBlueprint.GetUsedNumBPs();
-                                    InsertItem.InventionChance = ManufacturingBlueprint.GetInventionChance();
-                                    InsertItem.Race = Public_Variables.GetRace(ManufacturingBlueprint.GetRaceID());
-                                    InsertItem.VolumeperItem = ManufacturingBlueprint.GetItemVolume();
-                                    InsertItem.TotalVolume = ManufacturingBlueprint.GetTotalItemVolume();
-                                    InsertItem.MaterialCost = ManufacturingBlueprint.GetRawMaterials().GetTotalMaterialsCost();
-                                    InsertItem.SellExcess = ManufacturingBlueprint.GetExcessMaterials().GetTotalMaterialsCost();
-                                    InsertItem.ROI = ManufacturingBlueprint.GetTotalComponentProfit() / ManufacturingBlueprint.GetTotalComponentCost();
-
-                                    if (chkCalcPPU.Checked)
-                                    {
-                                        InsertItem.DivideUnits = (int)ManufacturingBlueprint.GetTotalUnits();
-                                        InsertItem.PortionSize = 1;
-                                    }
-                                    else
-                                    {
-                                        InsertItem.DivideUnits = 1;
-                                        InsertItem.PortionSize = (int)ManufacturingBlueprint.GetTotalUnits();
-                                    }
-
-                                    InsertItem.BPProductionTime = Public_Variables.FormatIPHTime(ManufacturingBlueprint.GetProductionTime() / InsertItem.DivideUnits);
-                                    InsertItem.TotalProductionTime = Public_Variables.FormatIPHTime(ManufacturingBlueprint.GetProductionTime() / InsertItem.DivideUnits); // Total production time for components only is always the bp production time
-                                    InsertItem.CopyTime = Public_Variables.FormatIPHTime(ManufacturingBlueprint.GetCopyTime() / InsertItem.DivideUnits);
-                                    InsertItem.InventionTime = Public_Variables.FormatIPHTime(ManufacturingBlueprint.GetInventionTime() / InsertItem.DivideUnits);
-
-                                    if ((ManufacturingBlueprint.GetTechLevel() == (int)Public_Variables.BPTechLevel.T2 | ManufacturingBlueprint.GetTechLevel() == (int)Public_Variables.BPTechLevel.T3) & InsertItem.BlueprintType != Public_Variables.BPType.Original & InsertItem.BlueprintType != Public_Variables.BPType.Copy)
-                                    {
-                                        InsertItem.InventionCost = ManufacturingBlueprint.GetInventionCost();
-                                    }
-                                    else
-                                    {
-                                        InsertItem.InventionCost = 0d;
-                                    }
-
-                                    if (ManufacturingBlueprint.GetTechLevel() == (int)Public_Variables.BPTechLevel.T2)
-                                    {
-                                        InsertItem.CopyCost = ManufacturingBlueprint.GetCopyCost();
-                                    }
-                                    else
-                                    {
-                                        InsertItem.CopyCost = 0d;
-                                    }
-
-                                    // Usage
-                                    InsertItem.BuildFacilityUsage = ManufacturingBlueprint.GetManufacturingFacilityUsage();
-                                    // Don't build components in this calculation
-                                    InsertItem.ComponentManufacturingFacilityUsage = 0d;
-                                    InsertItem.CapComponentManufacturingFacilityUsage = 0d;
-                                    InsertItem.CopyFacilityUsage = ManufacturingBlueprint.GetCopyUsage();
-                                    InsertItem.InventionFacilityUsage = ManufacturingBlueprint.GetInventionUsage();
-                                    InsertItem.ReprocessingFacilityUsage = ManufacturingBlueprint.GetReprocessingUsage();
-
-                                    // Save the bp
-                                    InsertItem.Blueprint = ManufacturingBlueprint;
-
-                                    // Insert Components Item
-                                    InsertManufacturingItem(InsertItem, SVRThresholdValue, chkCalcSVRIncludeNull.Checked, ref ManufacturingList, ref ListRowFormats);
-
-                                    // Insert the item for decryptor compare
-                                    InsertDecryptorforOptimalCompare(ref ManufacturingBlueprint, ref InsertItem.CalcType, ref InsertItem.ListID, ref OptimalDecryptorItems);
-
-                                }
-
-                                // *** Raw Mats - always add
-                                InsertItem.ProfitPercent = ManufacturingBlueprint.GetTotalRawProfitPercent();
-                                InsertItem.Profit = ManufacturingBlueprint.GetTotalRawProfit();
-                                InsertItem.IPH = ManufacturingBlueprint.GetTotalIskperHourRaw();
-                                InsertItem.CalcType = "Raw Materials";
-                                InsertItem.SVR = GetItemSVR(InsertItem.ItemTypeID, MarketRegionID, AveragePriceDays, ManufacturingBlueprint.GetTotalProductionTime(), ManufacturingBlueprint.GetTotalUnits());
-                                if (InsertItem.SVR == "-")
-                                {
-                                    InsertItem.SVRxIPH = "0.00";
-                                }
-                                else
-                                {
-                                    InsertItem.SVRxIPH = Strings.FormatNumber(Conversions.ToDouble(InsertItem.SVR) * InsertItem.IPH, 2);
-                                }
-                                InsertItem.TotalCost = ManufacturingBlueprint.GetTotalBuildCost();
-                                InsertItem.Taxes = ManufacturingBlueprint.GetSalesTaxes();
-                                InsertItem.BrokerFees = ManufacturingBlueprint.GetSalesBrokerFees();
-                                InsertItem.SingleInventedBPCRunsperBPC = ManufacturingBlueprint.GetSingleInventedBPCRuns();
-                                InsertItem.BaseJobCost = ManufacturingBlueprint.GetEstimatedItemValue();
-                                InsertItem.JobFee = ManufacturingBlueprint.GetJobFee();
-                                InsertItem.NumBPs = ManufacturingBlueprint.GetUsedNumBPs();
-                                InsertItem.InventionChance = ManufacturingBlueprint.GetInventionChance();
-                                InsertItem.Race = Public_Variables.GetRace(ManufacturingBlueprint.GetRaceID());
-                                InsertItem.VolumeperItem = ManufacturingBlueprint.GetItemVolume();
-                                InsertItem.TotalVolume = ManufacturingBlueprint.GetTotalItemVolume();
-                                InsertItem.MaterialCost = ManufacturingBlueprint.GetRawMaterials().GetTotalMaterialsCost();
-                                InsertItem.SellExcess = ManufacturingBlueprint.GetExcessMaterials().GetTotalMaterialsCost();
-                                InsertItem.ROI = ManufacturingBlueprint.GetTotalRawProfit() / ManufacturingBlueprint.GetTotalRawCost();
-
-                                if (chkCalcPPU.Checked)
-                                {
-                                    InsertItem.DivideUnits = (int)ManufacturingBlueprint.GetTotalUnits();
-                                    InsertItem.PortionSize = 1;
-                                }
-                                else
-                                {
-                                    InsertItem.DivideUnits = 1;
-                                    InsertItem.PortionSize = (int)ManufacturingBlueprint.GetTotalUnits();
-                                }
-
-                                InsertItem.BPProductionTime = Public_Variables.FormatIPHTime(ManufacturingBlueprint.GetProductionTime() / InsertItem.DivideUnits);
-                                InsertItem.TotalProductionTime = Public_Variables.FormatIPHTime(ManufacturingBlueprint.GetTotalProductionTime() / InsertItem.DivideUnits);
-                                InsertItem.CopyTime = Public_Variables.FormatIPHTime(ManufacturingBlueprint.GetCopyTime() / InsertItem.DivideUnits);
-                                InsertItem.InventionTime = Public_Variables.FormatIPHTime(ManufacturingBlueprint.GetInventionTime() / InsertItem.DivideUnits);
-
-                                if ((ManufacturingBlueprint.GetTechLevel() == (int)Public_Variables.BPTechLevel.T2 | ManufacturingBlueprint.GetTechLevel() == (int)Public_Variables.BPTechLevel.T3) & InsertItem.BlueprintType != Public_Variables.BPType.Original & InsertItem.BlueprintType != Public_Variables.BPType.Copy)
-                                {
-                                    InsertItem.InventionCost = ManufacturingBlueprint.GetInventionCost();
-                                }
-                                else
-                                {
-                                    InsertItem.InventionCost = 0d;
-                                }
-
-                                if (ManufacturingBlueprint.GetTechLevel() == (int)Public_Variables.BPTechLevel.T2 & InsertItem.BlueprintType != Public_Variables.BPType.Original)
-                                {
-                                    InsertItem.CopyCost = ManufacturingBlueprint.GetCopyCost();
-                                }
-                                else
-                                {
-                                    InsertItem.CopyCost = 0d;
-                                }
-
-                                // Usage
-                                InsertItem.BuildFacilityUsage = ManufacturingBlueprint.GetManufacturingFacilityUsage();
-                                InsertItem.ComponentManufacturingFacilityUsage = ManufacturingBlueprint.GetComponentFacilityUsage();
-                                InsertItem.CapComponentManufacturingFacilityUsage = ManufacturingBlueprint.GetCapComponentFacilityUsage();
-                                InsertItem.ReactionFacilityUsage = ManufacturingBlueprint.GetTotalReactionFacilityUsage();
-                                InsertItem.CopyFacilityUsage = ManufacturingBlueprint.GetCopyUsage();
-                                InsertItem.InventionFacilityUsage = ManufacturingBlueprint.GetInventionUsage();
-                                InsertItem.ReprocessingFacilityUsage = ManufacturingBlueprint.GetReprocessingUsage();
-
-                                // Save the bp
-                                InsertItem.Blueprint = ManufacturingBlueprint;
-
-                                // Insert Raw Mats item
-                                InsertManufacturingItem(InsertItem, SVRThresholdValue, chkCalcSVRIncludeNull.Checked, ref ManufacturingList, ref ListRowFormats);
-
-                                // Insert the item for decryptor compare
-                                InsertDecryptorforOptimalCompare(ref ManufacturingBlueprint, ref InsertItem.CalcType, ref InsertItem.ListID, ref OptimalDecryptorItems);
-
-                                // *** For Build/Buy we need to construct a new BP and add that
-                                // Construct the BP
-                                List<Public_Variables.BuildBuyItem> argBuildBuyList1 = null;
-                                IndustryFacility argBPReprocessingFacility1 = null;
-                                ManufacturingBlueprint = new Blueprint(InsertItem.BPID, Conversions.ToInteger(txtCalcRuns.Text), InsertItem.BPME, InsertItem.BPTE, NumberofBlueprints, Conversions.ToInteger(txtCalcProdLines.Text), Public_Variables.SelectedCharacter, SettingsVariables.UserApplicationSettings, true, InsertItem.AddlCosts, InsertItem.BuildFacility, InsertItem.ComponentManufacturingFacility, InsertItem.CapComponentManufacturingFacility, InsertItem.ReactionFacility, chkCalcSellExessItems.Checked, SettingsVariables.UserManufacturingTabSettings.BuildT2T3Materials, true, BuildBuyList: ref argBuildBuyList1, BPReprocessingFacility: ref argBPReprocessingFacility1);
-
-                                if ((InsertItem.TechLevel == "T2" | InsertItem.TechLevel == "T3") & InsertItem.BlueprintType == Public_Variables.BPType.InventedBPC & chkCalcIgnoreInvention.Checked == false & !PolarizedWeapon)
-                                {
-                                    // Construct the T2/T3 BP
-                                    ManufacturingBlueprint.InventBlueprint(Conversions.ToInteger(txtCalcLabLines.Text), SelectedDecryptor, InsertItem.InventionFacility, InsertItem.CopyFacility, Public_Variables.GetInventItemTypeID(InsertItem.BPID, InsertItem.Relic));
-
-                                }
-
-                                // Get the list of materials
-                                ManufacturingBlueprint.BuildItems(chkCalcTaxes.Checked, Public_Variables.GetBrokerFeeData(chkCalcFees, txtCalcBrokerFeeRate), false, chkCalcIgnoreMinerals.Checked, chkCalcIgnoreT1Item.Checked);
-
-                                // Build/Buy (add only if it has components we build)
-                                if (ManufacturingBlueprint.HasComponents())
-                                {
-                                    InsertItem.ProfitPercent = ManufacturingBlueprint.GetTotalRawProfitPercent();
-                                    InsertItem.Profit = ManufacturingBlueprint.GetTotalRawProfit();
-                                    InsertItem.IPH = ManufacturingBlueprint.GetTotalIskperHourRaw();
-                                    InsertItem.CalcType = "Build/Buy";
-                                    InsertItem.SVR = GetItemSVR(InsertItem.ItemTypeID, MarketRegionID, AveragePriceDays, ManufacturingBlueprint.GetTotalProductionTime(), ManufacturingBlueprint.GetTotalUnits());
-                                    if (InsertItem.SVR == "-")
-                                    {
-                                        InsertItem.SVRxIPH = "0.00";
-                                    }
-                                    else
-                                    {
-                                        InsertItem.SVRxIPH = Strings.FormatNumber(Conversions.ToDouble(InsertItem.SVR) * InsertItem.IPH, 2);
-                                    }
-                                    InsertItem.TotalCost = ManufacturingBlueprint.GetTotalBuildCost();
-                                    InsertItem.Taxes = ManufacturingBlueprint.GetSalesTaxes();
-                                    InsertItem.BrokerFees = ManufacturingBlueprint.GetSalesBrokerFees();
-                                    InsertItem.SingleInventedBPCRunsperBPC = ManufacturingBlueprint.GetSingleInventedBPCRuns();
-                                    InsertItem.BaseJobCost = ManufacturingBlueprint.GetEstimatedItemValue();
-                                    InsertItem.JobFee = ManufacturingBlueprint.GetJobFee();
-                                    InsertItem.NumBPs = ManufacturingBlueprint.GetUsedNumBPs();
-                                    InsertItem.InventionChance = ManufacturingBlueprint.GetInventionChance();
-                                    InsertItem.Race = Public_Variables.GetRace(ManufacturingBlueprint.GetRaceID());
-                                    InsertItem.VolumeperItem = ManufacturingBlueprint.GetItemVolume();
-                                    InsertItem.TotalVolume = ManufacturingBlueprint.GetTotalItemVolume();
-                                    InsertItem.MaterialCost = ManufacturingBlueprint.GetRawMaterials().GetTotalMaterialsCost();
-                                    InsertItem.SellExcess = ManufacturingBlueprint.GetExcessMaterials().GetTotalMaterialsCost();
-                                    InsertItem.ROI = ManufacturingBlueprint.GetTotalRawProfit() / ManufacturingBlueprint.GetTotalRawCost();
-
-                                    if (chkCalcPPU.Checked)
-                                    {
-                                        InsertItem.DivideUnits = (int)ManufacturingBlueprint.GetTotalUnits();
-                                        InsertItem.PortionSize = 1;
-                                    }
-                                    else
-                                    {
-                                        InsertItem.DivideUnits = 1;
-                                        InsertItem.PortionSize = (int)ManufacturingBlueprint.GetTotalUnits();
-                                    }
-
-                                    InsertItem.BPProductionTime = Public_Variables.FormatIPHTime(ManufacturingBlueprint.GetProductionTime() / InsertItem.DivideUnits);
-                                    InsertItem.TotalProductionTime = Public_Variables.FormatIPHTime(ManufacturingBlueprint.GetTotalProductionTime() / InsertItem.DivideUnits);
-                                    InsertItem.CopyTime = Public_Variables.FormatIPHTime(ManufacturingBlueprint.GetCopyTime() / InsertItem.DivideUnits);
-                                    InsertItem.InventionTime = Public_Variables.FormatIPHTime(ManufacturingBlueprint.GetInventionTime() / InsertItem.DivideUnits);
-
-                                    if ((ManufacturingBlueprint.GetTechLevel() == (int)Public_Variables.BPTechLevel.T2 | ManufacturingBlueprint.GetTechLevel() == (int)Public_Variables.BPTechLevel.T3) & InsertItem.BlueprintType != Public_Variables.BPType.Original & InsertItem.BlueprintType != Public_Variables.BPType.Copy)
-                                    {
-                                        InsertItem.InventionCost = ManufacturingBlueprint.GetInventionCost();
-                                    }
-                                    else
-                                    {
-                                        InsertItem.InventionCost = 0d;
-                                    }
-
-                                    if (ManufacturingBlueprint.GetTechLevel() == (int)Public_Variables.BPTechLevel.T2 & InsertItem.BlueprintType != Public_Variables.BPType.Original)
-                                    {
-                                        InsertItem.CopyCost = ManufacturingBlueprint.GetCopyCost();
-                                    }
-                                    else
-                                    {
-                                        InsertItem.CopyCost = 0d;
-                                    }
-
-                                    // Usage
-                                    InsertItem.BuildFacilityUsage = ManufacturingBlueprint.GetManufacturingFacilityUsage();
-                                    InsertItem.ComponentManufacturingFacilityUsage = ManufacturingBlueprint.GetComponentFacilityUsage();
-                                    InsertItem.CapComponentManufacturingFacilityUsage = ManufacturingBlueprint.GetCapComponentFacilityUsage();
-                                    InsertItem.ReactionFacilityUsage = ManufacturingBlueprint.GetReactionFacilityUsage();
-                                    InsertItem.CopyFacilityUsage = ManufacturingBlueprint.GetCopyUsage();
-                                    InsertItem.InventionFacilityUsage = ManufacturingBlueprint.GetInventionUsage();
-                                    InsertItem.ReprocessingFacilityUsage = ManufacturingBlueprint.GetReprocessingUsage();
-
-                                    // Save the bp
-                                    InsertItem.Blueprint = ManufacturingBlueprint;
-
-                                    // Insert Build/Buy item
-                                    InsertManufacturingItem(InsertItem, SVRThresholdValue, chkCalcSVRIncludeNull.Checked, ref ManufacturingList, ref ListRowFormats);
-
-                                    // Insert the item for decryptor compare
-                                    InsertDecryptorforOptimalCompare(ref ManufacturingBlueprint, ref InsertItem.CalcType, ref InsertItem.ListID, ref OptimalDecryptorItems);
-
-                                }
-                            }
-                            else
-                            {
-                                // Just look at each one individually
-                                if (rbtnCalcCompareComponents.Checked)
-                                {
-                                    // Use the Component values
-                                    InsertItem.ProfitPercent = ManufacturingBlueprint.GetTotalComponentProfitPercent();
-                                    InsertItem.Profit = ManufacturingBlueprint.GetTotalComponentProfit();
-                                    InsertItem.IPH = ManufacturingBlueprint.GetTotalIskperHourComponents();
-                                    InsertItem.CalcType = "Components";
-                                    InsertItem.SVR = GetItemSVR(InsertItem.ItemTypeID, MarketRegionID, AveragePriceDays, ManufacturingBlueprint.GetProductionTime(), ManufacturingBlueprint.GetTotalUnits());
-                                    if (InsertItem.SVR == "-")
-                                    {
-                                        InsertItem.SVRxIPH = "0.00";
-                                    }
-                                    else
-                                    {
-                                        InsertItem.SVRxIPH = Strings.FormatNumber(Conversions.ToDouble(InsertItem.SVR) * InsertItem.IPH, 2);
-                                    }
-                                    InsertItem.TotalCost = ManufacturingBlueprint.GetTotalComponentCost();
-                                    InsertItem.ROI = ManufacturingBlueprint.GetTotalComponentProfit() / ManufacturingBlueprint.GetTotalComponentCost();
-                                }
-                                else if (rbtnCalcCompareRawMats.Checked)
-                                {
-                                    // Use the Raw values 
-                                    InsertItem.ProfitPercent = ManufacturingBlueprint.GetTotalRawProfitPercent();
-                                    InsertItem.Profit = ManufacturingBlueprint.GetTotalRawProfit();
-                                    InsertItem.IPH = ManufacturingBlueprint.GetTotalIskperHourRaw();
-                                    InsertItem.CalcType = "Raw Materials";
-                                    InsertItem.SVR = GetItemSVR(InsertItem.ItemTypeID, MarketRegionID, AveragePriceDays, ManufacturingBlueprint.GetTotalProductionTime(), ManufacturingBlueprint.GetTotalUnits());
-                                    if (InsertItem.SVR == "-")
-                                    {
-                                        InsertItem.SVRxIPH = "0.00";
-                                    }
-                                    else
-                                    {
-                                        InsertItem.SVRxIPH = Strings.FormatNumber(Conversions.ToDouble(InsertItem.SVR) * InsertItem.IPH, 2);
-                                    }
-                                    InsertItem.TotalCost = ManufacturingBlueprint.GetTotalBuildCost();
-                                    InsertItem.ROI = ManufacturingBlueprint.GetTotalRawProfit() / ManufacturingBlueprint.GetTotalRawCost();
-                                }
-                                else if (rbtnCalcCompareBuildBuy.Checked)
-                                {
-                                    // Use the Build/Buy best rate values (the blueprint was set to get these values above)
-                                    InsertItem.ProfitPercent = ManufacturingBlueprint.GetTotalRawProfitPercent();
-                                    InsertItem.Profit = ManufacturingBlueprint.GetTotalRawProfit();
-                                    InsertItem.IPH = ManufacturingBlueprint.GetTotalIskperHourRaw();
-                                    InsertItem.CalcType = "Build/Buy";
-                                    InsertItem.SVR = GetItemSVR(InsertItem.ItemTypeID, MarketRegionID, AveragePriceDays, ManufacturingBlueprint.GetTotalProductionTime(), ManufacturingBlueprint.GetTotalUnits());
-                                    if (InsertItem.SVR == "-")
-                                    {
-                                        InsertItem.SVRxIPH = "0.00";
-                                    }
-                                    else
-                                    {
-                                        InsertItem.SVRxIPH = Strings.FormatNumber(Conversions.ToDouble(InsertItem.SVR) * InsertItem.IPH, 2);
-                                    }
-                                    InsertItem.TotalCost = ManufacturingBlueprint.GetTotalBuildCost();
-                                    InsertItem.ROI = ManufacturingBlueprint.GetTotalRawProfit() / ManufacturingBlueprint.GetTotalRawCost();
-                                }
-
-                                InsertItem.Taxes = ManufacturingBlueprint.GetSalesTaxes();
-                                InsertItem.BrokerFees = ManufacturingBlueprint.GetSalesBrokerFees();
-                                InsertItem.SingleInventedBPCRunsperBPC = ManufacturingBlueprint.GetSingleInventedBPCRuns();
-                                InsertItem.BaseJobCost = ManufacturingBlueprint.GetEstimatedItemValue();
-                                InsertItem.JobFee = ManufacturingBlueprint.GetJobFee();
-                                InsertItem.NumBPs = ManufacturingBlueprint.GetUsedNumBPs();
-                                InsertItem.InventionChance = ManufacturingBlueprint.GetInventionChance();
-                                InsertItem.Race = Public_Variables.GetRace(ManufacturingBlueprint.GetRaceID());
-                                InsertItem.VolumeperItem = ManufacturingBlueprint.GetItemVolume();
-                                InsertItem.TotalVolume = ManufacturingBlueprint.GetTotalItemVolume();
-                                InsertItem.MaterialCost = ManufacturingBlueprint.GetRawMaterials().GetTotalMaterialsCost();
-                                InsertItem.SellExcess = ManufacturingBlueprint.GetExcessMaterials().GetTotalMaterialsCost();
-
-                                if (chkCalcPPU.Checked)
-                                {
-                                    InsertItem.DivideUnits = (int)ManufacturingBlueprint.GetTotalUnits();
-                                    InsertItem.PortionSize = 1;
-                                }
-                                else
-                                {
-                                    InsertItem.DivideUnits = 1;
-                                    InsertItem.PortionSize = (int)ManufacturingBlueprint.GetTotalUnits();
-                                }
-
-                                InsertItem.BPProductionTime = Public_Variables.FormatIPHTime(ManufacturingBlueprint.GetProductionTime() / InsertItem.DivideUnits);
-                                if (rbtnCalcCompareComponents.Checked)
-                                {
-                                    // Total production time for components only is always the bp production time
-                                    InsertItem.TotalProductionTime = Public_Variables.FormatIPHTime(ManufacturingBlueprint.GetProductionTime() / InsertItem.DivideUnits);
-                                }
-                                else
-                                {
-                                    InsertItem.TotalProductionTime = Public_Variables.FormatIPHTime(ManufacturingBlueprint.GetTotalProductionTime() / InsertItem.DivideUnits);
-                                }
-
-                                InsertItem.CopyTime = Public_Variables.FormatIPHTime(ManufacturingBlueprint.GetCopyTime() / InsertItem.DivideUnits);
-                                InsertItem.InventionTime = Public_Variables.FormatIPHTime(ManufacturingBlueprint.GetInventionTime() / InsertItem.DivideUnits);
-
-                                if ((ManufacturingBlueprint.GetTechLevel() == (int)Public_Variables.BPTechLevel.T2 | ManufacturingBlueprint.GetTechLevel() == (int)Public_Variables.BPTechLevel.T3) & InsertItem.BlueprintType != Public_Variables.BPType.Original & InsertItem.BlueprintType != Public_Variables.BPType.Copy)
-                                {
-                                    InsertItem.InventionCost = ManufacturingBlueprint.GetInventionCost();
-                                }
-                                else
-                                {
-                                    InsertItem.InventionCost = 0d;
-                                }
-
-                                if (ManufacturingBlueprint.GetTechLevel() == (int)Public_Variables.BPTechLevel.T2 & InsertItem.BlueprintType != Public_Variables.BPType.Original)
-                                {
-                                    InsertItem.CopyCost = ManufacturingBlueprint.GetCopyCost();
-                                }
-                                else
-                                {
-                                    InsertItem.CopyCost = 0d;
-                                }
-
-                                // Usage
-                                // If it's a reaction, we don't want to add the manufacturing usage for any fuel blocks if it's a component
-                                switch (InsertItem.ItemGroupID)
-                                {
-                                    case var case2 when case2 == Public_Variables.ReactionGroupID(InsertItem.ItemGroupID):
-                                        {
-                                            InsertItem.BuildFacilityUsage = 0d;
-                                            break;
-                                        }
-
-                                    default:
-                                        {
-                                            InsertItem.BuildFacilityUsage = ManufacturingBlueprint.GetManufacturingFacilityUsage();
-                                            break;
-                                        }
-                                }
-                                InsertItem.ComponentManufacturingFacilityUsage = ManufacturingBlueprint.GetComponentFacilityUsage();
-                                InsertItem.CapComponentManufacturingFacilityUsage = ManufacturingBlueprint.GetCapComponentFacilityUsage();
-                                InsertItem.ReactionFacilityUsage = ManufacturingBlueprint.GetReactionFacilityUsage();
-                                InsertItem.CopyFacilityUsage = ManufacturingBlueprint.GetCopyUsage();
-                                InsertItem.InventionFacilityUsage = ManufacturingBlueprint.GetInventionUsage();
-                                InsertItem.ReprocessingFacilityUsage = ManufacturingBlueprint.GetReprocessingUsage();
-
-                                // Save the bp
-                                InsertItem.Blueprint = ManufacturingBlueprint;
-
-                                // Insert the chosen item
-                                InsertManufacturingItem(InsertItem, SVRThresholdValue, chkCalcSVRIncludeNull.Checked, ref ManufacturingList, ref ListRowFormats);
-
-                                // Insert the item for decryptor compare
-                                InsertDecryptorforOptimalCompare(ref ManufacturingBlueprint, ref InsertItem.CalcType, ref InsertItem.ListID, ref OptimalDecryptorItems);
-
-                            }
-
-                        }
-
-                        // For each record, update the progress bar
-                        var argPG1 = pnlProgressBar;
-                        Public_Variables.IncrementToolStripProgressBar(ref argPG1);
-                        pnlProgressBar = argPG1;
-
                     }
+                    Task.WaitAll(CalculationTasks.ToArray());
 
                     // Done processing the blueprints
                     pnlProgressBar.Value = 0;
@@ -19035,13 +18554,14 @@ namespace EVE_Isk_per_Hour
                     {
                         FinalManufacturingItemList = null; // It didn't calculate anything, so just clear the grid and exit
                         lstManufacturing.Items.Clear();
-                        goto ExitCalc;
+                        ExitCalculation(Calculate);
+                        return;
                     }
                 }
                 else
                 {
                     // Use Current data lists and save
-                    FinalManufacturingItemList = ManufacturingList;
+                    FinalManufacturingItemList = ManufacturingList.ToList();
                 }
             }
             else
@@ -19051,7 +18571,7 @@ namespace EVE_Isk_per_Hour
             }
 
             // Remove only but the optimal decryptor items before final display, and set the final list
-            FinalItemList = SetOptimalDecryptorList(FinalManufacturingItemList, OptimalDecryptorItems);
+            FinalItemList = SetOptimalDecryptorList(FinalManufacturingItemList, OptimalDecryptorItems.ToList());
 
             pnlProgressBar.Minimum = 0;
             pnlProgressBar.Maximum = FinalItemList.Count;
@@ -19708,9 +19228,11 @@ namespace EVE_Isk_per_Hour
 
             lstManufacturing.EndUpdate();
 
-        ExitCalc:
-            ;
+            ExitCalculation(Calculate);
+        }
 
+        void ExitCalculation(bool Calculate)
+        {
             pnlProgressBar.Value = 0;
             pnlProgressBar.Visible = false;
             pnlStatus.Text = "";
@@ -19761,7 +19283,552 @@ namespace EVE_Isk_per_Hour
                 btnCalcCalculate.Text = "Refresh";
                 RefreshCalcData = true;
             } // Allow data to be refreshed since we just calcuated
+        }
 
+        (bool CancelProcess, List<ManufacturingItem> ManufacturingItems) ProcessCalculationStep(ManufacturingItem InsertItem, bool PolarizedWeapon, DecryptorList InventionDecryptors,
+            long MarketRegionID, int AveragePriceDays, double SVRThresholdValue,
+            ConcurrentBag<OptimalDecryptorItem> OptimalDecryptorItems)
+        {
+            string InputText;
+            List<ManufacturingItem> ManufacturingList = new List<ManufacturingItem>();
+
+            // If they cancel the calc
+            if (Public_Variables.CancelManufacturingTabCalc)
+            {
+                return (true, ManufacturingList);
+            }
+
+            int NumberofBlueprints;
+            // Set the number of BPs
+            if ((InsertItem.TechLevel == "T2" | InsertItem.TechLevel == "T3") & chkCalcAutoCalcT2NumBPs.Checked == true & (InsertItem.BlueprintType == Public_Variables.BPType.InventedBPC | InsertItem.BlueprintType == Public_Variables.BPType.NotOwned) & !PolarizedWeapon)
+            {
+                // For T3 or if they have calc checked, we will never have a BPO so determine the number of BPs
+                NumberofBlueprints = GetUsedNumBPs(InsertItem.BPID, Conversions.ToInteger(InsertItem.TechLevel.Substring(1, 1)), InsertItem.Runs, InsertItem.ProductionLines, InsertItem.NumBPs, InsertItem.Decryptor.RunMod);
+            }
+            else
+            {
+                NumberofBlueprints = Conversions.ToInteger(txtCalcNumBPs.Text);
+            }
+
+            // Construct the BP
+            List<Public_Variables.BuildBuyItem> argBuildBuyList = null;
+            IndustryFacility argBPReprocessingFacility = null;
+            var ManufacturingBlueprint = new Blueprint(InsertItem.BPID, Conversions.ToInteger(txtCalcRuns.Text), InsertItem.BPME, InsertItem.BPTE, NumberofBlueprints, Conversions.ToInteger(txtCalcProdLines.Text), Public_Variables.SelectedCharacter, SettingsVariables.UserApplicationSettings, rbtnCalcCompareBuildBuy.Checked, InsertItem.AddlCosts, InsertItem.BuildFacility, InsertItem.ComponentManufacturingFacility, InsertItem.CapComponentManufacturingFacility, InsertItem.ReactionFacility, chkCalcSellExessItems.Checked, SettingsVariables.UserManufacturingTabSettings.BuildT2T3Materials, true, BuildBuyList: ref argBuildBuyList, BPReprocessingFacility: ref argBPReprocessingFacility);
+
+            // Set the T2 and T3 inputs if necessary
+            if ((InsertItem.TechLevel == "T2" | InsertItem.TechLevel == "T3") & InsertItem.BlueprintType == Public_Variables.BPType.InventedBPC & chkCalcIgnoreInvention.Checked == false & !PolarizedWeapon)
+            {
+
+                // Strip off the relic if in here for the decryptor
+                if (InsertItem.Inputs.Contains("-"))
+                {
+                    InputText = InsertItem.Inputs.Substring(0, Strings.InStr(InsertItem.Inputs, "-") - 2);
+                }
+                else
+                {
+                    InputText = InsertItem.Inputs;
+                }
+
+                if ((InputText ?? "") == Public_Variables.None)
+                {
+                    SelectedDecryptor = DecryptorVariables.NoDecryptor;
+                }
+                else // A decryptor is set
+                {
+                    SelectedDecryptor = InventionDecryptors.GetDecryptor(InputText);
+                }
+
+                // Construct the T2/T3 BP
+                ManufacturingBlueprint.InventBlueprint(Conversions.ToInteger(txtCalcLabLines.Text), SelectedDecryptor, InsertItem.InventionFacility, InsertItem.CopyFacility, Public_Variables.GetInventItemTypeID(InsertItem.BPID, InsertItem.Relic));
+
+            }
+
+            // Build the blueprint(s)
+            ManufacturingBlueprint.BuildItems(chkCalcTaxes.Checked, Public_Variables.GetBrokerFeeData(chkCalcFees, txtCalcBrokerFeeRate), false, chkCalcIgnoreMinerals.Checked, chkCalcIgnoreT1Item.Checked);
+
+            // If checked, Add the values to the array only if we can Build, Invent, or RE it
+            bool AddItem = true;
+
+            // User can Build
+            if (chkCalcCanBuild.Checked & !ManufacturingBlueprint.UserCanBuildBlueprint())
+            {
+                AddItem = false;
+            }
+
+            // User can Invent
+            if (chkCalcCanInvent.Checked & chkCalcCanInvent.Enabled & !ManufacturingBlueprint.UserCanInventRE() & (ManufacturingBlueprint.GetTechLevel() == 2 | ManufacturingBlueprint.GetTechLevel() == 3))
+            {
+                AddItem = false;
+            }
+
+            // Adjust the item with calculations
+            if (AddItem)
+            {
+                //Application.DoEvents();
+                // Add data that will the same for all options (need to move more from the bottom but have to test)
+                InsertItem.CanBuildBP = ManufacturingBlueprint.UserCanBuildBlueprint();
+                InsertItem.CanInvent = ManufacturingBlueprint.UserCanInventRE();
+                InsertItem.CanRE = ManufacturingBlueprint.UserCanInventRE();
+                // Trend data
+                InsertItem.PriceTrend = CalculatePriceTrend(InsertItem.ItemTypeID, MarketRegionID, CalcAvgPriceDuration);
+                InsertItem.ItemMarketPrice = ManufacturingBlueprint.GetItemMarketPrice();
+
+                // Add all the volume, items on hand, etc here since they won't change
+                InsertItem.TotalItemsSold = CalculateTotalItemsSold(InsertItem.ItemTypeID, MarketRegionID, CalcAvgPriceDuration);
+                InsertItem.TotalOrdersFilled = CalculateTotalOrdersFilled(InsertItem.ItemTypeID, MarketRegionID, CalcAvgPriceDuration);
+                InsertItem.AvgItemsperOrder = Conversions.ToDouble(Interaction.IIf(InsertItem.TotalOrdersFilled == 0L, 0, InsertItem.TotalItemsSold / (double)InsertItem.TotalOrdersFilled));
+                GetCurrentOrders(InsertItem.ItemTypeID, MarketRegionID, ref InsertItem.CurrentBuyOrders, ref InsertItem.CurrentSellOrders);
+
+                InsertItem.ItemsinStock = GetTotalItemsinStock(InsertItem.ItemTypeID);
+                InsertItem.ItemsinProduction = GetTotalItemsinProduction(InsertItem.ItemTypeID);
+
+                // Get the output data
+                if (rbtnCalcCompareAll.Checked)
+                {
+                    // Need to add a record for each of the three types
+
+                    // *** For components, only add if it has buildable components
+                    if (ManufacturingBlueprint.HasComponents())
+                    {
+                        // Components first
+                        InsertItem.ProfitPercent = ManufacturingBlueprint.GetTotalComponentProfitPercent();
+                        InsertItem.Profit = ManufacturingBlueprint.GetTotalComponentProfit();
+                        InsertItem.IPH = ManufacturingBlueprint.GetTotalIskperHourComponents();
+                        InsertItem.CalcType = "Components";
+                        InsertItem.SVR = GetItemSVR(InsertItem.ItemTypeID, MarketRegionID, AveragePriceDays, ManufacturingBlueprint.GetProductionTime(), ManufacturingBlueprint.GetTotalUnits());
+                        if (InsertItem.SVR == "-")
+                        {
+                            InsertItem.SVRxIPH = "0.00";
+                        }
+                        else
+                        {
+                            InsertItem.SVRxIPH = Strings.FormatNumber(Conversions.ToDouble(InsertItem.SVR) * InsertItem.IPH, 2);
+                        }
+                        InsertItem.TotalCost = ManufacturingBlueprint.GetTotalComponentCost();
+                        InsertItem.Taxes = ManufacturingBlueprint.GetSalesTaxes();
+                        InsertItem.BrokerFees = ManufacturingBlueprint.GetSalesBrokerFees();
+                        InsertItem.SingleInventedBPCRunsperBPC = ManufacturingBlueprint.GetSingleInventedBPCRuns();
+                        InsertItem.BaseJobCost = ManufacturingBlueprint.GetEstimatedItemValue();
+                        InsertItem.JobFee = ManufacturingBlueprint.GetJobFee();
+                        InsertItem.NumBPs = ManufacturingBlueprint.GetUsedNumBPs();
+                        InsertItem.InventionChance = ManufacturingBlueprint.GetInventionChance();
+                        InsertItem.Race = Public_Variables.GetRace(ManufacturingBlueprint.GetRaceID());
+                        InsertItem.VolumeperItem = ManufacturingBlueprint.GetItemVolume();
+                        InsertItem.TotalVolume = ManufacturingBlueprint.GetTotalItemVolume();
+                        InsertItem.MaterialCost = ManufacturingBlueprint.GetRawMaterials().GetTotalMaterialsCost();
+                        InsertItem.SellExcess = ManufacturingBlueprint.GetExcessMaterials().GetTotalMaterialsCost();
+                        InsertItem.ROI = ManufacturingBlueprint.GetTotalComponentProfit() / ManufacturingBlueprint.GetTotalComponentCost();
+
+                        if (chkCalcPPU.Checked)
+                        {
+                            InsertItem.DivideUnits = (int)ManufacturingBlueprint.GetTotalUnits();
+                            InsertItem.PortionSize = 1;
+                        }
+                        else
+                        {
+                            InsertItem.DivideUnits = 1;
+                            InsertItem.PortionSize = (int)ManufacturingBlueprint.GetTotalUnits();
+                        }
+
+                        InsertItem.BPProductionTime = Public_Variables.FormatIPHTime(ManufacturingBlueprint.GetProductionTime() / InsertItem.DivideUnits);
+                        InsertItem.TotalProductionTime = Public_Variables.FormatIPHTime(ManufacturingBlueprint.GetProductionTime() / InsertItem.DivideUnits); // Total production time for components only is always the bp production time
+                        InsertItem.CopyTime = Public_Variables.FormatIPHTime(ManufacturingBlueprint.GetCopyTime() / InsertItem.DivideUnits);
+                        InsertItem.InventionTime = Public_Variables.FormatIPHTime(ManufacturingBlueprint.GetInventionTime() / InsertItem.DivideUnits);
+
+                        if ((ManufacturingBlueprint.GetTechLevel() == (int)Public_Variables.BPTechLevel.T2 | ManufacturingBlueprint.GetTechLevel() == (int)Public_Variables.BPTechLevel.T3) & InsertItem.BlueprintType != Public_Variables.BPType.Original & InsertItem.BlueprintType != Public_Variables.BPType.Copy)
+                        {
+                            InsertItem.InventionCost = ManufacturingBlueprint.GetInventionCost();
+                        }
+                        else
+                        {
+                            InsertItem.InventionCost = 0d;
+                        }
+
+                        if (ManufacturingBlueprint.GetTechLevel() == (int)Public_Variables.BPTechLevel.T2)
+                        {
+                            InsertItem.CopyCost = ManufacturingBlueprint.GetCopyCost();
+                        }
+                        else
+                        {
+                            InsertItem.CopyCost = 0d;
+                        }
+
+                        // Usage
+                        InsertItem.BuildFacilityUsage = ManufacturingBlueprint.GetManufacturingFacilityUsage();
+                        // Don't build components in this calculation
+                        InsertItem.ComponentManufacturingFacilityUsage = 0d;
+                        InsertItem.CapComponentManufacturingFacilityUsage = 0d;
+                        InsertItem.CopyFacilityUsage = ManufacturingBlueprint.GetCopyUsage();
+                        InsertItem.InventionFacilityUsage = ManufacturingBlueprint.GetInventionUsage();
+                        InsertItem.ReprocessingFacilityUsage = ManufacturingBlueprint.GetReprocessingUsage();
+
+                        // Save the bp
+                        InsertItem.Blueprint = ManufacturingBlueprint;
+
+                        // Insert Components Item
+                        var mi=InsertManufacturingItem(InsertItem, SVRThresholdValue, chkCalcSVRIncludeNull.Checked);
+                        if (mi.result)
+                        {
+                            ManufacturingList.Add(mi.manufacturingItem);
+                            ListRowFormats.Add(mi.rowFormat);
+                        }
+                        // Insert the item for decryptor compare
+                        InsertDecryptorforOptimalCompare(ManufacturingBlueprint, InsertItem.CalcType, InsertItem.ListID, OptimalDecryptorItems);
+
+                    }
+
+                    // *** Raw Mats - always add
+                    InsertItem.ProfitPercent = ManufacturingBlueprint.GetTotalRawProfitPercent();
+                    InsertItem.Profit = ManufacturingBlueprint.GetTotalRawProfit();
+                    InsertItem.IPH = ManufacturingBlueprint.GetTotalIskperHourRaw();
+                    InsertItem.CalcType = "Raw Materials";
+                    InsertItem.SVR = GetItemSVR(InsertItem.ItemTypeID, MarketRegionID, AveragePriceDays, ManufacturingBlueprint.GetTotalProductionTime(), ManufacturingBlueprint.GetTotalUnits());
+                    if (InsertItem.SVR == "-")
+                    {
+                        InsertItem.SVRxIPH = "0.00";
+                    }
+                    else
+                    {
+                        InsertItem.SVRxIPH = Strings.FormatNumber(Conversions.ToDouble(InsertItem.SVR) * InsertItem.IPH, 2);
+                    }
+                    InsertItem.TotalCost = ManufacturingBlueprint.GetTotalBuildCost();
+                    InsertItem.Taxes = ManufacturingBlueprint.GetSalesTaxes();
+                    InsertItem.BrokerFees = ManufacturingBlueprint.GetSalesBrokerFees();
+                    InsertItem.SingleInventedBPCRunsperBPC = ManufacturingBlueprint.GetSingleInventedBPCRuns();
+                    InsertItem.BaseJobCost = ManufacturingBlueprint.GetEstimatedItemValue();
+                    InsertItem.JobFee = ManufacturingBlueprint.GetJobFee();
+                    InsertItem.NumBPs = ManufacturingBlueprint.GetUsedNumBPs();
+                    InsertItem.InventionChance = ManufacturingBlueprint.GetInventionChance();
+                    InsertItem.Race = Public_Variables.GetRace(ManufacturingBlueprint.GetRaceID());
+                    InsertItem.VolumeperItem = ManufacturingBlueprint.GetItemVolume();
+                    InsertItem.TotalVolume = ManufacturingBlueprint.GetTotalItemVolume();
+                    InsertItem.MaterialCost = ManufacturingBlueprint.GetRawMaterials().GetTotalMaterialsCost();
+                    InsertItem.SellExcess = ManufacturingBlueprint.GetExcessMaterials().GetTotalMaterialsCost();
+                    InsertItem.ROI = ManufacturingBlueprint.GetTotalRawProfit() / ManufacturingBlueprint.GetTotalRawCost();
+
+                    if (chkCalcPPU.Checked)
+                    {
+                        InsertItem.DivideUnits = (int)ManufacturingBlueprint.GetTotalUnits();
+                        InsertItem.PortionSize = 1;
+                    }
+                    else
+                    {
+                        InsertItem.DivideUnits = 1;
+                        InsertItem.PortionSize = (int)ManufacturingBlueprint.GetTotalUnits();
+                    }
+
+                    InsertItem.BPProductionTime = Public_Variables.FormatIPHTime(ManufacturingBlueprint.GetProductionTime() / InsertItem.DivideUnits);
+                    InsertItem.TotalProductionTime = Public_Variables.FormatIPHTime(ManufacturingBlueprint.GetTotalProductionTime() / InsertItem.DivideUnits);
+                    InsertItem.CopyTime = Public_Variables.FormatIPHTime(ManufacturingBlueprint.GetCopyTime() / InsertItem.DivideUnits);
+                    InsertItem.InventionTime = Public_Variables.FormatIPHTime(ManufacturingBlueprint.GetInventionTime() / InsertItem.DivideUnits);
+
+                    if ((ManufacturingBlueprint.GetTechLevel() == (int)Public_Variables.BPTechLevel.T2 | ManufacturingBlueprint.GetTechLevel() == (int)Public_Variables.BPTechLevel.T3) & InsertItem.BlueprintType != Public_Variables.BPType.Original & InsertItem.BlueprintType != Public_Variables.BPType.Copy)
+                    {
+                        InsertItem.InventionCost = ManufacturingBlueprint.GetInventionCost();
+                    }
+                    else
+                    {
+                        InsertItem.InventionCost = 0d;
+                    }
+
+                    if (ManufacturingBlueprint.GetTechLevel() == (int)Public_Variables.BPTechLevel.T2 & InsertItem.BlueprintType != Public_Variables.BPType.Original)
+                    {
+                        InsertItem.CopyCost = ManufacturingBlueprint.GetCopyCost();
+                    }
+                    else
+                    {
+                        InsertItem.CopyCost = 0d;
+                    }
+
+                    // Usage
+                    InsertItem.BuildFacilityUsage = ManufacturingBlueprint.GetManufacturingFacilityUsage();
+                    InsertItem.ComponentManufacturingFacilityUsage = ManufacturingBlueprint.GetComponentFacilityUsage();
+                    InsertItem.CapComponentManufacturingFacilityUsage = ManufacturingBlueprint.GetCapComponentFacilityUsage();
+                    InsertItem.ReactionFacilityUsage = ManufacturingBlueprint.GetTotalReactionFacilityUsage();
+                    InsertItem.CopyFacilityUsage = ManufacturingBlueprint.GetCopyUsage();
+                    InsertItem.InventionFacilityUsage = ManufacturingBlueprint.GetInventionUsage();
+                    InsertItem.ReprocessingFacilityUsage = ManufacturingBlueprint.GetReprocessingUsage();
+
+                    // Save the bp
+                    InsertItem.Blueprint = ManufacturingBlueprint;
+
+                    // Insert Raw Mats item
+                    (var result, var manufacturingItem, var rowFormat) = InsertManufacturingItem(InsertItem, SVRThresholdValue, chkCalcSVRIncludeNull.Checked);
+                    if (result)
+                    {
+                        ManufacturingList.Add(manufacturingItem);
+                        ListRowFormats.Add(rowFormat);
+                    }
+
+                    // Insert the item for decryptor compare
+                    InsertDecryptorforOptimalCompare(ManufacturingBlueprint, InsertItem.CalcType, InsertItem.ListID, OptimalDecryptorItems);
+
+                    // *** For Build/Buy we need to construct a new BP and add that
+                    // Construct the BP
+                    List<Public_Variables.BuildBuyItem> argBuildBuyList1 = null;
+                    IndustryFacility argBPReprocessingFacility1 = null;
+                    ManufacturingBlueprint = new Blueprint(InsertItem.BPID, Conversions.ToInteger(txtCalcRuns.Text), InsertItem.BPME, InsertItem.BPTE, NumberofBlueprints, Conversions.ToInteger(txtCalcProdLines.Text), Public_Variables.SelectedCharacter, SettingsVariables.UserApplicationSettings, true, InsertItem.AddlCosts, InsertItem.BuildFacility, InsertItem.ComponentManufacturingFacility, InsertItem.CapComponentManufacturingFacility, InsertItem.ReactionFacility, chkCalcSellExessItems.Checked, SettingsVariables.UserManufacturingTabSettings.BuildT2T3Materials, true, BuildBuyList: ref argBuildBuyList1, BPReprocessingFacility: ref argBPReprocessingFacility1);
+
+                    if ((InsertItem.TechLevel == "T2" | InsertItem.TechLevel == "T3") & InsertItem.BlueprintType == Public_Variables.BPType.InventedBPC & chkCalcIgnoreInvention.Checked == false & !PolarizedWeapon)
+                    {
+                        // Construct the T2/T3 BP
+                        ManufacturingBlueprint.InventBlueprint(Conversions.ToInteger(txtCalcLabLines.Text), SelectedDecryptor, InsertItem.InventionFacility, InsertItem.CopyFacility, Public_Variables.GetInventItemTypeID(InsertItem.BPID, InsertItem.Relic));
+
+                    }
+
+                    // Get the list of materials
+                    ManufacturingBlueprint.BuildItems(chkCalcTaxes.Checked, Public_Variables.GetBrokerFeeData(chkCalcFees, txtCalcBrokerFeeRate), false, chkCalcIgnoreMinerals.Checked, chkCalcIgnoreT1Item.Checked);
+
+                    // Build/Buy (add only if it has components we build)
+                    if (ManufacturingBlueprint.HasComponents())
+                    {
+                        InsertItem.ProfitPercent = ManufacturingBlueprint.GetTotalRawProfitPercent();
+                        InsertItem.Profit = ManufacturingBlueprint.GetTotalRawProfit();
+                        InsertItem.IPH = ManufacturingBlueprint.GetTotalIskperHourRaw();
+                        InsertItem.CalcType = "Build/Buy";
+                        InsertItem.SVR = GetItemSVR(InsertItem.ItemTypeID, MarketRegionID, AveragePriceDays, ManufacturingBlueprint.GetTotalProductionTime(), ManufacturingBlueprint.GetTotalUnits());
+                        if (InsertItem.SVR == "-")
+                        {
+                            InsertItem.SVRxIPH = "0.00";
+                        }
+                        else
+                        {
+                            InsertItem.SVRxIPH = Strings.FormatNumber(Conversions.ToDouble(InsertItem.SVR) * InsertItem.IPH, 2);
+                        }
+                        InsertItem.TotalCost = ManufacturingBlueprint.GetTotalBuildCost();
+                        InsertItem.Taxes = ManufacturingBlueprint.GetSalesTaxes();
+                        InsertItem.BrokerFees = ManufacturingBlueprint.GetSalesBrokerFees();
+                        InsertItem.SingleInventedBPCRunsperBPC = ManufacturingBlueprint.GetSingleInventedBPCRuns();
+                        InsertItem.BaseJobCost = ManufacturingBlueprint.GetEstimatedItemValue();
+                        InsertItem.JobFee = ManufacturingBlueprint.GetJobFee();
+                        InsertItem.NumBPs = ManufacturingBlueprint.GetUsedNumBPs();
+                        InsertItem.InventionChance = ManufacturingBlueprint.GetInventionChance();
+                        InsertItem.Race = Public_Variables.GetRace(ManufacturingBlueprint.GetRaceID());
+                        InsertItem.VolumeperItem = ManufacturingBlueprint.GetItemVolume();
+                        InsertItem.TotalVolume = ManufacturingBlueprint.GetTotalItemVolume();
+                        InsertItem.MaterialCost = ManufacturingBlueprint.GetRawMaterials().GetTotalMaterialsCost();
+                        InsertItem.SellExcess = ManufacturingBlueprint.GetExcessMaterials().GetTotalMaterialsCost();
+                        InsertItem.ROI = ManufacturingBlueprint.GetTotalRawProfit() / ManufacturingBlueprint.GetTotalRawCost();
+
+                        if (chkCalcPPU.Checked)
+                        {
+                            InsertItem.DivideUnits = (int)ManufacturingBlueprint.GetTotalUnits();
+                            InsertItem.PortionSize = 1;
+                        }
+                        else
+                        {
+                            InsertItem.DivideUnits = 1;
+                            InsertItem.PortionSize = (int)ManufacturingBlueprint.GetTotalUnits();
+                        }
+
+                        InsertItem.BPProductionTime = Public_Variables.FormatIPHTime(ManufacturingBlueprint.GetProductionTime() / InsertItem.DivideUnits);
+                        InsertItem.TotalProductionTime = Public_Variables.FormatIPHTime(ManufacturingBlueprint.GetTotalProductionTime() / InsertItem.DivideUnits);
+                        InsertItem.CopyTime = Public_Variables.FormatIPHTime(ManufacturingBlueprint.GetCopyTime() / InsertItem.DivideUnits);
+                        InsertItem.InventionTime = Public_Variables.FormatIPHTime(ManufacturingBlueprint.GetInventionTime() / InsertItem.DivideUnits);
+
+                        if ((ManufacturingBlueprint.GetTechLevel() == (int)Public_Variables.BPTechLevel.T2 | ManufacturingBlueprint.GetTechLevel() == (int)Public_Variables.BPTechLevel.T3) & InsertItem.BlueprintType != Public_Variables.BPType.Original & InsertItem.BlueprintType != Public_Variables.BPType.Copy)
+                        {
+                            InsertItem.InventionCost = ManufacturingBlueprint.GetInventionCost();
+                        }
+                        else
+                        {
+                            InsertItem.InventionCost = 0d;
+                        }
+
+                        if (ManufacturingBlueprint.GetTechLevel() == (int)Public_Variables.BPTechLevel.T2 & InsertItem.BlueprintType != Public_Variables.BPType.Original)
+                        {
+                            InsertItem.CopyCost = ManufacturingBlueprint.GetCopyCost();
+                        }
+                        else
+                        {
+                            InsertItem.CopyCost = 0d;
+                        }
+
+                        // Usage
+                        InsertItem.BuildFacilityUsage = ManufacturingBlueprint.GetManufacturingFacilityUsage();
+                        InsertItem.ComponentManufacturingFacilityUsage = ManufacturingBlueprint.GetComponentFacilityUsage();
+                        InsertItem.CapComponentManufacturingFacilityUsage = ManufacturingBlueprint.GetCapComponentFacilityUsage();
+                        InsertItem.ReactionFacilityUsage = ManufacturingBlueprint.GetReactionFacilityUsage();
+                        InsertItem.CopyFacilityUsage = ManufacturingBlueprint.GetCopyUsage();
+                        InsertItem.InventionFacilityUsage = ManufacturingBlueprint.GetInventionUsage();
+                        InsertItem.ReprocessingFacilityUsage = ManufacturingBlueprint.GetReprocessingUsage();
+
+                        // Save the bp
+                        InsertItem.Blueprint = ManufacturingBlueprint;
+
+                        // Insert Build/Buy item
+                        var mi = InsertManufacturingItem(InsertItem, SVRThresholdValue, chkCalcSVRIncludeNull.Checked);
+                        if (mi.result)
+                        {
+                            ManufacturingList.Add(mi.manufacturingItem);
+                            ListRowFormats.Add(mi.rowFormat);
+                        }
+
+                        // Insert the item for decryptor compare
+                        InsertDecryptorforOptimalCompare(ManufacturingBlueprint, InsertItem.CalcType, InsertItem.ListID, OptimalDecryptorItems);
+
+                    }
+                }
+                else
+                {
+                    // Just look at each one individually
+                    if (rbtnCalcCompareComponents.Checked)
+                    {
+                        // Use the Component values
+                        InsertItem.ProfitPercent = ManufacturingBlueprint.GetTotalComponentProfitPercent();
+                        InsertItem.Profit = ManufacturingBlueprint.GetTotalComponentProfit();
+                        InsertItem.IPH = ManufacturingBlueprint.GetTotalIskperHourComponents();
+                        InsertItem.CalcType = "Components";
+                        InsertItem.SVR = GetItemSVR(InsertItem.ItemTypeID, MarketRegionID, AveragePriceDays, ManufacturingBlueprint.GetProductionTime(), ManufacturingBlueprint.GetTotalUnits());
+                        if (InsertItem.SVR == "-")
+                        {
+                            InsertItem.SVRxIPH = "0.00";
+                        }
+                        else
+                        {
+                            InsertItem.SVRxIPH = Strings.FormatNumber(Conversions.ToDouble(InsertItem.SVR) * InsertItem.IPH, 2);
+                        }
+                        InsertItem.TotalCost = ManufacturingBlueprint.GetTotalComponentCost();
+                        InsertItem.ROI = ManufacturingBlueprint.GetTotalComponentProfit() / ManufacturingBlueprint.GetTotalComponentCost();
+                    }
+                    else if (rbtnCalcCompareRawMats.Checked)
+                    {
+                        // Use the Raw values 
+                        InsertItem.ProfitPercent = ManufacturingBlueprint.GetTotalRawProfitPercent();
+                        InsertItem.Profit = ManufacturingBlueprint.GetTotalRawProfit();
+                        InsertItem.IPH = ManufacturingBlueprint.GetTotalIskperHourRaw();
+                        InsertItem.CalcType = "Raw Materials";
+                        InsertItem.SVR = GetItemSVR(InsertItem.ItemTypeID, MarketRegionID, AveragePriceDays, ManufacturingBlueprint.GetTotalProductionTime(), ManufacturingBlueprint.GetTotalUnits());
+                        if (InsertItem.SVR == "-")
+                        {
+                            InsertItem.SVRxIPH = "0.00";
+                        }
+                        else
+                        {
+                            InsertItem.SVRxIPH = Strings.FormatNumber(Conversions.ToDouble(InsertItem.SVR) * InsertItem.IPH, 2);
+                        }
+                        InsertItem.TotalCost = ManufacturingBlueprint.GetTotalBuildCost();
+                        InsertItem.ROI = ManufacturingBlueprint.GetTotalRawProfit() / ManufacturingBlueprint.GetTotalRawCost();
+                    }
+                    else if (rbtnCalcCompareBuildBuy.Checked)
+                    {
+                        // Use the Build/Buy best rate values (the blueprint was set to get these values above)
+                        InsertItem.ProfitPercent = ManufacturingBlueprint.GetTotalRawProfitPercent();
+                        InsertItem.Profit = ManufacturingBlueprint.GetTotalRawProfit();
+                        InsertItem.IPH = ManufacturingBlueprint.GetTotalIskperHourRaw();
+                        InsertItem.CalcType = "Build/Buy";
+                        InsertItem.SVR = GetItemSVR(InsertItem.ItemTypeID, MarketRegionID, AveragePriceDays, ManufacturingBlueprint.GetTotalProductionTime(), ManufacturingBlueprint.GetTotalUnits());
+                        if (InsertItem.SVR == "-")
+                        {
+                            InsertItem.SVRxIPH = "0.00";
+                        }
+                        else
+                        {
+                            InsertItem.SVRxIPH = Strings.FormatNumber(Conversions.ToDouble(InsertItem.SVR) * InsertItem.IPH, 2);
+                        }
+                        InsertItem.TotalCost = ManufacturingBlueprint.GetTotalBuildCost();
+                        InsertItem.ROI = ManufacturingBlueprint.GetTotalRawProfit() / ManufacturingBlueprint.GetTotalRawCost();
+                    }
+
+                    InsertItem.Taxes = ManufacturingBlueprint.GetSalesTaxes();
+                    InsertItem.BrokerFees = ManufacturingBlueprint.GetSalesBrokerFees();
+                    InsertItem.SingleInventedBPCRunsperBPC = ManufacturingBlueprint.GetSingleInventedBPCRuns();
+                    InsertItem.BaseJobCost = ManufacturingBlueprint.GetEstimatedItemValue();
+                    InsertItem.JobFee = ManufacturingBlueprint.GetJobFee();
+                    InsertItem.NumBPs = ManufacturingBlueprint.GetUsedNumBPs();
+                    InsertItem.InventionChance = ManufacturingBlueprint.GetInventionChance();
+                    InsertItem.Race = Public_Variables.GetRace(ManufacturingBlueprint.GetRaceID());
+                    InsertItem.VolumeperItem = ManufacturingBlueprint.GetItemVolume();
+                    InsertItem.TotalVolume = ManufacturingBlueprint.GetTotalItemVolume();
+                    InsertItem.MaterialCost = ManufacturingBlueprint.GetRawMaterials().GetTotalMaterialsCost();
+                    InsertItem.SellExcess = ManufacturingBlueprint.GetExcessMaterials().GetTotalMaterialsCost();
+
+                    if (chkCalcPPU.Checked)
+                    {
+                        InsertItem.DivideUnits = (int)ManufacturingBlueprint.GetTotalUnits();
+                        InsertItem.PortionSize = 1;
+                    }
+                    else
+                    {
+                        InsertItem.DivideUnits = 1;
+                        InsertItem.PortionSize = (int)ManufacturingBlueprint.GetTotalUnits();
+                    }
+
+                    InsertItem.BPProductionTime = Public_Variables.FormatIPHTime(ManufacturingBlueprint.GetProductionTime() / InsertItem.DivideUnits);
+                    if (rbtnCalcCompareComponents.Checked)
+                    {
+                        // Total production time for components only is always the bp production time
+                        InsertItem.TotalProductionTime = Public_Variables.FormatIPHTime(ManufacturingBlueprint.GetProductionTime() / InsertItem.DivideUnits);
+                    }
+                    else
+                    {
+                        InsertItem.TotalProductionTime = Public_Variables.FormatIPHTime(ManufacturingBlueprint.GetTotalProductionTime() / InsertItem.DivideUnits);
+                    }
+
+                    InsertItem.CopyTime = Public_Variables.FormatIPHTime(ManufacturingBlueprint.GetCopyTime() / InsertItem.DivideUnits);
+                    InsertItem.InventionTime = Public_Variables.FormatIPHTime(ManufacturingBlueprint.GetInventionTime() / InsertItem.DivideUnits);
+
+                    if ((ManufacturingBlueprint.GetTechLevel() == (int)Public_Variables.BPTechLevel.T2 | ManufacturingBlueprint.GetTechLevel() == (int)Public_Variables.BPTechLevel.T3) & InsertItem.BlueprintType != Public_Variables.BPType.Original & InsertItem.BlueprintType != Public_Variables.BPType.Copy)
+                    {
+                        InsertItem.InventionCost = ManufacturingBlueprint.GetInventionCost();
+                    }
+                    else
+                    {
+                        InsertItem.InventionCost = 0d;
+                    }
+
+                    if (ManufacturingBlueprint.GetTechLevel() == (int)Public_Variables.BPTechLevel.T2 & InsertItem.BlueprintType != Public_Variables.BPType.Original)
+                    {
+                        InsertItem.CopyCost = ManufacturingBlueprint.GetCopyCost();
+                    }
+                    else
+                    {
+                        InsertItem.CopyCost = 0d;
+                    }
+
+                    // Usage
+                    // If it's a reaction, we don't want to add the manufacturing usage for any fuel blocks if it's a component
+                    switch (InsertItem.ItemGroupID)
+                    {
+                        case var case2 when case2 == Public_Variables.ReactionGroupID(InsertItem.ItemGroupID):
+                        {
+                            InsertItem.BuildFacilityUsage = 0d;
+                            break;
+                        }
+
+                        default:
+                        {
+                            InsertItem.BuildFacilityUsage = ManufacturingBlueprint.GetManufacturingFacilityUsage();
+                            break;
+                        }
+                    }
+                    InsertItem.ComponentManufacturingFacilityUsage = ManufacturingBlueprint.GetComponentFacilityUsage();
+                    InsertItem.CapComponentManufacturingFacilityUsage = ManufacturingBlueprint.GetCapComponentFacilityUsage();
+                    InsertItem.ReactionFacilityUsage = ManufacturingBlueprint.GetReactionFacilityUsage();
+                    InsertItem.CopyFacilityUsage = ManufacturingBlueprint.GetCopyUsage();
+                    InsertItem.InventionFacilityUsage = ManufacturingBlueprint.GetInventionUsage();
+                    InsertItem.ReprocessingFacilityUsage = ManufacturingBlueprint.GetReprocessingUsage();
+
+                    // Save the bp
+                    InsertItem.Blueprint = ManufacturingBlueprint;
+
+                    // Insert the chosen item
+                    (var result, var manufacturingItem, var rowFormat) = InsertManufacturingItem(InsertItem, SVRThresholdValue, chkCalcSVRIncludeNull.Checked);
+                    if (result)
+                    {
+                        ManufacturingList.Add(manufacturingItem);
+                        ListRowFormats.Add(rowFormat);
+                    }
+
+                    // Insert the item for decryptor compare
+                    InsertDecryptorforOptimalCompare(ManufacturingBlueprint, InsertItem.CalcType, InsertItem.ListID, OptimalDecryptorItems);
+
+                }
+
+            }
+
+           
+            return (false, ManufacturingList);
         }
 
         // Finds the total items sold over the time period for the region sent
@@ -19848,9 +19915,9 @@ namespace EVE_Isk_per_Hour
             string CurrentItemName = "";
             int ItemQuantity = 0;
 
-            Application.UseWaitCursor = true;
-            Cursor = Cursors.WaitCursor;
-            Application.DoEvents();
+            //Application.UseWaitCursor = true;
+            //Cursor = Cursors.WaitCursor;
+            //Application.DoEvents();
 
             string IDString = "";
 
@@ -19895,7 +19962,7 @@ namespace EVE_Isk_per_Hour
             int Splits = (int)Math.Round(Math.Ceiling(AssetLocationFlagList.Count / 900d));
             for (int k = 0, loopTo = Splits - 1; k <= loopTo; k++)
             {
-                Application.DoEvents();
+                //Application.DoEvents();
                 string TempAssetWhereList = "";
                 // Build the partial asset location id/flag list
                 for (int z = k * 900, loopTo1 = (k + 1) * 900 - 1; z <= loopTo1; z++)
@@ -20779,7 +20846,7 @@ namespace EVE_Isk_per_Hour
         }
 
         // Checks data on different filters to see if we enter the item, and formats colors, etc. after
-        private void InsertManufacturingItem(ManufacturingItem SentItem, double SVRThreshold, bool InsertBlankSVR, ref List<ManufacturingItem> SentList, ref List<RowFormat> FormatList)
+        private (bool result, ManufacturingItem manufacturingItem, RowFormat rowFormat) InsertManufacturingItem(ManufacturingItem SentItem, double SVRThreshold, bool InsertBlankSVR)
         {
             var CurrentRowFormat = new RowFormat();
             bool InsertItem = true; // Assume we include until the record doesn't pass one condition
@@ -20804,7 +20871,7 @@ namespace EVE_Isk_per_Hour
             }
 
             // Filter based on price trend first
-            if (cmbCalcPriceTrend.Text == "Up")
+            if (CalcPriceTrend == "Up")
             {
                 // They want up trends and this is less than zero, so false
                 if (SentItem.PriceTrend < 0d)
@@ -20812,7 +20879,7 @@ namespace EVE_Isk_per_Hour
                     InsertItem = false;
                 }
             }
-            else if (cmbCalcPriceTrend.Text == "Down")
+            else if (CalcPriceTrend == "Down")
             {
                 // They want down trends and this is greater than zero, so false
                 if (SentItem.PriceTrend > 0d)
@@ -20822,7 +20889,7 @@ namespace EVE_Isk_per_Hour
             }
 
             // Min Build time
-            if (chkCalcMinBuildTimeFilter.Checked)
+            if (CalcMinBuildTimeFilter)
             {
                 // If greater than max threshold, don't include
                 if (Public_Variables.ConvertDHMSTimetoSeconds(SentItem.TotalProductionTime) < Public_Variables.ConvertDHMSTimetoSeconds(tpMinBuildTimeFilter.Text))
@@ -20832,7 +20899,7 @@ namespace EVE_Isk_per_Hour
             }
 
             // Max Build time
-            if (chkCalcMaxBuildTimeFilter.Checked)
+            if (CalcMaxBuildTimeFilter)
             {
                 // If greater than max threshold, don't include
                 if (Public_Variables.ConvertDHMSTimetoSeconds(SentItem.TotalProductionTime) > Public_Variables.ConvertDHMSTimetoSeconds(tpMaxBuildTimeFilter.Text))
@@ -20842,7 +20909,7 @@ namespace EVE_Isk_per_Hour
             }
 
             // IPH Threshold
-            if (chkCalcIPHThreshold.Checked)
+            if (CalcIPHThreshold)
             {
                 // If less than threshold, don't include
                 if (SentItem.IPH < Conversions.ToDouble(txtCalcIPHThreshold.Text))
@@ -20852,7 +20919,7 @@ namespace EVE_Isk_per_Hour
             }
 
             // Profit Threshold
-            if (chkCalcProfitThreshold.CheckState == CheckState.Checked)
+            if (CalcProfitThreshold == CheckState.Checked)
             {
                 // If less than threshold, don't include
                 if (SentItem.Profit < Conversions.ToDouble(txtCalcProfitThreshold.Text))
@@ -20860,7 +20927,7 @@ namespace EVE_Isk_per_Hour
                     InsertItem = false;
                 }
             }
-            else if (chkCalcProfitThreshold.CheckState == CheckState.Indeterminate)
+            else if (CalcProfitThreshold == CheckState.Indeterminate)
             {
                 // Profit %
                 if (SentItem.ProfitPercent < Public_Variables.CpctD(txtCalcProfitThreshold.Text))
@@ -20870,7 +20937,7 @@ namespace EVE_Isk_per_Hour
             }
 
             // Profit Threshold
-            if (chkCalcVolumeThreshold.Checked)
+            if (CalcVolumeThreshold)
             {
                 // If less than threshold, don't include
                 if (SentItem.TotalItemsSold < Conversions.ToDouble(txtCalcVolumeThreshold.Text))
@@ -20882,9 +20949,6 @@ namespace EVE_Isk_per_Hour
             // Now determine the format of the item and save it for drawing the list - only if we add it
             if (InsertItem)
             {
-                // Add the record
-                SentList.Add((ManufacturingItem)SentItem.Clone());
-
                 CurrentRowFormat.ListID = ListIDIterator;
 
                 // Set the row format for background and foreground colors
@@ -20932,14 +20996,15 @@ namespace EVE_Isk_per_Hour
                 }
 
                 // Insert the format
-                FormatList.Add(CurrentRowFormat);
+                return (true, (ManufacturingItem)SentItem.Clone(), CurrentRowFormat);
 
             }
 
+            return (false, (ManufacturingItem)SentItem.Clone(), CurrentRowFormat);
         }
 
         // Checks if the BP is T2 or T3 and we want to save it for determining the optimal calc for decryptors
-        private void InsertDecryptorforOptimalCompare(ref Blueprint BP, ref string CalcType, ref int LocationID, ref List<OptimalDecryptorItem> OptimalList)
+        private void InsertDecryptorforOptimalCompare(Blueprint BP, string CalcType, int LocationID, ConcurrentBag<OptimalDecryptorItem> OptimalList)
         {
             if (chkCalcDecryptor0.Checked)
             {
