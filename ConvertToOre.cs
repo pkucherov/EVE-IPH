@@ -96,8 +96,8 @@ namespace EVE_Isk_per_Hour
 
                     SQL += "GROUP BY ORES.ORE_ID, ORE_NAME, UNITS_TO_REFINE, ORE_VOLUME, PRICE, ORE_GROUP";
 
-                    Public_Variables.DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
-                    rsOre = Public_Variables.DBCommand.ExecuteReader();
+                    var DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+                    rsOre = DBCommand.ExecuteReader();
 
                     while (rsOre.Read())
                     {

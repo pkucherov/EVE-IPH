@@ -56,8 +56,8 @@ namespace EVE_Isk_per_Hour
             // Load up all the data for the corporation
             SQL = "SELECT * FROM ESI_CORPORATION_DATA WHERE CORPORATION_ID = " + CorpID;
 
-            Public_Variables.DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
-            rsData = Public_Variables.DBCommand.ExecuteReader();
+            var DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+            rsData = DBCommand.ExecuteReader();
 
             while (rsData.Read())
             {
@@ -245,8 +245,8 @@ namespace EVE_Isk_per_Hour
 
             // Look up roles for the character sent in DB
             SQL = "SELECT ROLE FROM ESI_CORPORATION_ROLES WHERE CORPORATION_ID = {0} AND CHARACTER_ID = {1}";
-            Public_Variables.DBCommand = new SQLiteCommand(string.Format(SQL, CorporationID, TokenData.CharacterID), Public_Variables.EVEDB.DBREf());
-            rsRoles = Public_Variables.DBCommand.ExecuteReader();
+            var DBCommand = new SQLiteCommand(string.Format(SQL, CorporationID, TokenData.CharacterID), Public_Variables.EVEDB.DBREf());
+            rsRoles = DBCommand.ExecuteReader();
 
             while (rsRoles.Read())
                 ReturnRoles.Add(rsRoles.GetString(0));

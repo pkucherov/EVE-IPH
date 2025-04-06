@@ -418,8 +418,8 @@ namespace EVE_Isk_per_Hour
 
             SQL += "ORDER BY ORE";
 
-            Public_Variables.DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
-            readerBelts = Public_Variables.DBCommand.ExecuteReader();
+            var DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+            readerBelts = DBCommand.ExecuteReader();
 
             CurrentList.Items.Clear();
             CurrentList.BeginUpdate();
@@ -872,8 +872,8 @@ namespace EVE_Isk_per_Hour
                     OreName = item.SubItems[1].Text;
                     SQL = "SELECT typeID from INVENTORY_TYPES WHERE typeName = '" + OreName + "'";
 
-                    Public_Variables.DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
-                    readerBelts = Public_Variables.DBCommand.ExecuteReader();
+                    var DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+                    readerBelts = DBCommand.ExecuteReader();
 
                     if (readerBelts.Read())
                     {
@@ -898,8 +898,8 @@ namespace EVE_Isk_per_Hour
 
                             // First, get the unit price and volume for the compressed ore
                             SQL = "SELECT PRICE FROM ITEM_PRICES WHERE ITEM_NAME LIKE 'Compressed " + OreName + "'";
-                            Public_Variables.DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
-                            readerOre = Public_Variables.DBCommand.ExecuteReader();
+                            var DBCommand3 = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+                            readerOre = DBCommand3.ExecuteReader();
 
                             if (readerOre.Read())
                             {
@@ -921,7 +921,7 @@ namespace EVE_Isk_per_Hour
 
                     }
                     readerBelts.Close();
-                    Public_Variables.DBCommand = null;
+                    DBCommand = null;
 
                 }
 
@@ -1051,8 +1051,8 @@ namespace EVE_Isk_per_Hour
                     {
                         SQL += "AND ORE_NAME = '" + OreName + "'";
                     }
-                    Public_Variables.DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
-                    readerBelts = Public_Variables.DBCommand.ExecuteReader();
+                    var DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+                    readerBelts = DBCommand.ExecuteReader();
 
                     if (readerBelts.Read())
                     {

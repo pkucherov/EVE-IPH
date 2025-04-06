@@ -379,13 +379,12 @@ namespace EVE_Isk_per_Hour
         {
             string SQL;
             SQLiteDataReader rsReader;
-            SQLiteCommand DBCommand;
 
             SQL = @"SELECT typeID, typeName, INVENTORY_GROUPS.groupID FROM INVENTORY_TYPES, INVENTORY_GROUPS WHERE INVENTORY_GROUPS.categoryID = 65 
                AND INVENTORY_TYPES.groupID = INVENTORY_GROUPS.groupid AND INVENTORY_TYPES.published = 1 
                AND INVENTORY_TYPES.groupID NOT IN (1408, 2016, 2017)";
 
-            DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+            var DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
             rsReader = DBCommand.ExecuteReader();
 
             // Clear the combo
@@ -588,16 +587,16 @@ namespace EVE_Isk_per_Hour
                 foreach (var Rig in CurrentRigs)
                 {
                     // Get the group ID of the installed RIG
-                    Public_Variables.DBCommand = new SQLiteCommand("SELECT groupID FROM INVENTORY_TYPES WHERE typeID = " + Rig.ToString(), Public_Variables.EVEDB.DBREf());
-                    rsLoader = Public_Variables.DBCommand.ExecuteReader();
+                    var DBCommand5 = new SQLiteCommand("SELECT groupID FROM INVENTORY_TYPES WHERE typeID = " + Rig.ToString(), Public_Variables.EVEDB.DBREf());
+                    rsLoader = DBCommand5.ExecuteReader();
 
                     if (rsLoader.Read())
                     {
                         GroupID = rsLoader.GetInt32(0);
 
                         // Look up the rig max modules value, then compare to the group of this rig they want to add
-                        Public_Variables.DBCommand = new SQLiteCommand("SELECT value FROM TYPE_ATTRIBUTES AS TA, INVENTORY_TYPES AS IT WHERE attributeID = 1544 AND IT.typeID = TA.typeID AND TA.typeID = " + ModuleTypeID.ToString() + " AND groupID =" + GroupID.ToString(), Public_Variables.EVEDB.DBREf());
-                        rsLoader = Public_Variables.DBCommand.ExecuteReader();
+                        var DBCommand = new SQLiteCommand("SELECT value FROM TYPE_ATTRIBUTES AS TA, INVENTORY_TYPES AS IT WHERE attributeID = 1544 AND IT.typeID = TA.typeID AND TA.typeID = " + ModuleTypeID.ToString() + " AND groupID =" + GroupID.ToString(), Public_Variables.EVEDB.DBREf());
+                        rsLoader = DBCommand.ExecuteReader();
 
                         if (rsLoader.Read())
                         {
@@ -626,9 +625,8 @@ namespace EVE_Isk_per_Hour
         {
             string SQL = string.Format("SELECT * FROM type_effects WHERe typeid = {0} AND effectID = {1}", TypeID.ToString(), UsesMissilesEffectID);
             SQLiteDataReader rsReader;
-            SQLiteCommand DBCommand;
 
-            DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+            var DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
             rsReader = DBCommand.ExecuteReader();
 
             if (rsReader.Read())
@@ -732,7 +730,6 @@ namespace EVE_Isk_per_Hour
         {
             string SQL = "";
             SQLiteDataReader rsStructure;
-            SQLiteCommand DBCommand;
 
             Application.UseWaitCursor = true;
             Enabled = false;
@@ -761,8 +758,8 @@ namespace EVE_Isk_per_Hour
             SQL += "WHERE UPWELL_STRUCTURES_INSTALLED_MODULES.FACILITY_ID = INVENTORY_TYPES.typeID ";
             SQL += "AND FACILITY_VIEW = {0} And PRODUCTION_TYPE = {1} And CHARACTER_ID = {2} And SOLAR_SYSTEM_ID = {3} And typeName = '{4}'";
 
-            DBCommand = new SQLiteCommand(string.Format(SQL, (int)SelectedStructureLocation, (int)SelectedFacilityProductionType, SelectedCharacterID, SelectedSolarSystemID, Public_Variables.FormatDBString(SentUSName)), Public_Variables.EVEDB.DBREf());
-            rsStructure = DBCommand.ExecuteReader();
+            var DBCommand5 = new SQLiteCommand(string.Format(SQL, (int)SelectedStructureLocation, (int)SelectedFacilityProductionType, SelectedCharacterID, SelectedSolarSystemID, Public_Variables.FormatDBString(SentUSName)), Public_Variables.EVEDB.DBREf());
+            rsStructure = DBCommand5.ExecuteReader();
 
             InstalledModules = new List<int>();
 
@@ -780,7 +777,6 @@ namespace EVE_Isk_per_Hour
             }
 
             rsStructure.Close();
-            DBCommand = null;
 
             // Now fill the slots with the modules in the list
             foreach (var typeID in InstalledModules)
@@ -799,7 +795,7 @@ namespace EVE_Isk_per_Hour
                     SQL += "AND INVENTORY_TYPES.published <> 0 ";
                     SQL += "AND INVENTORY_TYPES.typeID = " + typeID.ToString();
 
-                    DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+                    var DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
                     rsStructure = DBCommand.ExecuteReader();
 
                     if (rsStructure.Read())
@@ -961,12 +957,11 @@ namespace EVE_Isk_per_Hour
         {
             string SQL;
             SQLiteDataReader rsReader;
-            SQLiteCommand DBCommand;
 
             SQL = "Select typeID, groupID FROM INVENTORY_TYPES ";
             SQL += "WHERE INVENTORY_TYPES.published <> 0 And typeName = '" + Public_Variables.FormatDBString(LookupName) + "'";
 
-            DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+            var DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
             rsReader = DBCommand.ExecuteReader();
 
             if (rsReader.Read())
@@ -993,7 +988,6 @@ namespace EVE_Isk_per_Hour
         {
             string SQL;
             SQLiteDataReader rsReader;
-            SQLiteCommand DBCommand;
             int AID;
 
             // Query all the stats for the selected Upwell Structure and process slots
@@ -1002,7 +996,7 @@ namespace EVE_Isk_per_Hour
             SQL += "WHERE attributeID In (" + ((int)ItemAttributes.hiSlots).ToString() + "," + ((int)ItemAttributes.medSlots).ToString() + "," + ((int)ItemAttributes.lowSlots).ToString() + "," + ((int)ItemAttributes.serviceSlots).ToString() + "," + ((int)ItemAttributes.rigSlots).ToString() + ") ";
             SQL += "And INVENTORY_TYPES.typeID = TYPE_ATTRIBUTES.typeID And typeName = '" + Public_Variables.FormatDBString(cmbUpwellStructureName.Text) + "'";
 
-            DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+            var DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
             rsReader = DBCommand.ExecuteReader();
 
             while (rsReader.Read())
@@ -1249,14 +1243,13 @@ namespace EVE_Isk_per_Hour
         {
             string SQL;
             SQLiteDataReader rsReader;
-            SQLiteCommand DBCommand;
             int GroupID;
 
             try
             {
                 SQL = "SELECT groupID FROM INVENTORY_TYPES WHERE typeID = " + StructureModuleID;
 
-                DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+                var DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
                 rsReader = DBCommand.ExecuteReader();
                 rsReader.Read();
                 GroupID = rsReader.GetInt32(0);
@@ -1612,7 +1605,6 @@ namespace EVE_Isk_per_Hour
         {
             string SQL;
             SQLiteDataReader rsReader;
-            SQLiteCommand DBCommand;
 
             try
             {
@@ -1621,7 +1613,7 @@ namespace EVE_Isk_per_Hour
                 SQL += "WHERE INVENTORY_TYPES.groupID = INVENTORY_GROUPS.groupID AND ABS(categoryID) = 66 "; // I save rigs as -66
                 SQL += "AND INVENTORY_TYPES.published <> 0";
 
-                DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+                var DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
                 rsReader = DBCommand.ExecuteReader();
 
                 Image myImage;
@@ -1679,7 +1671,6 @@ namespace EVE_Isk_per_Hour
                 string SlotString = "";
                 var SQLList = new List<string>();
                 SQLiteDataReader rsReader;
-                SQLiteCommand DBCommand;
                 ListViewItem DVI;
 
                 // query for all types of modules, rigs, and services to fit
@@ -1783,7 +1774,7 @@ namespace EVE_Isk_per_Hour
 
                 SQL += " ORDER BY groupName, typeName";
 
-                DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+                var DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
                 rsReader = DBCommand.ExecuteReader();
 
                 while (rsReader.Read())
@@ -1879,7 +1870,6 @@ namespace EVE_Isk_per_Hour
         {
             string SQL;
             SQLiteDataReader rsReader;
-            SQLiteCommand DBCommand;
 
             SQL = "SELECT value AS STRUCTURE_ID FROM TYPE_ATTRIBUTES, ATTRIBUTE_TYPES ";
             SQL += "WHERE TYPE_ATTRIBUTES.typeID = {0} AND ATTRIBUTE_TYPES.attributeID = TYPE_ATTRIBUTES.attributeID ";
@@ -1887,7 +1877,7 @@ namespace EVE_Isk_per_Hour
             // Add typeid to look up
             SQL = string.Format(SQL, ItemTypeID);
 
-            DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+            var DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
             rsReader = DBCommand.ExecuteReader();
 
             while (rsReader.Read())
@@ -2409,8 +2399,8 @@ namespace EVE_Isk_per_Hour
                         SQL += ((int)ItemAttributes.nullSecModifier).ToString() + " ";
                     }
 
-                    DBCommand = new SQLiteCommand(string.Format(SQL, InstalledModule.typeID), Public_Variables.EVEDB.DBREf());
-                    rsReader = DBCommand.ExecuteReader();
+                    var DBCommand2 = new SQLiteCommand(string.Format(SQL, InstalledModule.typeID), Public_Variables.EVEDB.DBREf());
+                    rsReader = DBCommand2.ExecuteReader();
 
                     if (rsReader.Read())
                     {
@@ -2441,8 +2431,8 @@ namespace EVE_Isk_per_Hour
                                 SQL += "AND TA.attributeID IN (SELECT attributeID FROM ATTRIBUTE_TYPES WHERE attributeName LIKE 'attributeEngRig%') ";
 
                                 // Only include this if it's a Thukker array, else don't limit
-                                DBCommand = new SQLiteCommand("SELECT 'X' FROM INVENTORY_TYPES WHERE typeName LIKE '%Standup%-Set Thukker%' AND typeName NOT LIKE '%Blueprint' AND typeID = " + InstalledModule.typeID.ToString(), Public_Variables.EVEDB.DBREf());
-                                rsCheck = DBCommand.ExecuteReader();
+                                var DBCommand3 = new SQLiteCommand("SELECT 'X' FROM INVENTORY_TYPES WHERE typeName LIKE '%Standup%-Set Thukker%' AND typeName NOT LIKE '%Blueprint' AND typeID = " + InstalledModule.typeID.ToString(), Public_Variables.EVEDB.DBREf());
+                                rsCheck = DBCommand3.ExecuteReader();
 
                                 if (rsCheck.Read())
                                 {
@@ -2541,8 +2531,8 @@ namespace EVE_Isk_per_Hour
 
                     SQL += "AND BONUS <> 0 AND TA.typeID = {0} ";
 
-                    DBCommand = new SQLiteCommand(string.Format(SQL, InstalledModule.typeID), Public_Variables.EVEDB.DBREf());
-                    rsReader = DBCommand.ExecuteReader();
+                    var DBCommand6 = new SQLiteCommand(string.Format(SQL, InstalledModule.typeID), Public_Variables.EVEDB.DBREf());
+                    rsReader = DBCommand6.ExecuteReader();
 
                     while (rsReader.Read())
                     {
@@ -2746,8 +2736,8 @@ namespace EVE_Isk_per_Hour
             SQL += "WHERE ALL_BLUEPRINTS.BLUEPRINT_ID = OWNED_BLUEPRINTS.BLUEPRINT_ID ";
             SQL += "AND ALL_BLUEPRINTS.BLUEPRINT_ID IN (" + ((int)FuelBlocks.HeliumBP).ToString() + "," + ((int)FuelBlocks.HydrogenBP).ToString() + "," + ((int)FuelBlocks.NitrogenBP).ToString() + "," + ((int)FuelBlocks.OxygenBP).ToString() + ")";
 
-            Public_Variables.DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
-            reader = Public_Variables.DBCommand.ExecuteReader();
+            var DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+            reader = DBCommand.ExecuteReader();
 
             while (reader.Read())
             {
@@ -3099,8 +3089,8 @@ namespace EVE_Isk_per_Hour
             SQL += "(9832, 44, 16272, 16274, 17889, 16273, 3689, 17888, 3683, 17887, 9848, 16275)"; // Mats
             SQL += "OR ITEM_PRICES.ITEM_ID IN (" + ((int)FuelBlocks.Nitrogen).ToString() + "," + ((int)FuelBlocks.Hydrogen).ToString() + "," + ((int)FuelBlocks.Helium).ToString() + "," + ((int)FuelBlocks.Oxygen).ToString() + ")";
 
-            Public_Variables.DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
-            reader = Public_Variables.DBCommand.ExecuteReader();
+            var DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+            reader = DBCommand.ExecuteReader();
 
             while (reader.Read())
             {
@@ -3209,7 +3199,7 @@ namespace EVE_Isk_per_Hour
             txtHeliumIsotopes.Focus();
 
             reader.Close();
-            Public_Variables.DBCommand = null;
+            DBCommand = null;
 
         }
 

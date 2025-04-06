@@ -46,8 +46,8 @@ namespace EVE_Isk_per_Hour
             SQL += "RUNS, BP_TYPE, OWNED, SCANNED, FAVORITE, ADDITIONAL_COSTS ";
             SQL += "FROM OWNED_BLUEPRINTS WHERE USER_ID = " + CharID;
 
-            Public_Variables.DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
-            readerBlueprints = Public_Variables.DBCommand.ExecuteReader();
+            var DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+            readerBlueprints = DBCommand.ExecuteReader();
 
             while (readerBlueprints.Read())
             {
@@ -73,7 +73,7 @@ namespace EVE_Isk_per_Hour
             }
 
             readerBlueprints.Close();
-            Public_Variables.DBCommand = null;
+            DBCommand = null;
             readerBlueprints = null;
 
             BlueprintList = Blueprints;
@@ -159,8 +159,8 @@ namespace EVE_Isk_per_Hour
                                 SQL = "SELECT ME, TE, BP_TYPE, ITEM_ID, OWNED, SCANNED FROM OWNED_BLUEPRINTS ";
                                 SQL += "WHERE BLUEPRINT_ID = " + withBlock.TypeID + " And USER_ID = " + TempID.ToString();
 
-                                Public_Variables.DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
-                                readerBlueprints = Public_Variables.DBCommand.ExecuteReader();
+                                var DBCommand9 = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+                                readerBlueprints = DBCommand9.ExecuteReader();
                                 readerBlueprints.Read();
 
                                 if (readerBlueprints.HasRows)
@@ -215,8 +215,8 @@ namespace EVE_Isk_per_Hour
                                     if (CurrentBPType == Public_Variables.BPType.Copy)
                                     {
                                         SQL = "SELECT TECH_LEVEL FROM ALL_BLUEPRINTS WHERE BLUEPRINT_ID = " + withBlock.TypeID.ToString();
-                                        Public_Variables.DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
-                                        readerCheck = Public_Variables.DBCommand.ExecuteReader();
+                                        var DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+                                        readerCheck = DBCommand.ExecuteReader();
                                         if (readerCheck.Read())
                                         {
                                             var TempDecryptorList = new DecryptorList();
@@ -284,7 +284,6 @@ namespace EVE_Isk_per_Hour
                             }
                         }
 
-                        Public_Variables.DBCommand = null;
 
                         Public_Variables.EVEDB.CommitSQLiteTransaction();
 

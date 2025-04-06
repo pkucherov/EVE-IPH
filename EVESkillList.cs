@@ -55,8 +55,8 @@ namespace EVE_Isk_per_Hour
             }
             SQL += "ORDER BY SKILLS.SKILL_GROUP, SKILLS.SKILL_NAME ";
 
-            Public_Variables.DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
-            rsData = Public_Variables.DBCommand.ExecuteReader();
+            var DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+            rsData = DBCommand.ExecuteReader();
 
             int SelectedSkillLevel = 0;
 
@@ -133,8 +133,8 @@ namespace EVE_Isk_per_Hour
                         // Check for skill and update if there
                         SQL = "SELECT 'X' FROM CHARACTER_SKILLS WHERE SKILL_TYPE_ID = " + TempCharacterSkills.GetSkillList()[i].TypeID + " AND CHARACTER_ID =" + ID.ToString();
 
-                        Public_Variables.DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
-                        readerCharacter = Public_Variables.DBCommand.ExecuteReader();
+                        var DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+                        readerCharacter = DBCommand.ExecuteReader();
 
                         if (!readerCharacter.HasRows)
                         {
@@ -159,7 +159,6 @@ namespace EVE_Isk_per_Hour
 
                     }
 
-                    Public_Variables.DBCommand = null;
 
                     // Update cache date now all entered
                     CB.UpdateCacheDate(CacheDateType.Skills, CacheDate, ID);
@@ -338,8 +337,8 @@ namespace EVE_Isk_per_Hour
                     SQL = "SELECT typeName, groupName FROM INVENTORY_TYPES, INVENTORY_GROUPS ";
                     SQL += "WHERE INVENTORY_TYPES.groupID = INVENTORY_GROUPS.groupID AND typeID = " + SentSkill.TypeID;
 
-                    Public_Variables.DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
-                    readerSkills = Public_Variables.DBCommand.ExecuteReader();
+                    var DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+                    readerSkills = DBCommand.ExecuteReader();
 
                     if (readerSkills.Read())
                     {
@@ -502,8 +501,8 @@ namespace EVE_Isk_per_Hour
                     }
                     SQL = "SELECT " + SkillType + " FROM CHARACTER_SKILLS WHERE SKILL_TYPE_ID = " + OverRideSkills.Skills[i].TypeID + " AND CHARACTER_ID =" + Public_Variables.SelectedCharacter.ID;
 
-                    Public_Variables.DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
-                    readerSkills = Public_Variables.DBCommand.ExecuteReader();
+                    var DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+                    readerSkills = DBCommand.ExecuteReader();
 
                     if (readerSkills.Read())
                     {
@@ -821,8 +820,8 @@ namespace EVE_Isk_per_Hour
             SQL += "AND TYPE_ATTRIBUTES.attributeID > 181 AND TYPE_ATTRIBUTES.attributeID < 185 AND TYPE_ATTRIBUTES_1.attributeID = TYPE_ATTRIBUTES.attributeID + 95 ";
             SQL += "AND INVENTORY_TYPES.typeID = " + TypeID.ToString();
 
-            Public_Variables.DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
-            readerSkills = Public_Variables.DBCommand.ExecuteReader();
+            var DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+            readerSkills = DBCommand.ExecuteReader();
 
             while (readerSkills.Read())
             {

@@ -39,8 +39,8 @@ namespace EVE_Isk_per_Hour
             SQL += "AND CHARACTER_ID = " + CharacterID.ToString() + " ";
             SQL += "GROUP BY AGENT_NAME, typeName, RP_PER_DAY, LEVEL, STATION, RESEARCH_START_DATE, REMAINDER_POINTS ";
 
-            Public_Variables.DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
-            readerResearch = Public_Variables.DBCommand.ExecuteReader();
+            var DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+            readerResearch = DBCommand.ExecuteReader();
 
             // New list
             AgentList = new List<ResearchAgent>();

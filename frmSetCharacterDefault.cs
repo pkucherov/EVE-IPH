@@ -97,13 +97,13 @@ namespace EVE_Isk_per_Hour
 
             SQL = "SELECT COUNT(*) FROM ESI_CHARACTER_DATA WHERE CHARACTER_ID <> {0}";
 
-            Public_Variables.DBCommand = new SQLiteCommand(string.Format(SQL, Public_Variables.DummyCharacterID), Public_Variables.EVEDB.DBREf());
-            numChars = Conversions.ToLong(Public_Variables.DBCommand.ExecuteScalar());
+            var DBCommand = new SQLiteCommand(string.Format(SQL, Public_Variables.DummyCharacterID), Public_Variables.EVEDB.DBREf());
+            numChars = Conversions.ToLong(DBCommand.ExecuteScalar());
 
             SQL = "SELECT CHARACTER_NAME, IS_DEFAULT FROM ESI_CHARACTER_DATA WHERE CHARACTER_ID <> {0}";
 
-            Public_Variables.DBCommand = new SQLiteCommand(string.Format(SQL, Public_Variables.DummyCharacterID), Public_Variables.EVEDB.DBREf());
-            readerCharacters = Public_Variables.DBCommand.ExecuteReader();
+            var DBCommand2 = new SQLiteCommand(string.Format(SQL, Public_Variables.DummyCharacterID), Public_Variables.EVEDB.DBREf());
+            readerCharacters = DBCommand2.ExecuteReader();
 
             while (readerCharacters.Read())
             {
@@ -134,7 +134,7 @@ namespace EVE_Isk_per_Hour
 
             readerCharacters.Close();
             readerCharacters = null;
-            Public_Variables.DBCommand = null;
+            DBCommand = null;
 
         }
 

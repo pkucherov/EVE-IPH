@@ -89,7 +89,7 @@ namespace EVE_Isk_per_Hour
         private List<double> ComponentProductionTimes = new List<double>(); // A list of production times for components in this BP
 
         // Character skills we are making this blueprint with
-        private Character BPCharacter; // The character for this BP
+        readonly Character BPCharacter; // The character for this BP
         private int IndustrySkill; // Industry skill level of character
         private int AdvancedIndustrySkill; // Old Production Efficiency skill, now reduces TE on building, reactions, researching
         private int ScienceSkill;
@@ -199,6 +199,7 @@ namespace EVE_Isk_per_Hour
         // BP Constructor
         public Blueprint(long BPBlueprintID, long BPRuns, int BPME, int BPTE, int NumBlueprints, int NumProductionLines, Character UserCharacter, ApplicationSettings UserSettings, bool BPBuildBuy, double UserAddlCosts, IndustryFacility BPProductionFacility, IndustryFacility BPComponentProductionFacility, IndustryFacility BPCapComponentProductionFacility, IndustryFacility BPReactionFacility, bool BPSellExcessItems, BuildMatType BuildT2T3MaterialType, bool OriginalBlueprint, [Optional] ref List<Public_Variables.BuildBuyItem> BuildBuyList, [Optional] ref IndustryFacility BPReprocessingFacility, ConversionToOreSettings CompressedOreSettings = default)
         {
+            BPCharacter = UserCharacter;
 
             SQLiteDataReader readerBP;
             string SQL = "";
@@ -208,8 +209,8 @@ namespace EVE_Isk_per_Hour
             SQL += "FROM ALL_BLUEPRINTS_FACT INNER JOIN INVENTORY_TYPES ON ALL_BLUEPRINTS_FACT.ITEM_ID = INVENTORY_TYPES.typeID ";
             SQL += "WHERE BLUEPRINT_ID =" + BPBlueprintID;
 
-            Public_Variables.DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
-            readerBP = Public_Variables.DBCommand.ExecuteReader();
+            var DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+            readerBP = DBCommand.ExecuteReader();
 
             if (readerBP.Read())
             {
@@ -329,9 +330,7 @@ namespace EVE_Isk_per_Hour
             // Else
             UserRuns = BPRuns;
             // End If
-
-            BPCharacter = UserCharacter;
-
+            
             // Set the skills to use for this blueprint - changed to type ID's due to name changes (1/29/2014)
             if (Public_Variables.IsReaction(ItemGroupID))
             {
@@ -676,9 +675,9 @@ namespace EVE_Isk_per_Hour
                 // First get the BP's that are components of the main item we are building for future calculations
                 SQLiteDataReader rsBPComps;
                 var BPComponentIDs = new List<int>();
-                Public_Variables.DBCommand = new SQLiteCommand(string.Format(@"SELECT MATERIAL_ID FROM ALL_BLUEPRINT_MATERIALS_FACT WHERE BLUEPRINT_ID={0} AND ACTIVITY IN (1,11) 
+                var DBCommand = new SQLiteCommand(string.Format(@"SELECT MATERIAL_ID FROM ALL_BLUEPRINT_MATERIALS_FACT WHERE BLUEPRINT_ID={0} AND ACTIVITY IN (1,11) 
                                                          AND CONSUME = 1 AND MATERIAL_ID IN (SELECT ITEM_ID FROM ALL_BLUEPRINTS_FACT)", BlueprintID), Public_Variables.EVEDB.DBREf());
-                rsBPComps = Public_Variables.DBCommand.ExecuteReader();
+                rsBPComps = DBCommand.ExecuteReader();
 
                 while (rsBPComps.Read())
                     // These are the only items that are built from the base BP
@@ -823,8 +822,8 @@ namespace EVE_Isk_per_Hour
                         SQL += "FROM ALL_BLUEPRINTS_FACT, ITEM_PRICES_FACT WHERE ALL_BLUEPRINTS_FACT.ITEM_ID = ITEM_PRICES_FACT.ITEM_ID ";
                         SQL += "AND ALL_BLUEPRINTS_FACT.ITEM_ID = " + withBlock.ItemTypeID;
 
-                        Public_Variables.DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
-                        rsCheck = Public_Variables.DBCommand.ExecuteReader();
+                        var DBCommand2 = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+                        rsCheck = DBCommand2.ExecuteReader();
 
                         if (rsCheck.Read())
                         {
@@ -1072,8 +1071,8 @@ namespace EVE_Isk_per_Hour
             SQL += "WHERE ABM.BLUEPRINT_ID =" + BlueprintID.ToString() + " And ACTIVITY IN (1,11) ";
             SQL += "AND MATERIAL_ID = INVENTORY_TYPES.typeID AND INVENTORY_TYPES.groupID = INVENTORY_GROUPS.groupID";
 
-            Public_Variables.DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
-            readerBP = Public_Variables.DBCommand.ExecuteReader();
+            var DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+            readerBP = DBCommand.ExecuteReader();
 
             // For each material in the blueprint, calculate the total mats
             // and load them into the list
@@ -1267,8 +1266,8 @@ namespace EVE_Isk_per_Hour
 
                     // If it has a value in the main bp table, then the item can be built from it's own BP - do a check if they want to use reactions to drill down to raw mats
                     SQL = "SELECT BLUEPRINT_ID, TECH_LEVEL, ITEM_GROUP_ID FROM ALL_BLUEPRINTS_FACT WHERE ITEM_ID =" + CurrentMaterial.GetMaterialTypeID() + SQLAdd;
-                    Public_Variables.DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
-                    readerME = Public_Variables.DBCommand.ExecuteReader();
+                    var DBCommand2 = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+                    readerME = DBCommand2.ExecuteReader();
 
                     if (readerME.Read() & !IgnoreBuild)
                     {
@@ -2328,8 +2327,8 @@ namespace EVE_Isk_per_Hour
             // The user can't define an ME or TE for this blueprint, so just look it up
             SQL = "SELECT ME, TE, OWNED FROM OWNED_BLUEPRINTS WHERE USER_ID IN (" + UserID + "," + BPCharacter.CharacterCorporation.CorporationID + ") ";
             SQL += " AND BLUEPRINT_ID =" + BlueprintID.ToString() + " AND OWNED <> 0 ";
-            Public_Variables.DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
-            readerLookup = Public_Variables.DBCommand.ExecuteReader();
+            var DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+            readerLookup = DBCommand.ExecuteReader();
 
             if (readerLookup.Read())
             {
@@ -2647,8 +2646,8 @@ namespace EVE_Isk_per_Hour
             SQL += "WHERE BLUEPRINT_ID = " + InventionBPCTypeID + " And PRODUCT_ID = " + BlueprintID + " ";
             SQL += "AND ACTIVITY = 8 And MATERIAL_GROUP = 'Datacores'";
 
-            Public_Variables.DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
-            readerBP = Public_Variables.DBCommand.ExecuteReader();
+            var DBCommand5 = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+            readerBP = DBCommand5.ExecuteReader();
 
             // Get all the Datacores
             while (readerBP.Read())
@@ -2673,8 +2672,8 @@ namespace EVE_Isk_per_Hour
                 // Look up the cost for the material
                 SQL = "SELECT PRICE, ITEM_NAME FROM ITEM_PRICES WHERE ITEM_ID =" + InventionBPCTypeID;
 
-                Public_Variables.DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
-                readerCost = Public_Variables.DBCommand.ExecuteReader();
+                var DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+                readerCost = DBCommand.ExecuteReader();
 
                 if (readerCost.Read())
                 {
@@ -2691,8 +2690,8 @@ namespace EVE_Isk_per_Hour
                 SQL += "LEFT OUTER JOIN ITEM_PRICES ON typeID = ITEM_ID ";
                 SQL += "WHERE typeID = " + InventionBPCTypeID.ToString();
 
-                Public_Variables.DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
-                readerBP = Public_Variables.DBCommand.ExecuteReader();
+                var DBCommand2 = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+                readerBP = DBCommand2.ExecuteReader();
                 readerBP.Read();
 
                 if (!(readerBP.GetValue(0) == null))
@@ -2723,8 +2722,8 @@ namespace EVE_Isk_per_Hour
                 SQL = "SELECT typeName, quantity FROM INVENTORY_TYPES, INDUSTRY_ACTIVITY_PRODUCTS ";
                 SQL += "WHERE typeID = blueprintTypeID And typeID = " + InventionBPCTypeID.ToString() + " AND productTypeID = " + BlueprintID.ToString();
 
-                Public_Variables.DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
-                readerBP = Public_Variables.DBCommand.ExecuteReader();
+                var DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+                readerBP = DBCommand.ExecuteReader();
 
                 if (readerBP.Read())
                 {
@@ -2778,8 +2777,8 @@ namespace EVE_Isk_per_Hour
                 SQL += "WHERE BLUEPRINT_ID = " + InventionBPCTypeID + " AND PRODUCT_ID = " + InventionBPCTypeID + " ";
                 SQL += "AND ACTIVITY = 5 AND MATERIAL_CATEGORY <> 'Skill'";
 
-                Public_Variables.DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
-                readerBP = Public_Variables.DBCommand.ExecuteReader();
+                var DBCommand2 = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+                readerBP = DBCommand2.ExecuteReader();
 
                 // Get all the mats and add
                 while (readerBP.Read())
@@ -2887,8 +2886,8 @@ namespace EVE_Isk_per_Hour
             SQL = "SELECT probability FROM INDUSTRY_ACTIVITY_PRODUCTS WHERE blueprintTypeID = " + InventionBPCTypeID;
             SQL += " AND activityID = 8 AND productTypeID = " + BlueprintID;
 
-            Public_Variables.DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
-            readerLookup = Public_Variables.DBCommand.ExecuteReader();
+            var DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+            readerLookup = DBCommand.ExecuteReader();
             readerLookup.Read();
 
             if (readerLookup.HasRows)
@@ -2970,8 +2969,8 @@ namespace EVE_Isk_per_Hour
                 // Look it up
                 SQL = "SELECT BASE_INVENTION_TIME FROM ALL_BLUEPRINTS_FACT WHERE BLUEPRINT_ID =" + InventionBPCTypeID;
 
-                Public_Variables.DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
-                readerLookup = Public_Variables.DBCommand.ExecuteReader();
+                var DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+                readerLookup = DBCommand.ExecuteReader();
 
                 // inventionTime = baseInventionTime * facilityModifier * 3% of AI level * implant (doesn't work)
                 if (readerLookup.Read())
@@ -3016,8 +3015,8 @@ namespace EVE_Isk_per_Hour
             // Look up the blueprint name from the sent blueprint ID 
             SQL = "SELECT BASE_COPY_TIME FROM ALL_BLUEPRINTS_FACT WHERE BLUEPRINT_ID =" + InventionBPCTypeID;
 
-            Public_Variables.DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
-            readerLookup = Public_Variables.DBCommand.ExecuteReader();
+            var DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+            readerLookup = DBCommand.ExecuteReader();
 
             // copyTime = BaseCopyTime * runs * runsperBP * (1 - (0.05 * science)) * (1 - (0.03 * advancedindustry)) * facility copyslotmod * (1-implant)
             if (readerLookup.Read()) // just use the number of runs we need to make
@@ -3047,8 +3046,8 @@ namespace EVE_Isk_per_Hour
             SQL += "WHERE BLUEPRINT_ID = " + InventionBPCTypeID + " ";
             SQL += "AND ACTIVITY = 8 AND MATERIAL_CATEGORY_ID = 16"; // 16 is Skill Category
 
-            Public_Variables.DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
-            readerItems = Public_Variables.DBCommand.ExecuteReader();
+            var DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+            readerItems = DBCommand.ExecuteReader();
 
             // Just add all the skills and levels
             while (readerItems.Read())
@@ -3070,8 +3069,8 @@ namespace EVE_Isk_per_Hour
             SQL += "WHERE BLUEPRINT_ID = " + InventionBPCTypeID + " ";
             SQL += "AND ACTIVITY = 5 AND MATERIAL_CATEGORY_ID = 16"; // 16 is Skill Category
 
-            Public_Variables.DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
-            readerItems = Public_Variables.DBCommand.ExecuteReader();
+            var DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+            readerItems = DBCommand.ExecuteReader();
 
             // Just add all the skills and levels
             while (readerItems.Read())
@@ -3093,8 +3092,8 @@ namespace EVE_Isk_per_Hour
             SQL += "LEFT OUTER JOIN ITEM_PRICES_FACT ON ALL_BLUEPRINT_MATERIALS_FACT.MATERIAL_ID = ITEM_PRICES_FACT.ITEM_ID ";
             SQL += "WHERE BLUEPRINT_ID =" + InventionBPCTypeID + " AND ACTIVITY IN (1,11) ";
 
-            Public_Variables.DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
-            readerLookup = Public_Variables.DBCommand.ExecuteReader();
+            var DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+            readerLookup = DBCommand.ExecuteReader();
 
             while (readerLookup.Read())
                 BaseJobCost += readerLookup.GetInt64(0) * (readerLookup.GetValue(1) is DBNull ? 0d : readerLookup.GetDouble(1));
@@ -3556,8 +3555,8 @@ namespace EVE_Isk_per_Hour
         {
             Material TempMat;
             SQLiteDataReader rsGroup;
-            Public_Variables.DBCommand = new SQLiteCommand("SELECT groupName FROM INVENTORY_GROUPS WHERE groupID = " + ItemGroupID.ToString(), Public_Variables.EVEDB.DBREf());
-            rsGroup = Public_Variables.DBCommand.ExecuteReader();
+            var DBCommand = new SQLiteCommand("SELECT groupName FROM INVENTORY_GROUPS WHERE groupID = " + ItemGroupID.ToString(), Public_Variables.EVEDB.DBREf());
+            rsGroup = DBCommand.ExecuteReader();
             rsGroup.Read();
 
             // Volume doesn't matter

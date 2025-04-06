@@ -332,8 +332,8 @@ namespace EVE_Isk_per_Hour
                 // Finally, update any location data on structures we imported without region or system ID
                 var UpdateIDs = new List<long>();
                 SQLiteDataReader rsUpdate;
-                Public_Variables.DBCommand = new SQLiteCommand("SELECT DISTINCT LOCATION_ID FROM MARKET_ORDERS WHERE REGION_ID = 0", Public_Variables.EVEDB.DBREf());
-                rsUpdate = Public_Variables.DBCommand.ExecuteReader();
+                var DBCommand = new SQLiteCommand("SELECT DISTINCT LOCATION_ID FROM MARKET_ORDERS WHERE REGION_ID = 0", Public_Variables.EVEDB.DBREf());
+                rsUpdate = DBCommand.ExecuteReader();
 
                 while (rsUpdate.Read())
                     UpdateIDs.Add(rsUpdate.GetInt64(0));
@@ -347,8 +347,8 @@ namespace EVE_Isk_per_Hour
 
                 foreach (var ID in UpdateIDs)
                 {
-                    Public_Variables.DBCommand = new SQLiteCommand("SELECT REGION_ID, SOLAR_SYSTEM_ID FROM STATIONS WHERE STATION_ID =" + ID.ToString(), Public_Variables.EVEDB.DBREf());
-                    rsUpdate = Public_Variables.DBCommand.ExecuteReader();
+                    var DBCommand2 = new SQLiteCommand("SELECT REGION_ID, SOLAR_SYSTEM_ID FROM STATIONS WHERE STATION_ID =" + ID.ToString(), Public_Variables.EVEDB.DBREf());
+                    rsUpdate = DBCommand2.ExecuteReader();
 
                     if (rsUpdate.Read())
                     {
@@ -480,8 +480,8 @@ namespace EVE_Isk_per_Hour
             }
 
             SQL = "SELECT CACHE_DATE FROM " + TableName + " WHERE TYPE_ID = " + Item.ItemID.ToString() + " AND REGION_ID = " + Item.RegionID.ToString();
-            Public_Variables.DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
-            rsCache = Public_Variables.DBCommand.ExecuteReader();
+            var DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+            rsCache = DBCommand.ExecuteReader();
 
             Cachedate = Public_Variables.ProcessCacheDate(ref rsCache);
 

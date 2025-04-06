@@ -785,7 +785,7 @@ namespace EVE_Isk_per_Hour
             }
 
             // Make sure to set the USER ID for the owned blueprint query
-            Public_Variables.DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+            var DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
 
             if (rbtnScannedCorpBPs.Checked)
             {
@@ -797,9 +797,9 @@ namespace EVE_Isk_per_Hour
                 BPUserID = Public_Variables.GetBPUserID(Public_Variables.SelectedCharacter.ID);
             }
 
-            Public_Variables.DBCommand.Parameters.AddWithValue("@USERBP_USERID", BPUserID); // need to search for corp ID too
-            Public_Variables.DBCommand.Parameters.AddWithValue("@USERBP_CORPID", Public_Variables.SelectedCharacter.CharacterCorporation.CorporationID.ToString());
-            readerBP = Public_Variables.DBCommand.ExecuteReader();
+            DBCommand.Parameters.AddWithValue("@USERBP_USERID", BPUserID); // need to search for corp ID too
+            DBCommand.Parameters.AddWithValue("@USERBP_CORPID", Public_Variables.SelectedCharacter.CharacterCorporation.CorporationID.ToString());
+            readerBP = DBCommand.ExecuteReader();
 
             lstBPs.Visible = false;
             Cursor = Cursors.WaitCursor;
@@ -925,8 +925,8 @@ namespace EVE_Isk_per_Hour
                             SQL += "AND productTypeID = " + readerBP.GetInt64(0).ToString();
                         }
 
-                        Public_Variables.DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
-                        rsLookup = Public_Variables.DBCommand.ExecuteReader();
+                        var DBCommand2 = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+                        rsLookup = DBCommand2.ExecuteReader();
 
                         if (rsLookup.Read())
                         {
@@ -944,8 +944,8 @@ namespace EVE_Isk_per_Hour
                     {
                         // Get max runs from all_blueprints for unowned bps
                         SQL = "SELECT MAX_PRODUCTION_LIMIT FROM ALL_BLUEPRINTS WHERE BLUEPRINT_ID = " + readerBP.GetInt64(0).ToString();
-                        Public_Variables.DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
-                        rsLookup = Public_Variables.DBCommand.ExecuteReader();
+                        var DBCommand2 = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+                        rsLookup = DBCommand2.ExecuteReader();
 
                         if (rsLookup.Read())
                         {
@@ -1034,7 +1034,7 @@ namespace EVE_Isk_per_Hour
 
             readerBP.Close();
             readerBP = null;
-            Public_Variables.DBCommand = null;
+            DBCommand = null;
 
             lstBPs.Visible = true;
             Cursor = Cursors.Default;
@@ -1609,11 +1609,11 @@ namespace EVE_Isk_per_Hour
 
             SQL += WhereClause + " AND IGNORE = 0 GROUP BY ITEM_GROUP";
 
-            Public_Variables.DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+            var DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
 
-            Public_Variables.DBCommand.Parameters.AddWithValue("@USERBP_USERID", Public_Variables.GetBPUserID(BPUserID)); // need to search for corp ID too
-            Public_Variables.DBCommand.Parameters.AddWithValue("@USERBP_CORPID", Public_Variables.SelectedCharacter.CharacterCorporation.CorporationID.ToString());
-            readerTypes = Public_Variables.DBCommand.ExecuteReader();
+            DBCommand.Parameters.AddWithValue("@USERBP_USERID", Public_Variables.GetBPUserID(BPUserID)); // need to search for corp ID too
+            DBCommand.Parameters.AddWithValue("@USERBP_CORPID", Public_Variables.SelectedCharacter.CharacterCorporation.CorporationID.ToString());
+            readerTypes = DBCommand.ExecuteReader();
 
             cmbBPTypeFilter.Items.Clear();
             // Add Select Type to top
@@ -1624,7 +1624,7 @@ namespace EVE_Isk_per_Hour
 
             readerTypes.Close();
             readerTypes = null;
-            Public_Variables.DBCommand = null;
+            DBCommand = null;
 
         }
 
@@ -1927,11 +1927,11 @@ your developer scopes.", Constants.vbExclamation, Application.ProductName);
 
             // Pull all the blueprints, including not owned and output data
             SQL = "SELECT * FROM " + Public_Variables.USER_BLUEPRINTS + " ORDER BY BLUEPRINT_GROUP, BLUEPRINT_NAME";
-            Public_Variables.DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+            var DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
 
-            Public_Variables.DBCommand.Parameters.AddWithValue("@USERBP_USERID", Public_Variables.GetBPUserID(API_ID)); // need to search for corp ID too
-            Public_Variables.DBCommand.Parameters.AddWithValue("@USERBP_CORPID", Public_Variables.SelectedCharacter.CharacterCorporation.CorporationID.ToString());
-            readerBP = Public_Variables.DBCommand.ExecuteReader();
+            DBCommand.Parameters.AddWithValue("@USERBP_USERID", Public_Variables.GetBPUserID(API_ID)); // need to search for corp ID too
+            DBCommand.Parameters.AddWithValue("@USERBP_CORPID", Public_Variables.SelectedCharacter.CharacterCorporation.CorporationID.ToString());
+            readerBP = DBCommand.ExecuteReader();
 
             // 0-BP_ID, 1-BLUEPRINT_GROUP, 2-BLUEPRINT_NAME, 3-ITEM_GROUP_ID, 4-ITEM_GROUP, 5-ITEM_CATEGORY_ID, 
             // 6-ITEM_CATEGORY, 7-ITEM_ID, 8-ITEM_NAME, 9-ME, 10-TE, 11-USERID, 12-ITEM_TYPE, 13-RACE_ID, 14-OWNED, 15-SCANNED 

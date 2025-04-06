@@ -822,8 +822,8 @@ namespace EVE_Isk_per_Hour
 
                     SQL = "SELECT * FROM ESI_CHARACTER_DATA WHERE CHARACTER_ID = " + CharacterTokenData.CharacterID.ToString();
 
-                    Public_Variables.DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
-                    rsCheck = Public_Variables.DBCommand.ExecuteReader();
+                    var DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+                    rsCheck = DBCommand.ExecuteReader();
 
                     if (rsCheck.HasRows)
                     {
@@ -1032,32 +1032,42 @@ namespace EVE_Isk_per_Hour
                     TempBlueprint.ItemID = BP.item_id;
                     TempBlueprint.TypeID = BP.type_id;
                     // Get the typeName for this bp
-                    Public_Variables.DBCommand = new SQLiteCommand("SELECT typeName FROM INVENTORY_TYPES WHERE typeID = " + BP.type_id.ToString(), Public_Variables.EVEDB.DBREf());
-                    rsLookup = Public_Variables.DBCommand.ExecuteReader();
-                    if (rsLookup.Read())
                     {
-                        TempBlueprint.TypeName = rsLookup.GetString(0);
-                    }
-                    else
-                    {
-                        TempBlueprint.TypeName = Public_Variables.Unknown;
-                    }
-                    rsLookup.Close();
+                        var DBCommand =
+                            new SQLiteCommand(
+                                "SELECT typeName FROM INVENTORY_TYPES WHERE typeID = " + BP.type_id.ToString(),
+                                Public_Variables.EVEDB.DBREf());
+                        rsLookup = DBCommand.ExecuteReader();
+                        if (rsLookup.Read())
+                        {
+                            TempBlueprint.TypeName = rsLookup.GetString(0);
+                        }
+                        else
+                        {
+                            TempBlueprint.TypeName = Public_Variables.Unknown;
+                        }
 
+                        rsLookup.Close();
+                    }
                     TempBlueprint.LocationID = BP.location_id;
                     // Get the flag id for this location
-                    Public_Variables.DBCommand = new SQLiteCommand("SELECT flagID FROM INVENTORY_FLAGS WHERE flagName = '" + BP.location_flag + "'", Public_Variables.EVEDB.DBREf());
-                    rsLookup = Public_Variables.DBCommand.ExecuteReader();
-                    if (rsLookup.Read())
                     {
-                        TempBlueprint.FlagID = rsLookup.GetInt32(0);
-                    }
-                    else
-                    {
-                        TempBlueprint.FlagID = 0;
-                    }
-                    rsLookup.Close();
+                        var DBCommand =
+                            new SQLiteCommand(
+                                "SELECT flagID FROM INVENTORY_FLAGS WHERE flagName = '" + BP.location_flag + "'",
+                                Public_Variables.EVEDB.DBREf());
+                        rsLookup = DBCommand.ExecuteReader();
+                        if (rsLookup.Read())
+                        {
+                            TempBlueprint.FlagID = rsLookup.GetInt32(0);
+                        }
+                        else
+                        {
+                            TempBlueprint.FlagID = 0;
+                        }
 
+                        rsLookup.Close();
+                    }
                     TempBlueprint.Quantity = BP.quantity;
                     TempBlueprint.MaterialEfficiency = BP.material_efficiency;
                     TempBlueprint.TimeEfficiency = BP.time_efficiency;
@@ -1310,8 +1320,8 @@ namespace EVE_Isk_per_Hour
                     // Load up all the data for the corporation
                     SQL = "SELECT * FROM ESI_CORPORATION_DATA WHERE CORPORATION_ID = " + ID;
 
-                    Public_Variables.DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
-                    rsCheck = Public_Variables.DBCommand.ExecuteReader();
+                    var DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+                    rsCheck = DBCommand.ExecuteReader();
 
                     if (rsCheck.Read())
                     {
@@ -1411,8 +1421,8 @@ namespace EVE_Isk_per_Hour
                     SQL = "SELECT DISTINCT STATION_ID FROM STATIONS WHERE REGION_ID =" + item.RegionID + " AND STATION_ID >70000000";
                 }
 
-                Public_Variables.DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
-                rsCheck = Public_Variables.DBCommand.ExecuteReader();
+                var DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+                rsCheck = DBCommand.ExecuteReader();
 
                 while (rsCheck.Read())
                 {
@@ -1570,8 +1580,8 @@ namespace EVE_Isk_per_Hour
 
             // First look up the cache date to see if it's time to run the update for the structure
             SQL = "SELECT CACHE_DATE FROM STRUCTURE_MARKET_ORDERS_UPDATE_CACHE WHERE STRUCTURE_ID = " + QueryInfo.StructureID.ToString();
-            Public_Variables.DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
-            rsCache = Public_Variables.DBCommand.ExecuteReader();
+            var DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+            rsCache = DBCommand.ExecuteReader();
             CacheDate = Public_Variables.ProcessCacheDate(ref rsCache);
             rsCache.Close();
 
@@ -1761,8 +1771,8 @@ namespace EVE_Isk_per_Hour
 
                             // Look up each entry and if not in there, insert, if there, update
                             SQL = "SELECT 'X' FROM ESI_STATUS_ITEMS WHERE route = '" + item.route + "'";
-                            Public_Variables.DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
-                            rsUpdate = Public_Variables.DBCommand.ExecuteReader();
+                            var DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+                            rsUpdate = DBCommand.ExecuteReader();
                             rsUpdate.Read();
 
                             if (rsUpdate.HasRows)
@@ -1808,8 +1818,8 @@ namespace EVE_Isk_per_Hour
             {
                 // First look up the cache date to see if it's time to run the update
                 SQL = "SELECT CACHE_DATE FROM MARKET_ORDERS_UPDATE_CACHE WHERE TYPE_ID = " + TypeID.ToString() + " AND REGION_ID = " + RegionID.ToString();
-                Public_Variables.DBCommand = new SQLiteCommand(SQL, MHDB.DBREf());
-                rsCache = Public_Variables.DBCommand.ExecuteReader();
+                var DBCommand = new SQLiteCommand(SQL, MHDB.DBREf());
+                rsCache = DBCommand.ExecuteReader();
 
                 CacheDate = Public_Variables.ProcessCacheDate(ref rsCache);
 
@@ -2167,8 +2177,8 @@ namespace EVE_Isk_per_Hour
                                         // Look up each system and if found, update it. If not, insert - this way if the ESI is having issues, we won't delete all the station data (which doesn't change much)
                                         SQL = "SELECT 'X' FROM INDUSTRY_SYSTEMS_COST_INDICIES WHERE SOLAR_SYSTEM_ID = " + SolarSystemID.ToString() + " AND ACTIVITY_ID = " + ActivityID.ToString();
 
-                                        Public_Variables.DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
-                                        rsLookup = Public_Variables.DBCommand.ExecuteReader();
+                                        var DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+                                        rsLookup = DBCommand.ExecuteReader();
 
                                         if (rsLookup.Read())
                                         {

@@ -284,8 +284,8 @@ namespace EVE_Isk_per_Hour
                         {
                             // Set based on BP
                             SQLiteDataReader rsBP;
-                            Public_Variables.DBCommand = new SQLiteCommand(string.Format("SELECT ITEM_GROUP_ID, ITEM_CATEGORY_ID, TECH_LEVEL FROM ALL_BLUEPRINTS_FACT WHERE BLUEPRINT_ID = {0}", SelectedBPID), Public_Variables.EVEDB.DBREf());
-                            rsBP = Public_Variables.DBCommand.ExecuteReader();
+                            var DBCommand = new SQLiteCommand(string.Format("SELECT ITEM_GROUP_ID, ITEM_CATEGORY_ID, TECH_LEVEL FROM ALL_BLUEPRINTS_FACT WHERE BLUEPRINT_ID = {0}", SelectedBPID), Public_Variables.EVEDB.DBREf());
+                            rsBP = DBCommand.ExecuteReader();
                             rsBP.Read();
                             SelectedBPGroupID = rsBP.GetInt32(0);
                             SelectedBPCategoryID = rsBP.GetInt32(1);
@@ -1086,8 +1086,8 @@ namespace EVE_Isk_per_Hour
             // See if this has buildable components
             SQL = "SELECT DISTINCT 'X' FROM ALL_BLUEPRINTS ";
             SQL += "WHERE ITEM_ID IN (SELECT MATERIAL_ID FROM ALL_BLUEPRINT_MATERIALS WHERE BLUEPRINT_ID = {0})";
-            Public_Variables.DBCommand = new SQLiteCommand(string.Format(SQL, BPID), Public_Variables.EVEDB.DBREf());
-            readerBP = Public_Variables.DBCommand.ExecuteReader();
+            var DBCommand = new SQLiteCommand(string.Format(SQL, BPID), Public_Variables.EVEDB.DBREf());
+            readerBP = DBCommand.ExecuteReader();
 
             if (readerBP.Read())
             {
@@ -1514,8 +1514,8 @@ namespace EVE_Isk_per_Hour
 
             SQLiteDataReader rsLoader;
 
-            Public_Variables.DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
-            rsLoader = Public_Variables.DBCommand.ExecuteReader();
+            var DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+            rsLoader = DBCommand.ExecuteReader();
 
             while (rsLoader.Read())
                 cmbFacilityRegion.Items.Add(rsLoader.GetString(0));
@@ -1775,8 +1775,8 @@ namespace EVE_Isk_per_Hour
             SQL += " GROUP BY SSN, CI";
 
             SQLiteDataReader rsLoader;
-            Public_Variables.DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
-            rsLoader = Public_Variables.DBCommand.ExecuteReader();
+            var DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+            rsLoader = DBCommand.ExecuteReader();
 
             while (rsLoader.Read())
             {
@@ -2033,8 +2033,8 @@ namespace EVE_Isk_per_Hour
 
             SQLiteDataReader rsLoader;
             SQLiteDataReader rsCheck;
-            Public_Variables.DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
-            rsLoader = Public_Variables.DBCommand.ExecuteReader();
+            var DBCommand2 = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+            rsLoader = DBCommand2.ExecuteReader();
 
             cmbFacility.Enabled = true;
             cmbFacility.Items.Clear();
@@ -2051,8 +2051,8 @@ namespace EVE_Isk_per_Hour
                     SQL += "AND factionID IS NULL AND regionName NOT LIKE '%-R%' "; // -R region names are wormhole regions
                     SQL += "AND security <= 0.0 AND SOLAR_SYSTEMS.solarSystemName = '" + SystemName + "'";
 
-                    Public_Variables.DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
-                    rsCheck = Public_Variables.DBCommand.ExecuteReader();
+                    var DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+                    rsCheck = DBCommand.ExecuteReader();
 
                     if (rsCheck.Read())
                     {
@@ -2153,7 +2153,6 @@ namespace EVE_Isk_per_Hour
 
             rsLoader.Close();
             rsLoader = null;
-            Public_Variables.DBCommand = null;
 
         }
         private void cmbFacilityorArray_SelectedIndexChanged(object sender, EventArgs e)
@@ -2286,8 +2285,8 @@ namespace EVE_Isk_per_Hour
                 SQL = "SELECT UPWELL_STRUCTURE_TYPE_ID FROM UPWELL_STRUCTURES WHERE UPWELL_STRUCTURE_NAME = '" + Public_Variables.FormatDBString(FacilityName) + "' ";
             }
 
-            Public_Variables.DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
-            rsLoader = Public_Variables.DBCommand.ExecuteReader();
+            var DBCommand2 = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+            rsLoader = DBCommand2.ExecuteReader();
             rsLoader.Read();
 
             if (rsLoader.HasRows)
@@ -2338,16 +2337,16 @@ namespace EVE_Isk_per_Hour
                 SQL += "AND FACILITY_ID = {4}";
 
                 // First look up the character to see if it's saved there first (initially only do one set of facilities then allow by character via a setting)
-                Public_Variables.DBCommand = new SQLiteCommand(string.Format(SQL, CharID, ((int)BuildType).ToString(), ((int)FacilityType).ToString(), ((int)SelectedLocation).ToString(), FacilityID.ToString()), Public_Variables.EVEDB.DBREf());
-                rsLoader = Public_Variables.DBCommand.ExecuteReader();
+                var DBCommand6 = new SQLiteCommand(string.Format(SQL, CharID, ((int)BuildType).ToString(), ((int)FacilityType).ToString(), ((int)SelectedLocation).ToString(), FacilityID.ToString()), Public_Variables.EVEDB.DBREf());
+                rsLoader = DBCommand6.ExecuteReader();
                 rsLoader.Read();
 
                 if (!rsLoader.HasRows)
                 {
                     // Need to look up the default - CharID = 0
                     rsLoader.Close();
-                    Public_Variables.DBCommand = new SQLiteCommand(string.Format(SQL, "0", ((int)BuildType).ToString(), ((int)FacilityType).ToString(), ((int)SelectedLocation).ToString(), FacilityID.ToString()), Public_Variables.EVEDB.DBREf());
-                    rsLoader = Public_Variables.DBCommand.ExecuteReader();
+                    var DBCommand = new SQLiteCommand(string.Format(SQL, "0", ((int)BuildType).ToString(), ((int)FacilityType).ToString(), ((int)SelectedLocation).ToString(), FacilityID.ToString()), Public_Variables.EVEDB.DBREf());
+                    rsLoader = DBCommand.ExecuteReader();
                     rsLoader.Read();
                 }
 
@@ -2453,8 +2452,8 @@ namespace EVE_Isk_per_Hour
                                 }
 
                                 SQLiteDataReader rsStats;
-                                Public_Variables.DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
-                                rsStats = Public_Variables.DBCommand.ExecuteReader();
+                                var DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+                                rsStats = DBCommand.ExecuteReader();
                                 rsStats.Read();
 
                                 // Set base multipliers 
@@ -2592,8 +2591,8 @@ namespace EVE_Isk_per_Hour
                     // Quick look up for the solarsystemid and region id
                     SQL = "SELECT security, regionID FROM SOLAR_SYSTEMS WHERE solarSystemID = " + SystemID.ToString();
 
-                    Public_Variables.DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
-                    rsLoader = Public_Variables.DBCommand.ExecuteReader();
+                    var DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+                    rsLoader = DBCommand.ExecuteReader();
                     rsLoader.Read();
 
                     withBlock.SolarSystemID = SystemID;
@@ -2606,8 +2605,8 @@ namespace EVE_Isk_per_Hour
                     SQL += "WHERE INDUSTRY_SYSTEMS_COST_INDICIES.SOLAR_SYSTEM_ID = " + withBlock.SolarSystemID + " ";
                     SQL += "AND INDUSTRY_SYSTEMS_COST_INDICIES.ACTIVITY_ID = " + withBlock.ActivityID + " ";
 
-                    Public_Variables.DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
-                    rsLoader = Public_Variables.DBCommand.ExecuteReader();
+                    var DBCommand3 = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+                    rsLoader = DBCommand3.ExecuteReader();
 
                     if (rsLoader.Read())
                     {
@@ -3692,8 +3691,8 @@ namespace EVE_Isk_per_Hour
             SQLiteDataReader rsLookup;
             var ReturnType = FacilityTypes.None;
 
-            Public_Variables.DBCommand = new SQLiteCommand("SELECT FACILITY_TYPE_ID FROM FACILITY_TYPES WHERE FACILITY_TYPE_NAME = '" + FacilityType + "'", Public_Variables.EVEDB.DBREf());
-            rsLookup = Public_Variables.DBCommand.ExecuteReader();
+            var DBCommand = new SQLiteCommand("SELECT FACILITY_TYPE_ID FROM FACILITY_TYPES WHERE FACILITY_TYPE_NAME = '" + FacilityType + "'", Public_Variables.EVEDB.DBREf());
+            rsLookup = DBCommand.ExecuteReader();
             if (rsLookup.Read())
             {
                 ReturnType = (FacilityTypes)rsLookup.GetInt32(0);
@@ -3711,8 +3710,8 @@ namespace EVE_Isk_per_Hour
             SQLiteDataReader rsLookup;
             string ReturnName = "";
 
-            Public_Variables.DBCommand = new SQLiteCommand("SELECT FACILITY_TYPE_NAME FROM FACILITY_TYPES WHERE FACILITY_TYPE_ID = " + (int)FacilityType, Public_Variables.EVEDB.DBREf());
-            rsLookup = Public_Variables.DBCommand.ExecuteReader();
+            var DBCommand = new SQLiteCommand("SELECT FACILITY_TYPE_NAME FROM FACILITY_TYPES WHERE FACILITY_TYPE_ID = " + (int)FacilityType, Public_Variables.EVEDB.DBREf());
+            rsLookup = DBCommand.ExecuteReader();
             if (rsLookup.Read())
             {
                 ReturnName = rsLookup.GetString(0);
@@ -4108,8 +4107,8 @@ namespace EVE_Isk_per_Hour
                 }
 
                 string SQL = "SELECT factionWarzone, solarSystemID FROM SOLAR_SYSTEMS WHERE solarSystemName = '" + Public_Variables.FormatDBString(SolarSystemName) + "'";
-                Public_Variables.DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
-                rsFW = Public_Variables.DBCommand.ExecuteReader();
+                var DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+                rsFW = DBCommand.ExecuteReader();
 
                 bool Warzone;
                 if (rsFW.Read())
@@ -4195,8 +4194,8 @@ namespace EVE_Isk_per_Hour
             }
 
             string SQL = "SELECT factionWarzone, solarSystemID FROM SOLAR_SYSTEMS WHERE solarSystemName = '" + Public_Variables.FormatDBString(SolarSystemName) + "'";
-            Public_Variables.DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
-            rsFW = Public_Variables.DBCommand.ExecuteReader();
+            var DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+            rsFW = DBCommand.ExecuteReader();
 
             if (rsFW.Read())
             {
@@ -4220,8 +4219,8 @@ namespace EVE_Isk_per_Hour
                 // look up level
                 SQLiteDataReader rsFWLevel;
                 SQL = "SELECT UPGRADE_LEVEL FROM FW_SYSTEM_UPGRADES WHERE SOLAR_SYSTEM_ID = " + SSID.ToString();
-                Public_Variables.DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
-                rsFWLevel = Public_Variables.DBCommand.ExecuteReader();
+                var DBCommand2 = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+                rsFWLevel = DBCommand2.ExecuteReader();
                 rsFWLevel.Read();
 
                 if (rsFWLevel.HasRows)
@@ -4565,8 +4564,8 @@ namespace EVE_Isk_per_Hour
                 if ((SelectedActivity ?? "") == ActivityManufacturing)
                 {
                     SQLiteDataReader rsCheck;
-                    Public_Variables.DBCommand = new SQLiteCommand("SELECT DISTINCT ITEM_GROUP_ID FROM ALL_BLUEPRINTS WHERE BLUEPRINT_ID IN (SELECT typeID FROM INVENTORY_TYPES WHERE typeName LIKE '%Reaction Formula%')", Public_Variables.EVEDB.DBREf());
-                    rsCheck = Public_Variables.DBCommand.ExecuteReader();
+                    var DBCommand = new SQLiteCommand("SELECT DISTINCT ITEM_GROUP_ID FROM ALL_BLUEPRINTS WHERE BLUEPRINT_ID IN (SELECT typeID FROM INVENTORY_TYPES WHERE typeName LIKE '%Reaction Formula%')", Public_Variables.EVEDB.DBREf());
+                    rsCheck = DBCommand.ExecuteReader();
 
                     while (rsCheck.Read())
                     {
@@ -5333,8 +5332,8 @@ namespace EVE_Isk_per_Hour
             // Load these for later use
             ThukkerRigIDs = new List<int>();
 
-            Public_Variables.DBCommand = new SQLiteCommand("SELECT typeID FROM INVENTORY_TYPES WHERE typeName LIKE 'Standup %Thukker%' AND groupID <> 1708", Public_Variables.EVEDB.DBREf());
-            rsLoader = Public_Variables.DBCommand.ExecuteReader();
+            var DBCommand = new SQLiteCommand("SELECT typeID FROM INVENTORY_TYPES WHERE typeName LIKE 'Standup %Thukker%' AND groupID <> 1708", Public_Variables.EVEDB.DBREf());
+            rsLoader = DBCommand.ExecuteReader();
 
             while (rsLoader.Read())
                 ThukkerRigIDs.Add(rsLoader.GetInt32(0));
@@ -5378,16 +5377,16 @@ namespace EVE_Isk_per_Hour
             }
 
             // First look up the character to see if it's saved there first (initially only do one set of facilities then allow by character via a setting)
-            Public_Variables.DBCommand = new SQLiteCommand(SQL + string.Format(SQLCharID, CharID), Public_Variables.EVEDB.DBREf());
-            rsLoader = Public_Variables.DBCommand.ExecuteReader();
+            var DBCommand4 = new SQLiteCommand(SQL + string.Format(SQLCharID, CharID), Public_Variables.EVEDB.DBREf());
+            rsLoader = DBCommand4.ExecuteReader();
             rsLoader.Read();
 
             if (!rsLoader.HasRows)
             {
                 // Need to look up the default
                 rsLoader.Close();
-                Public_Variables.DBCommand = new SQLiteCommand(SQL + string.Format(SQLCharID, "0"), Public_Variables.EVEDB.DBREf());
-                rsLoader = Public_Variables.DBCommand.ExecuteReader();
+                var DBCommand2 = new SQLiteCommand(SQL + string.Format(SQLCharID, "0"), Public_Variables.EVEDB.DBREf());
+                rsLoader = DBCommand2.ExecuteReader();
                 rsLoader.Read();
             }
 
@@ -5485,8 +5484,8 @@ namespace EVE_Isk_per_Hour
                     }
 
                     rsLoader.Close();
-                    Public_Variables.DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
-                    rsLoader = Public_Variables.DBCommand.ExecuteReader();
+                    var DBCommand2 = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+                    rsLoader = DBCommand2.ExecuteReader();
                     rsLoader.Read();
 
                     if (rsLoader.HasRows)
@@ -5594,8 +5593,8 @@ namespace EVE_Isk_per_Hour
             SQL = "SELECT REPROCESSING_TAX_RATE, CASE WHEN STANDING IS NULL THEN 0 ELSE STANDING END, REPROCESSING_EFFICIENCY FROM STATIONS ";
             SQL += "LEFT JOIN CHARACTER_STANDINGS ON STATIONS.CORPORATION_ID = CHARACTER_STANDINGS.NPC_TYPE_ID And CHARACTER_STANDINGS.CHARACTER_ID = {0} WHERE STATION_ID = {1}";
 
-            Public_Variables.DBCommand = new SQLiteCommand(string.Format(SQL, CharacterID, SentFacilityID), Public_Variables.EVEDB.DBREf());
-            rsStats = Public_Variables.DBCommand.ExecuteReader();
+            var DBCommand = new SQLiteCommand(string.Format(SQL, CharacterID, SentFacilityID), Public_Variables.EVEDB.DBREf());
+            rsStats = DBCommand.ExecuteReader();
             rsStats.Read();
 
             UnadjustedCorpStanding = rsStats.GetDouble(1);
@@ -5657,8 +5656,8 @@ namespace EVE_Isk_per_Hour
                     LID = currentLID1;
                     // See if the record exists - only save one set of facilities for now
                     SQL = string.Format("SELECT 'X' FROM SAVED_FACILITIES WHERE PRODUCTION_TYPE = {0} AND FACILITY_VIEW = {1} AND CHARACTER_ID = {2}", (int)FacilityProductionType, LID, CharacterID);
-                    Public_Variables.DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
-                    rsCheck = Public_Variables.DBCommand.ExecuteReader();
+                    var DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+                    rsCheck = DBCommand.ExecuteReader();
 
                     if (rsCheck.Read())
                     {
@@ -5790,8 +5789,8 @@ namespace EVE_Isk_per_Hour
                     // See if we update or insert
                     SQL = "SELECT * FROM FW_SYSTEM_UPGRADES WHERE SOLAR_SYSTEM_ID = " + SolarSystemID.ToString() + " ";
 
-                    Public_Variables.DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
-                    rsCheck = Public_Variables.DBCommand.ExecuteReader();
+                    var DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+                    rsCheck = DBCommand.ExecuteReader();
                     rsCheck.Read();
 
                     if (rsCheck.HasRows)
@@ -5814,8 +5813,8 @@ namespace EVE_Isk_per_Hour
                     var InstalledModules = new List<int>();
                     // Look up all the installed modules for the location sent
                     SQL = string.Format("SELECT INSTALLED_MODULE_ID FROM UPWELL_STRUCTURES_INSTALLED_MODULES WHERE PRODUCTION_TYPE = {0} AND FACILITY_VIEW = {1} AND CHARACTER_ID = {2} AND FACILITY_ID = {3} AND SOLAR_SYSTEM_ID = {4}", (int)FacilityProductionType, ((int)Location).ToString(), CharacterID, FacilityID, SolarSystemID);
-                    Public_Variables.DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
-                    rsCheck = Public_Variables.DBCommand.ExecuteReader();
+                    var DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+                    rsCheck = DBCommand.ExecuteReader();
 
                     while (rsCheck.Read())
                         InstalledModules.Add(rsCheck.GetInt32(0));
@@ -6179,8 +6178,8 @@ namespace EVE_Isk_per_Hour
                 // Get all the rigs and category/group combos installed on the facility
                 SQL = "SELECT DISTINCT INSTALLED_MODULE_ID FROM UPWELL_STRUCTURES_INSTALLED_MODULES AS USIM, ENGINEERING_RIG_BONUSES AS ERB WHERE ERB.typeID = USIM.INSTALLED_MODULE_ID  ";
                 SQL += "AND CHARACTER_ID = {0} AND PRODUCTION_TYPE = {1} AND SOLAR_SYSTEM_ID = {2} AND FACILITY_VIEW = {3} AND FACILITY_ID = {4}";
-                Public_Variables.DBCommand = new SQLiteCommand(string.Format(SQL, CharacterID, ((int)FacilityProductionType).ToString(), SolarSystemID.ToString(), ((int)ControlLocation).ToString(), FacilityID.ToString()), Public_Variables.EVEDB.DBREf());
-                rsLookup1 = Public_Variables.DBCommand.ExecuteReader();
+                var DBCommand = new SQLiteCommand(string.Format(SQL, CharacterID, ((int)FacilityProductionType).ToString(), SolarSystemID.ToString(), ((int)ControlLocation).ToString(), FacilityID.ToString()), Public_Variables.EVEDB.DBREf());
+                rsLookup1 = DBCommand.ExecuteReader();
 
                 while (rsLookup1.Read())
                 {
@@ -6189,8 +6188,8 @@ namespace EVE_Isk_per_Hour
                     RigBonuses = GetRigBonuses(RigID, SolarSystemID);
 
                     // Now lookup all category/group combos and apply all bonuses to it
-                    Public_Variables.DBCommand = new SQLiteCommand("SELECT groupID, categoryID, activityID FROM ENGINEERING_RIG_BONUSES WHERE typeID =" + RigID.ToString(), Public_Variables.EVEDB.DBREf());
-                    rsLookup2 = Public_Variables.DBCommand.ExecuteReader();
+                    var DBCommand3 = new SQLiteCommand("SELECT groupID, categoryID, activityID FROM ENGINEERING_RIG_BONUSES WHERE typeID =" + RigID.ToString(), Public_Variables.EVEDB.DBREf());
+                    rsLookup2 = DBCommand3.ExecuteReader();
 
                     while (rsLookup2.Read())
                     {
@@ -6249,8 +6248,8 @@ namespace EVE_Isk_per_Hour
                 var ThukkerRigIDs = new List<int>();
                 int AttributeID = 0;
 
-                Public_Variables.DBCommand = new SQLiteCommand("SELECT typeID FROM INVENTORY_TYPES WHERE typeName LIKE 'Standup %Thukker%' AND groupID <> 1708", Public_Variables.EVEDB.DBREf());
-                rsLoader = Public_Variables.DBCommand.ExecuteReader();
+                var DBCommand = new SQLiteCommand("SELECT typeID FROM INVENTORY_TYPES WHERE typeName LIKE 'Standup %Thukker%' AND groupID <> 1708", Public_Variables.EVEDB.DBREf());
+                rsLoader = DBCommand.ExecuteReader();
 
                 while (rsLoader.Read())
                     ThukkerRigIDs.Add(rsLoader.GetInt32(0));
@@ -6426,8 +6425,8 @@ namespace EVE_Isk_per_Hour
             SQL += "WHERE CHARACTER_ID = {0} AND PRODUCTION_TYPE = {1} AND SOLAR_SYSTEM_ID = {2} AND FACILITY_VIEW = {3} AND FACILITY_ID = {4} ";
             SQL += "AND UPWELL_STRUCTURES_INSTALLED_MODULES.INSTALLED_MODULE_ID = ENGINEERING_RIG_BONUSES.typeID AND activityId = {7} ";
             SQL += "AND ((categoryID = {5} AND groupID IS NULL) OR (categoryID IS NULL AND groupID = {6}))";
-            Public_Variables.DBCommand = new SQLiteCommand(string.Format(SQL, SelectedCharacterID, ((int)FacilityProductionType).ToString(), SystemID.ToString(), ((int)SelectedLocation).ToString(), FacilityID.ToString(), TempBPCategoryID.ToString(), TempBPGroupID.ToString(), ActivityID.ToString()), Public_Variables.EVEDB.DBREf());
-            rsLoader = Public_Variables.DBCommand.ExecuteReader();
+            var DBCommand = new SQLiteCommand(string.Format(SQL, SelectedCharacterID, ((int)FacilityProductionType).ToString(), SystemID.ToString(), ((int)SelectedLocation).ToString(), FacilityID.ToString(), TempBPCategoryID.ToString(), TempBPGroupID.ToString(), ActivityID.ToString()), Public_Variables.EVEDB.DBREf());
+            rsLoader = DBCommand.ExecuteReader();
 
             while (rsLoader.Read())
                 InstalledModules.Add(rsLoader.GetInt32(0));
@@ -6475,8 +6474,8 @@ namespace EVE_Isk_per_Hour
             SQL += "FROM TYPE_ATTRIBUTES WHERE attributeID IN (2593,2594,2595,2713,2714,2653,717) ";
             SQL += "AND value <> 0 AND TYPEID = {0}";
             SQL = string.Format(SQL, RigID, (int)SecModifier);
-            Public_Variables.DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
-            rsLoader = Public_Variables.DBCommand.ExecuteReader();
+            var DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+            rsLoader = DBCommand.ExecuteReader();
 
             while (rsLoader.Read())
             {

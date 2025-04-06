@@ -90,8 +90,8 @@ namespace EVE_Isk_per_Hour
                         SQL = "SELECT PRICE FROM ITEM_PRICES WHERE ITEM_NAME ='Datacore - " + withBlock.GetResearchAgents()[i].Field + "'";
                     }
 
-                    Public_Variables.DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
-                    readerPriceLookup = Public_Variables.DBCommand.ExecuteReader();
+                    var DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+                    readerPriceLookup = DBCommand.ExecuteReader();
 
                     if (readerPriceLookup.Read())
                     {

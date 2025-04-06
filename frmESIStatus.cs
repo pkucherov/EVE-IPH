@@ -51,8 +51,8 @@ namespace EVE_Isk_per_Hour
             SQL += "AND scope IN ('" + ScopesSQL + "') ";
             SQL += "ORDER BY tag1";
 
-            Public_Variables.DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
-            rsStatus = Public_Variables.DBCommand.ExecuteReader();
+            var DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+            rsStatus = DBCommand.ExecuteReader();
 
             while (rsStatus.Read())
             {

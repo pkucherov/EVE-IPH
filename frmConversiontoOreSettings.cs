@@ -282,8 +282,8 @@ namespace EVE_Isk_per_Hour
 
                 SQL += "GROUP BY ORE, ORE_GROUP";
 
-                Public_Variables.DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
-                rsOres = Public_Variables.DBCommand.ExecuteReader();
+                var DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+                rsOres = DBCommand.ExecuteReader();
 
                 while (rsOres.Read())
                 {

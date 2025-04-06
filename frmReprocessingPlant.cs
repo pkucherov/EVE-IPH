@@ -577,8 +577,8 @@ namespace EVE_Isk_per_Hour
 
                 foreach (var Mat in TempOutputs.GetMaterialList())
                 {
-                    Public_Variables.DBCommand = new SQLiteCommand("SELECT 'X' FROM REPROCESSING WHERE ITEM_ID = " + Mat.GetMaterialTypeID().ToString(), Public_Variables.EVEDB.DBREf());
-                    rsRefine = Public_Variables.DBCommand.ExecuteReader();
+                    var DBCommand = new SQLiteCommand("SELECT 'X' FROM REPROCESSING WHERE ITEM_ID = " + Mat.GetMaterialTypeID().ToString(), Public_Variables.EVEDB.DBREf());
+                    rsRefine = DBCommand.ExecuteReader();
                     rsRefine.Read();
 
                     if (rsRefine.HasRows)
@@ -647,8 +647,8 @@ namespace EVE_Isk_per_Hour
                 string AssetLocationFlagList = "";
                 // First look up the location and flagID pairs - unique ID of asset locations
                 SQL = "SELECT LocationID, FlagID FROM ASSET_LOCATIONS WHERE EnumAssetType = " + ((int)AssetWindow.Refinery).ToString() + " AND ID IN (" + IDString + ")";
-                Public_Variables.DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
-                readerItems = Public_Variables.DBCommand.ExecuteReader();
+                var DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+                readerItems = DBCommand.ExecuteReader();
 
                 while (readerItems.Read())
                 {
@@ -687,8 +687,8 @@ namespace EVE_Isk_per_Hour
                 SQL += "AND ID IN (" + IDString + ") ";
                 SQL += "GROUP BY IT.typeID, IT.typeName, IT.volume ";
 
-                Public_Variables.DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
-                readerItems = Public_Variables.DBCommand.ExecuteReader();
+                var DBCommand2 = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+                readerItems = DBCommand2.ExecuteReader();
 
                 while (readerItems.Read())
                 {
@@ -712,8 +712,8 @@ namespace EVE_Isk_per_Hour
             {
                 SQL = "SELECT ITEM_ID, BELT_TYPE FROM REPROCESSING LEFT JOIN ORES ON REPROCESSING.ITEM_ID = ORES.ORE_ID ";
                 SQL += "WHERE ITEM_ID =" + Mat.GetMaterialTypeID().ToString() + " GROUP BY ITEM_ID, BELT_TYPE ";
-                Public_Variables.DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
-                readerItems = Public_Variables.DBCommand.ExecuteReader();
+                var DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+                readerItems = DBCommand.ExecuteReader();
 
                 if (readerItems.Read())
                 {

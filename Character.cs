@@ -100,8 +100,8 @@ namespace EVE_Isk_per_Hour
                 SQLiteDataReader rsCheck;
 
                 SQL = string.Format("SELECT CHARACTER_NAME FROM ESI_CHARACTER_DATA WHERE CHARACTER_ID = {0}", Public_Variables.DummyCharacterID.ToString());
-                Public_Variables.DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
-                rsCheck = Public_Variables.DBCommand.ExecuteReader();
+                var DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+                rsCheck = DBCommand.ExecuteReader();
 
                 // Double check to make sure the record doesn't already exist - user could update skills, etc for a dummy and don't want to overwrite, or if we want to reload
                 if (!rsCheck.HasRows | ReloadDummy)
@@ -199,8 +199,8 @@ namespace EVE_Isk_per_Hour
 
             // See if we have a character ID loaded
             SQL = "SELECT CHARACTER_ID FROM ESI_CHARACTER_DATA WHERE IS_DEFAULT <> 0";
-            Public_Variables.DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
-            rsCharacter = Public_Variables.DBCommand.ExecuteReader();
+            var DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+            rsCharacter = DBCommand.ExecuteReader();
 
             if (rsCharacter.Read())
             {
@@ -233,8 +233,8 @@ namespace EVE_Isk_per_Hour
             SQL += "FROM ESI_CHARACTER_DATA ";
             SQL += "WHERE CHARACTER_ID = " + TokenData.CharacterID.ToString() + " ";
 
-            Public_Variables.DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
-            readerCharacter = Public_Variables.DBCommand.ExecuteReader();
+            var DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+            readerCharacter = DBCommand.ExecuteReader();
 
             if (readerCharacter.Read())
             {
@@ -407,8 +407,8 @@ namespace EVE_Isk_per_Hour
 
             SQL = "SELECT ACCESS_TOKEN, ACCESS_TOKEN_EXPIRE_DATE_TIME, REFRESH_TOKEN, TOKEN_TYPE, SCOPES FROM ESI_CHARACTER_DATA ";
             SQL += "WHERE CHARACTER_ID = " + CharID.ToString();
-            Public_Variables.DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
-            rsToken = Public_Variables.DBCommand.ExecuteReader();
+            var DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+            rsToken = DBCommand.ExecuteReader();
 
             if (rsToken.Read())
             {

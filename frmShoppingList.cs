@@ -452,8 +452,8 @@ namespace EVE_Isk_per_Hour
                         // of max buy (buy order) plus the brokers fees to set up that order (no tax). Then show the value in the grid of what they should do
                         // First find out what price and type we have stored
                         SQL = "SELECT PRICE, PRICE_TYPE, PRICE_SOURCE, RegionORSystem FROM ITEM_PRICES WHERE ITEM_ID = " + RawItems.GetMaterialList()[i].GetMaterialTypeID();
-                        Public_Variables.DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
-                        readerItemPrices = Public_Variables.DBCommand.ExecuteReader();
+                        var DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+                        readerItemPrices = DBCommand.ExecuteReader();
                         readerItemPrices.Read();
 
                         if (readerItemPrices.HasRows)
@@ -478,8 +478,8 @@ namespace EVE_Isk_per_Hour
                         {
                             SQL = "SELECT MIN(PRICE) FROM MARKET_ORDERS WHERE TYPE_ID = " + RawItems.GetMaterialList()[i].GetMaterialTypeID();
                             SQL += " AND (REGION_ID = " + RegionSystem + " OR SOLAR_SYSTEM_ID = " + RegionSystem + ") AND IS_BUY_ORDER = 0";
-                            Public_Variables.DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
-                            readerItemPrices = Public_Variables.DBCommand.ExecuteReader();
+                            var DBCommand7 = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+                            readerItemPrices = DBCommand7.ExecuteReader();
                             readerItemPrices.Read();
 
                             PriceType = GoodPriceData(ref readerItemPrices, 1, PriceType);
@@ -491,8 +491,8 @@ namespace EVE_Isk_per_Hour
 
                                 SQL = "SELECT MAX(PRICE) FROM MARKET_ORDERS WHERE TYPE_ID = " + RawItems.GetMaterialList()[i].GetMaterialTypeID();
                                 SQL += " AND (REGION_ID = " + RegionSystem + " OR SOLAR_SYSTEM_ID = " + RegionSystem + ") AND IS_BUY_ORDER <> 0";
-                                Public_Variables.DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
-                                readerItemPrices = Public_Variables.DBCommand.ExecuteReader();
+                                var DBCommand4 = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+                                readerItemPrices = DBCommand4.ExecuteReader();
                                 readerItemPrices.Read();
 
                                 PriceType = GoodPriceData(ref readerItemPrices, 1, PriceType);
@@ -509,8 +509,8 @@ namespace EVE_Isk_per_Hour
                             SQL = "SELECT sellMin, buyMax FROM ITEM_PRICES_CACHE WHERE typeID = " + RawItems.GetMaterialList()[i].GetMaterialTypeID();
                             SQL += " AND sellMin IS NOT NULL AND buyMax IS NOT NULL AND PRICE_SOURCE = " + PriceSource + " AND RegionORSystem = " + RegionSystem;
 
-                            Public_Variables.DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
-                            readerItemPrices = Public_Variables.DBCommand.ExecuteReader();
+                            var DBCommand2 = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+                            readerItemPrices = DBCommand2.ExecuteReader();
                             readerItemPrices.Read();
 
                             PriceType = GoodPriceData(ref readerItemPrices, 2, PriceType);
@@ -843,8 +843,8 @@ namespace EVE_Isk_per_Hour
             var AssetLocationFlagList = new List<string>();
             // First look up the location and flagID pairs - unique ID of asset locations
             SQL = "SELECT LocationID, FlagID FROM ASSET_LOCATIONS WHERE EnumAssetType = " + ((int)AssetWindow.ShoppingList).ToString() + " AND ID IN (" + IDString + ")";
-            Public_Variables.DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
-            readerAssets = Public_Variables.DBCommand.ExecuteReader();
+            var DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+            readerAssets = DBCommand.ExecuteReader();
 
             while (readerAssets.Read())
             {
@@ -935,8 +935,8 @@ namespace EVE_Isk_per_Hour
                                         SQL += " AND ASSETS.TypeID = " + ProcessList.GetMaterialList()[j].GetMaterialTypeID();
                                         SQL += " AND ID IN (" + IDString + ")";
 
-                                        Public_Variables.DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
-                                        readerAssets = Public_Variables.DBCommand.ExecuteReader();
+                                        var DBCommand8 = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+                                        readerAssets = DBCommand8.ExecuteReader();
                                         readerAssets.Read();
 
                                         if (readerAssets.HasRows & !(readerAssets.GetValue(1) is DBNull))
@@ -1156,8 +1156,8 @@ namespace EVE_Isk_per_Hour
                 SQL += " AND ASSETS.TypeID = " + MaterialTypeID;
                 SQL += " ORDER BY Quantity DESC";
 
-                Public_Variables.DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
-                readerAssets = Public_Variables.DBCommand.ExecuteReader();
+                var DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+                readerAssets = DBCommand.ExecuteReader();
 
                 UsedQuantityRemaining = UsedQuantity;
 
@@ -1811,8 +1811,8 @@ namespace EVE_Isk_per_Hour
                             // Look up BP data
                             SQL = "SELECT BLUEPRINT_ID, TECH_LEVEL, ITEM_GROUP_ID, ITEM_CATEGORY_ID FROM ALL_BLUEPRINTS WHERE ITEM_NAME = '" + Public_Variables.FormatDBString(ItemList[i].ItemName) + "'";
 
-                            Public_Variables.DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
-                            readerBP = Public_Variables.DBCommand.ExecuteReader();
+                            var DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+                            readerBP = DBCommand.ExecuteReader();
                             readerBP.Read();
 
                             // Build the Item - use everything we can from file import
@@ -2221,8 +2221,8 @@ namespace EVE_Isk_per_Hour
             {
                 SQL = "SELECT BLUEPRINT_ID, PORTION_SIZE FROM ALL_BLUEPRINTS WHERE ITEM_ID = " + lstBuild.SelectedItems[0].SubItems[0].Text;
 
-                Public_Variables.DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
-                rsBPLookup = Public_Variables.DBCommand.ExecuteReader();
+                var DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+                rsBPLookup = DBCommand.ExecuteReader();
                 rsBPLookup.Read();
 
                 int Runs = (int)Math.Round(Math.Ceiling(Conversions.ToInteger(lstBuild.SelectedItems[0].SubItems[2].Text) / (double)rsBPLookup.GetInt64(1)));
@@ -2298,8 +2298,8 @@ namespace EVE_Isk_per_Hour
 
             SQL = "SELECT BLUEPRINT_ID FROM ALL_BLUEPRINTS WHERE ITEM_ID = " + lstItems.SelectedItems[0].SubItems[0].Text;
 
-            Public_Variables.DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
-            rsBPLookup = Public_Variables.DBCommand.ExecuteReader();
+            var DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+            rsBPLookup = DBCommand.ExecuteReader();
             rsBPLookup.Read();
 
             Public_Variables.BrokerFeeInfo BFI;

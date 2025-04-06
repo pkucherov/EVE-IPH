@@ -59,8 +59,8 @@ namespace EVE_Isk_per_Hour
             SQL += "AND STATIONS.REGION_ID = REGIONS.regionID AND MANUAL_ENTRY <> 0 ";
             SQL += "ORDER BY regionName, solarSystemName, STATION_NAME";
 
-            Public_Variables.DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
-            rsList = Public_Variables.DBCommand.ExecuteReader();
+            var DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+            rsList = DBCommand.ExecuteReader();
 
             lstStructures.Items.Clear();
             lstStructures.BeginUpdate();

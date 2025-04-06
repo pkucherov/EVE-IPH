@@ -72,8 +72,8 @@ namespace EVE_Isk_per_Hour
             string RegionID = "";
 
             SQLiteDataReader rsItems;
-            Public_Variables.DBCommand = new SQLiteCommand("SELECT ITEM_ID FROM ALL_BLUEPRINTS WHERE ITEM_NAME = '" + Public_Variables.FormatDBString(cmbItems.Text) + "'", Public_Variables.EVEDB.DBREf());
-            rsItems = Public_Variables.DBCommand.ExecuteReader();
+            var DBCommand = new SQLiteCommand("SELECT ITEM_ID FROM ALL_BLUEPRINTS WHERE ITEM_NAME = '" + Public_Variables.FormatDBString(cmbItems.Text) + "'", Public_Variables.EVEDB.DBREf());
+            rsItems = DBCommand.ExecuteReader();
 
             if (rsItems.Read())
             {
@@ -87,8 +87,8 @@ namespace EVE_Isk_per_Hour
             }
 
             // Get RegionID
-            Public_Variables.DBCommand = new SQLiteCommand("SELECT regionID FROM REGIONS WHERE regionName = '" + cmbRegions.Text + "'", Public_Variables.EVEDB.DBREf());
-            rsItems = Public_Variables.DBCommand.ExecuteReader();
+            var DBCommand2 = new SQLiteCommand("SELECT regionID FROM REGIONS WHERE regionName = '" + cmbRegions.Text + "'", Public_Variables.EVEDB.DBREf());
+            rsItems = DBCommand2.ExecuteReader();
 
             if (rsItems.Read())
             {
@@ -163,8 +163,8 @@ namespace EVE_Isk_per_Hour
                     SQL += " WHERE ITEM_GROUP = '" + cmbItemGroup.Text + "'";
                 }
 
-                Public_Variables.DBCommand = new SQLiteCommand(SQL + " ORDER BY ITEM_NAME", Public_Variables.EVEDB.DBREf());
-                rsItems = Public_Variables.DBCommand.ExecuteReader();
+                var DBCommand = new SQLiteCommand(SQL + " ORDER BY ITEM_NAME", Public_Variables.EVEDB.DBREf());
+                rsItems = DBCommand.ExecuteReader();
 
                 while (rsItems.Read())
                     cmbItems.Items.Add(rsItems.GetString(0));
@@ -179,8 +179,8 @@ namespace EVE_Isk_per_Hour
                 SQLiteDataReader rsItems;
                 cmbItemGroup.Items.Clear();
 
-                Public_Variables.DBCommand = new SQLiteCommand("SELECT ITEM_GROUP FROM ALL_BLUEPRINTS GROUP BY ITEM_GROUP", Public_Variables.EVEDB.DBREf());
-                rsItems = Public_Variables.DBCommand.ExecuteReader();
+                var DBCommand = new SQLiteCommand("SELECT ITEM_GROUP FROM ALL_BLUEPRINTS GROUP BY ITEM_GROUP", Public_Variables.EVEDB.DBREf());
+                rsItems = DBCommand.ExecuteReader();
                 cmbItemGroup.Items.Add("All");
                 while (rsItems.Read())
                     cmbItemGroup.Items.Add(rsItems.GetString(0));

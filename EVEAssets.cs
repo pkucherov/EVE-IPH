@@ -66,8 +66,8 @@ namespace EVE_Isk_per_Hour
             {
                 SQL = "SELECT ASSETS_CACHE_DATE FROM ESI_CORPORATION_DATA WHERE CORPORATION_ID = " + ID.ToString();
             }
-            Public_Variables.DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
-            readerData = Public_Variables.DBCommand.ExecuteReader();
+            var DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+            readerData = DBCommand.ExecuteReader();
 
             if (readerData.Read())
             {
@@ -94,8 +94,8 @@ namespace EVE_Isk_per_Hour
             SQL += "LEFT JOIN ALL_OWNED_BLUEPRINTS ON ID = OWNER_ID And ItemID = ITEM_ID ";
             SQL += "WHERE ID = " + ID;
 
-            Public_Variables.DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
-            readerAssets = Public_Variables.DBCommand.ExecuteReader();
+            var DBCommand2 = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+            readerAssets = DBCommand2.ExecuteReader();
 
             while (readerAssets.Read())
             {
@@ -117,8 +117,8 @@ namespace EVE_Isk_per_Hour
                 SQL += "And INVENTORY_TYPES.groupID = INVENTORY_GROUPS.groupID ";
                 SQL += "And INVENTORY_GROUPS.categoryID = INVENTORY_CATEGORIES.categoryID";
 
-                Public_Variables.DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
-                readerData = Public_Variables.DBCommand.ExecuteReader();
+                var DBCommand3 = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+                readerData = DBCommand3.ExecuteReader();
 
                 try
                 {
@@ -223,8 +223,8 @@ namespace EVE_Isk_per_Hour
                         for (int i = 0, loopTo = Assets.Count - 1; i <= loopTo; i++)
                         {
                             // Get the flagID for this location
-                            Public_Variables.DBCommand = new SQLiteCommand("SELECT flagID FROM INVENTORY_FLAGS WHERE flagName = '" + Assets[i].location_flag + "'", Public_Variables.EVEDB.DBREf());
-                            rsLookup = Public_Variables.DBCommand.ExecuteReader();
+                            var DBCommand = new SQLiteCommand("SELECT flagID FROM INVENTORY_FLAGS WHERE flagName = '" + Assets[i].location_flag + "'", Public_Variables.EVEDB.DBREf());
+                            rsLookup = DBCommand.ExecuteReader();
                             if (rsLookup.Read())
                             {
                                 FlagID = rsLookup.GetInt32(0);
@@ -271,7 +271,6 @@ namespace EVE_Isk_per_Hour
                         CB.UpdateCacheDate(CDType, CacheDate, ID);
 
                         Public_Variables.EVEDB.CommitSQLiteTransaction();
-                        Public_Variables.DBCommand = null;
                     }
                 }
             }
@@ -298,8 +297,8 @@ namespace EVE_Isk_per_Hour
                 {
 
                     SQL = "SELECT STATION_NAME FROM STATIONS WHERE STATION_ID = " + LocationID.ToString();
-                    Public_Variables.DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
-                    readerData = Public_Variables.DBCommand.ExecuteReader();
+                    var DBCommand5 = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+                    readerData = DBCommand5.ExecuteReader();
 
                     if (readerData.Read())
                     {
@@ -318,8 +317,8 @@ namespace EVE_Isk_per_Hour
                 {
                     SQL = "SELECT solarSystemName FROM SOLAR_SYSTEMS WHERE solarSystemID = " + LocationID.ToString();
 
-                    Public_Variables.DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
-                    readerData = Public_Variables.DBCommand.ExecuteReader();
+                    var DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+                    readerData = DBCommand.ExecuteReader();
 
                     if (readerData.Read())
                     {
@@ -345,8 +344,8 @@ namespace EVE_Isk_per_Hour
                     // See if it's connected to another record, which will have a name look up
                     SQL = "SELECT locationID FROM ASSETS WHERE itemID = " + LocationID.ToString();
 
-                    Public_Variables.DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
-                    readerData = Public_Variables.DBCommand.ExecuteReader();
+                    var DBCommand2 = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+                    readerData = DBCommand2.ExecuteReader();
                     readerData.Read();
 
                     if (readerData.HasRows)
@@ -403,8 +402,8 @@ namespace EVE_Isk_per_Hour
             // Look up the flag text
             SQL = "SELECT FlagText FROM INVENTORY_FLAGS WHERE FlagID = " + Math.Abs(FlagID).ToString(); // FlagID can be negative
 
-            Public_Variables.DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
-            readerData = Public_Variables.DBCommand.ExecuteReader();
+            var DBCommand3 = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+            readerData = DBCommand3.ExecuteReader();
 
             if (readerData.Read())
             {
@@ -1114,8 +1113,8 @@ namespace EVE_Isk_per_Hour
             SQL = "SELECT ID, LocationID, FlagID FROM ASSET_LOCATIONS WHERE EnumAssetType = " + ((int)Location).ToString();
             SQL += " AND ID IN (" + ID.ToString() + "," + CharacterCorporation.CorporationID.ToString() + ")";
 
-            Public_Variables.DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
-            readerLocations = Public_Variables.DBCommand.ExecuteReader();
+            var DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+            readerLocations = DBCommand.ExecuteReader();
 
             while (readerLocations.Read())
             {

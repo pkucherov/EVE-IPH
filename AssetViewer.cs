@@ -597,8 +597,8 @@ namespace EVE_Isk_per_Hour
                     SQL += " AND typeName LIKE '%" + Public_Variables.FormatDBString(Strings.Trim(txtItemFilter.Text)) + "%' ";
                 }
 
-                Public_Variables.DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
-                readerMats = Public_Variables.DBCommand.ExecuteReader();
+                var DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+                readerMats = DBCommand.ExecuteReader();
 
                 // Fill list
                 while (readerMats.Read())
@@ -626,8 +626,8 @@ namespace EVE_Isk_per_Hour
                         SQL += " AND ITEM_NAME LIKE '%" + Public_Variables.FormatDBString(Strings.Trim(txtItemFilter.Text)) + "%' ";
                     }
 
-                    Public_Variables.DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
-                    readerMats = Public_Variables.DBCommand.ExecuteReader();
+                    var DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+                    readerMats = DBCommand.ExecuteReader();
 
                     // Fill list
                     while (readerMats.Read())
@@ -648,8 +648,8 @@ namespace EVE_Isk_per_Hour
                         SQL += " WHERE ITEM_NAME LIKE '%" + Public_Variables.FormatDBString(Strings.Trim(txtItemFilter.Text)) + "%' ";
                     }
 
-                    Public_Variables.DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
-                    readerMats = Public_Variables.DBCommand.ExecuteReader();
+                    var DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+                    readerMats = DBCommand.ExecuteReader();
 
                     // Fill list
                     while (readerMats.Read())
@@ -1520,8 +1520,8 @@ namespace EVE_Isk_per_Hour
             SQL += "AND inventory_types.published <> 0 and inventory_groups.published <> 0 and inventory_categories.published <> 0 ";
             SQL += "GROUP BY groupName ";
 
-            Public_Variables.DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
-            readerShipType = Public_Variables.DBCommand.ExecuteReader();
+            var DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+            readerShipType = DBCommand.ExecuteReader();
 
             cmbPriceShipTypes.Items.Add("All Ship Types");
 
@@ -1547,8 +1547,8 @@ namespace EVE_Isk_per_Hour
             SQL += "AND inventory_types.published <> 0 and inventory_groups.published <> 0 and inventory_categories.published <> 0 ";
             SQL += "GROUP BY groupName ";
 
-            Public_Variables.DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
-            readerChargeType = Public_Variables.DBCommand.ExecuteReader();
+            var DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+            readerChargeType = DBCommand.ExecuteReader();
 
             cmbPriceChargeTypes.Items.Add("All Charge Types");
 

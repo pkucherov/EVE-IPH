@@ -27,8 +27,8 @@ namespace EVE_Isk_per_Hour
         {
             SQLiteDataReader rsData;
 
-            Public_Variables.DBCommand = new SQLiteCommand("SELECT CHARACTER_NAME FROM ESI_CHARACTER_DATA WHERE CHARACTER_ID = " + Public_Variables.DummyCharacterID.ToString(), Public_Variables.EVEDB.DBREf());
-            rsData = Public_Variables.DBCommand.ExecuteReader();
+            var DBCommand = new SQLiteCommand("SELECT CHARACTER_NAME FROM ESI_CHARACTER_DATA WHERE CHARACTER_ID = " + Public_Variables.DummyCharacterID.ToString(), Public_Variables.EVEDB.DBREf());
+            rsData = DBCommand.ExecuteReader();
             rsData.Read();
 
             lblCurrentName.Text = rsData.GetString(0);

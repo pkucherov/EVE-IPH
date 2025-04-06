@@ -61,8 +61,8 @@ namespace EVE_Isk_per_Hour
             SQL += "WHERE ECHD.CORPORATION_ID = ECRPD.CORPORATION_ID ";
             SQL += "AND CHARACTER_ID <> " + Public_Variables.DummyCharacterID.ToString();
 
-            Public_Variables.DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
-            rsAccounts = Public_Variables.DBCommand.ExecuteReader();
+            var DBCommand8 = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+            rsAccounts = DBCommand8.ExecuteReader();
 
             lstAccounts.Items.Clear();
             lstAccounts.BeginUpdate();
@@ -104,8 +104,8 @@ namespace EVE_Isk_per_Hour
 
             SQL = "SELECT COUNT(*) FROM ESI_CHARACTER_DATA";
 
-            Public_Variables.DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
-            rsAccounts = Public_Variables.DBCommand.ExecuteReader();
+            var DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+            rsAccounts = DBCommand.ExecuteReader();
 
             rsAccounts.Read();
 
@@ -147,8 +147,8 @@ namespace EVE_Isk_per_Hour
                 // Get Director and Factory Manager roles.
                 SQLiteDataReader rsRoles;
                 string SQL = string.Format("SELECT ROLE FROM ESI_CORPORATION_ROLES WHERE CHARACTER_ID = {0} AND CORPORATION_ID = {1} AND ROLE IN ('Director','Factory_Manager')", Conversions.ToLong(txtCharacterID.Text), Conversions.ToLong(txtCorpID.Text));
-                Public_Variables.DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
-                rsRoles = Public_Variables.DBCommand.ExecuteReader();
+                var DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+                rsRoles = DBCommand.ExecuteReader();
 
                 while (rsRoles.Read())
                 {
@@ -231,9 +231,9 @@ namespace EVE_Isk_per_Hour
 
                 // Finally see if we have more accounts that are not the dummy - if only the dummy exists, set it to default and load it
                 SQL = "SELECT COUNT(*) FROM ESI_CHARACTER_DATA WHERE CHARACTER_ID <> " + Public_Variables.DummyCharacterID.ToString();
-                Public_Variables.DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+                var DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
 
-                if (Conversions.ToInteger(Public_Variables.DBCommand.ExecuteScalar()) == 0)
+                if (Conversions.ToInteger(DBCommand.ExecuteScalar()) == 0)
                 {
                     // Only the dummy is loaded, so set it to default
                     Public_Variables.EVEDB.ExecuteNonQuerySQL("UPDATE ESI_CHARACTER_DATA SET IS_DEFAULT = " + Public_Variables.DefaultCharacterCode.ToString() + " WHERE CHARACTER_ID = " + Public_Variables.DummyCharacterID.ToString());

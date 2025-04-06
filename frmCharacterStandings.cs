@@ -66,8 +66,8 @@ namespace EVE_Isk_per_Hour
                 SQL += "ORDER BY NPC_TYPE DESC, STANDING DESC";
             }
 
-            Public_Variables.DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
-            readerStandings = Public_Variables.DBCommand.ExecuteReader();
+            var DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+            readerStandings = DBCommand.ExecuteReader();
 
             if (readerStandings.HasRows)
             {
@@ -90,7 +90,7 @@ namespace EVE_Isk_per_Hour
 
             readerStandings.Close();
             readerStandings = null;
-            Public_Variables.DBCommand = null;
+            DBCommand = null;
 
         }
 

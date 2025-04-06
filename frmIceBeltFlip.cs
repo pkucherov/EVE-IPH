@@ -385,8 +385,8 @@ namespace EVE_Isk_per_Hour
                     IceName = item.SubItems[1].Text;
                     SQL = "SELECT typeID from INVENTORY_TYPES WHERE typeName = '" + IceName + "'";
 
-                    Public_Variables.DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
-                    readerBelts = Public_Variables.DBCommand.ExecuteReader();
+                    var DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+                    readerBelts = DBCommand.ExecuteReader();
 
                     if (readerBelts.Read())
                     {
@@ -408,7 +408,7 @@ namespace EVE_Isk_per_Hour
 
                     }
                     readerBelts.Close();
-                    Public_Variables.DBCommand = null;
+                    DBCommand = null;
 
                 }
 
@@ -541,8 +541,8 @@ namespace EVE_Isk_per_Hour
             }
             SQL += " ORDER BY typeName";
 
-            Public_Variables.DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
-            readerBelts = Public_Variables.DBCommand.ExecuteReader();
+            var DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+            readerBelts = DBCommand.ExecuteReader();
 
             lstIce.Items.Clear();
             lstIce.BeginUpdate();
@@ -818,8 +818,8 @@ namespace EVE_Isk_per_Hour
 
                     SQL = "SELECT ORE_VOLUME FROM ORES WHERE BELT_TYPE = 'Ice' ";
                     SQL += "AND ORE_NAME = '" + IceName + "'";
-                    Public_Variables.DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
-                    readerBelts = Public_Variables.DBCommand.ExecuteReader();
+                    var DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+                    readerBelts = DBCommand.ExecuteReader();
 
                     if (readerBelts.Read())
                     {

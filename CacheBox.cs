@@ -28,8 +28,8 @@ namespace EVE_Isk_per_Hour
             if (UpdateInfo.TableName == "ESI_PUBLIC_CACHE_DATES")
             {
                 SQLiteDataReader rsCheck;
-                Public_Variables.DBCommand = new SQLiteCommand("SELECT * FROM ESI_PUBLIC_CACHE_DATES", Public_Variables.EVEDB.DBREf());
-                rsCheck = Public_Variables.DBCommand.ExecuteReader();
+                var DBCommand = new SQLiteCommand("SELECT * FROM ESI_PUBLIC_CACHE_DATES", Public_Variables.EVEDB.DBREf());
+                rsCheck = DBCommand.ExecuteReader();
 
                 if (!rsCheck.HasRows)
                 {
@@ -71,8 +71,8 @@ namespace EVE_Isk_per_Hour
                     SQL = string.Format(SQL + " WHERE {0} = {1}", UpdateInfo.IDName, CharacterID);
                 }
 
-                Public_Variables.DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
-                rsDate = Public_Variables.DBCommand.ExecuteReader();
+                var DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+                rsDate = DBCommand.ExecuteReader();
 
                 if (rsDate.Read())
                 {

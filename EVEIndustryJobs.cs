@@ -90,8 +90,8 @@ namespace EVE_Isk_per_Hour
 
                             // Also, get the list of character IDs stored in the DB with this corporation and only load those jobs
                             SQLiteDataReader rsIDs;
-                            Public_Variables.DBCommand = new SQLiteCommand("SELECT CHARACTER_ID FROM ESI_CHARACTER_DATA WHERE CORPORATION_ID = " + ID.ToString(), Public_Variables.EVEDB.DBREf());
-                            rsIDs = Public_Variables.DBCommand.ExecuteReader();
+                            var DBCommand2 = new SQLiteCommand("SELECT CHARACTER_ID FROM ESI_CHARACTER_DATA WHERE CORPORATION_ID = " + ID.ToString(), Public_Variables.EVEDB.DBREf());
+                            rsIDs = DBCommand2.ExecuteReader();
 
                             while (rsIDs.Read())
                                 CorpCharIDs.Add(rsIDs.GetInt64(0));
@@ -183,8 +183,8 @@ namespace EVE_Isk_per_Hour
 
                         // Select facilties only for this character, since others may not have the same rights to this token
                         SQL = "SELECT DISTINCT facilityID FROM INDUSTRY_JOBS WHERE installerID = " + ID.ToString();
-                        Public_Variables.DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
-                        rsStructure = Public_Variables.DBCommand.ExecuteReader();
+                        var DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+                        rsStructure = DBCommand.ExecuteReader();
 
                         while (rsStructure.Read())
                             StructureIDList.Add(rsStructure.GetInt64(0));

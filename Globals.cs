@@ -27,7 +27,7 @@ namespace EVE_Isk_per_Hour
         public static CultureInfo LocalCulture;
 
         public static DBConnection EVEDB;
-        public static SQLiteCommand DBCommand;
+        // public static SQLiteCommand DBCommand;
         // For checking the DB to see if it's ok to write
         public static object DBLock = new object();
 
@@ -1182,7 +1182,7 @@ namespace EVE_Isk_per_Hour
             // Look up the cost for the material
             SQL = "SELECT PRICE FROM ITEM_PRICES WHERE ITEM_ID =" + TypeID;
 
-            DBCommand = new SQLiteCommand(SQL, EVEDB.DBREf());
+            var DBCommand = new SQLiteCommand(SQL, EVEDB.DBREf());
             readerCost = DBCommand.ExecuteReader();
 
             if (readerCost.Read())
@@ -1365,7 +1365,7 @@ namespace EVE_Isk_per_Hour
 
                     SQL = "SELECT typeID FROM INVENTORY_TYPES WHERE typeName = '" + FormatDBString(ItemColumns[0]) + "'";
 
-                    DBCommand = new SQLiteCommand(SQL, EVEDB.DBREf());
+                    var DBCommand = new SQLiteCommand(SQL, EVEDB.DBREf());
                     readerItem = DBCommand.ExecuteReader();
                     readerItem.Read();
 
@@ -1669,7 +1669,7 @@ namespace EVE_Isk_per_Hour
 
             try
             {
-                DBCommand = new SQLiteCommand(string.Format(SQL, BPID), EVEDB.DBREf());
+                var DBCommand = new SQLiteCommand(string.Format(SQL, BPID), EVEDB.DBREf());
                 readerBP = DBCommand.ExecuteReader();
 
                 if (readerBP.Read())
@@ -1743,7 +1743,7 @@ namespace EVE_Isk_per_Hour
             int ReturnID;
 
             // Get the region ID
-            DBCommand = new SQLiteCommand("SELECT regionID FROM REGIONS WHERE regionName ='" + FormatDBString(RegionName) + "'", EVEDB.DBREf());
+            var DBCommand = new SQLiteCommand("SELECT regionID FROM REGIONS WHERE regionName ='" + FormatDBString(RegionName) + "'", EVEDB.DBREf());
             readerRegion = DBCommand.ExecuteReader();
 
             if (readerRegion.Read())
@@ -1768,7 +1768,7 @@ namespace EVE_Isk_per_Hour
             int ReturnID;
 
             // Get the region ID
-            DBCommand = new SQLiteCommand("SELECT regionID FROM SOLAR_SYSTEMS WHERE solarSystemID = " + solarSystemID.ToString(), EVEDB.DBREf());
+            var DBCommand = new SQLiteCommand("SELECT regionID FROM SOLAR_SYSTEMS WHERE solarSystemID = " + solarSystemID.ToString(), EVEDB.DBREf());
             readerRegion = DBCommand.ExecuteReader();
 
             if (readerRegion.Read())
@@ -1812,7 +1812,7 @@ namespace EVE_Isk_per_Hour
             string ReturnName;
 
             // Get the region ID
-            DBCommand = new SQLiteCommand("SELECT regionName FROM REGIONS WHERE regionID = " + RegionID.ToString(), EVEDB.DBREf());
+            var DBCommand = new SQLiteCommand("SELECT regionName FROM REGIONS WHERE regionID = " + RegionID.ToString(), EVEDB.DBREf());
             readerRegion = DBCommand.ExecuteReader();
 
             if (readerRegion.Read())
@@ -2174,7 +2174,7 @@ namespace EVE_Isk_per_Hour
             SQLiteDataReader rsSystem;
             int SSID;
 
-            DBCommand = new SQLiteCommand("SELECT solarSystemID FROM SOLAR_SYSTEMS WHERE solarSystemName = '" + SystemName + "'", EVEDB.DBREf());
+            var DBCommand = new SQLiteCommand("SELECT solarSystemID FROM SOLAR_SYSTEMS WHERE solarSystemName = '" + SystemName + "'", EVEDB.DBREf());
             rsSystem = DBCommand.ExecuteReader();
 
             if (rsSystem.Read())
@@ -2198,7 +2198,7 @@ namespace EVE_Isk_per_Hour
             SQLiteDataReader rsSystem;
             string SSName;
 
-            DBCommand = new SQLiteCommand("SELECT solarSystemName FROM SOLAR_SYSTEMS WHERE solarSystemID = " + SystemID.ToString(), EVEDB.DBREf());
+            var DBCommand = new SQLiteCommand("SELECT solarSystemName FROM SOLAR_SYSTEMS WHERE solarSystemID = " + SystemID.ToString(), EVEDB.DBREf());
             rsSystem = DBCommand.ExecuteReader();
 
             if (rsSystem.Read())
@@ -2222,7 +2222,7 @@ namespace EVE_Isk_per_Hour
             SQLiteDataReader rsSystem;
             double security;
 
-            DBCommand = new SQLiteCommand("SELECT SECURITY FROM SOLAR_SYSTEMS WHERE solarSystemName = '" + FormatDBString(SystemName) + "'", EVEDB.DBREf());
+            var DBCommand = new SQLiteCommand("SELECT SECURITY FROM SOLAR_SYSTEMS WHERE solarSystemName = '" + FormatDBString(SystemName) + "'", EVEDB.DBREf());
             rsSystem = DBCommand.ExecuteReader();
 
             if (rsSystem.Read())
@@ -2246,7 +2246,7 @@ namespace EVE_Isk_per_Hour
             SQLiteDataReader rsSystem;
             double security;
 
-            DBCommand = new SQLiteCommand("SELECT SECURITY FROM SOLAR_SYSTEMS WHERE solarSystemID = " + SystemID.ToString(), EVEDB.DBREf());
+            var DBCommand = new SQLiteCommand("SELECT SECURITY FROM SOLAR_SYSTEMS WHERE solarSystemID = " + SystemID.ToString(), EVEDB.DBREf());
             rsSystem = DBCommand.ExecuteReader();
 
             if (rsSystem.Read())
@@ -2270,7 +2270,7 @@ namespace EVE_Isk_per_Hour
             SQLiteDataReader rsSystem;
             int AID;
 
-            DBCommand = new SQLiteCommand("SELECT activityID FROM INDUSTRY_ACTIVITIES WHERE UPPER(activityName) = '" + Strings.UCase(ActivityName) + "'", EVEDB.DBREf());
+            var DBCommand = new SQLiteCommand("SELECT activityID FROM INDUSTRY_ACTIVITIES WHERE UPPER(activityName) = '" + Strings.UCase(ActivityName) + "'", EVEDB.DBREf());
             rsSystem = DBCommand.ExecuteReader();
 
             if (rsSystem.Read())
@@ -2294,7 +2294,7 @@ namespace EVE_Isk_per_Hour
             SQLiteDataReader rsSystem;
             string AName;
 
-            DBCommand = new SQLiteCommand("SELECT activityName FROM INDUSTRY_ACTIVITIES WHERE activityID = " + ActivityID.ToString(), EVEDB.DBREf());
+            var DBCommand = new SQLiteCommand("SELECT activityName FROM INDUSTRY_ACTIVITIES WHERE activityID = " + ActivityID.ToString(), EVEDB.DBREf());
             rsSystem = DBCommand.ExecuteReader();
 
             if (rsSystem.Read())
@@ -2320,7 +2320,7 @@ namespace EVE_Isk_per_Hour
 
             SQL = "SELECT regionName FROM REGIONS WHERE (regionName NOT LIKE '%-R%' OR regionName = 'G-R00031' ) AND regionName NOT LIKE 'VR-%' ";
             SQL += "AND regionName NOT IN ('A821-A','J7HZ-F','PR-01','UUA-F4') AND regionName NOT LIKE 'ADR%' GROUP BY regionName ";
-            DBCommand = new SQLiteCommand(SQL, EVEDB.DBREf());
+            var DBCommand = new SQLiteCommand(SQL, EVEDB.DBREf());
             rsData = DBCommand.ExecuteReader();
             RegionCombo.BeginUpdate();
             RegionCombo.Items.Clear();
@@ -2407,25 +2407,26 @@ namespace EVE_Isk_per_Hour
 
                 // Get the ItemID from the BP ID
                 long ItemID = 0L;
-                DBCommand = new SQLiteCommand("SELECT ITEM_ID FROM ALL_BLUEPRINTS_FACT WHERE BLUEPRINT_ID = " + BlueprintID.ToString(), EVEDB.DBREf());
+                var DBCommand = new SQLiteCommand("SELECT ITEM_ID FROM ALL_BLUEPRINTS_FACT WHERE BLUEPRINT_ID = " + BlueprintID.ToString(), EVEDB.DBREf());
                 rsShip = DBCommand.ExecuteReader();
                 if (rsShip.Read())
                 {
                     ItemID = rsShip.GetInt64(0);
                 }
+                rsShip.Close();
 
                 SQL = "SELECT 'X' FROM INVENTORY_GROUPS, INVENTORY_TYPES WHERE typeID = {0} AND INVENTORY_TYPES.groupID = INVENTORY_GROUPS.groupID ";
                 SQL += "AND categoryID = 6 AND factionID IN (500010,500011) AND INVENTORY_GROUPS.groupID NOT IN (883, 547, 485, 1538, 513, 902, 30) "; // No caps
 
-                DBCommand = new SQLiteCommand(string.Format(SQL, ItemID), EVEDB.DBREf());
-                rsShip = DBCommand.ExecuteReader();
+                var DBCommand2 = new SQLiteCommand(string.Format(SQL, ItemID), EVEDB.DBREf());
+                var rsShip2 = DBCommand2.ExecuteReader();
 
-                if (rsShip.HasRows)
+                if (rsShip2.HasRows)
                 {
-                    rsShip.Close();
+                    rsShip2.Close();
                     return true;
                 }
-                rsShip.Close();
+                rsShip2.Close();
             }
 
             return false;
@@ -2686,7 +2687,7 @@ namespace EVE_Isk_per_Hour
 
             SQL = "SELECT value FROM TYPE_ATTRIBUTES AS TA, INVENTORY_TYPES AS IT WHERE TA.typeID = IT.typeID AND attributeID = " + ((int)ItemAttributes.reprocessingSkillType).ToString();
             SQL += " AND typeName = '" + OreName + "'";
-            DBCommand = new SQLiteCommand(SQL, EVEDB.DBREf());
+            var DBCommand = new SQLiteCommand(SQL, EVEDB.DBREf());
             rsCheck = DBCommand.ExecuteReader();
 
             if (rsCheck.Read())
@@ -2787,7 +2788,7 @@ namespace EVE_Isk_per_Hour
             // Look up the blueprint we used to invent from the sent blueprint ID
             SQL = "Select blueprintTypeID from INDUSTRY_ACTIVITY_PRODUCTS WHERE productTypeID = " + BlueprintID + " And activityID = 8";
 
-            DBCommand = new SQLiteCommand(SQL, EVEDB.DBREf());
+            var DBCommand = new SQLiteCommand(SQL, EVEDB.DBREf());
             readerLookup = DBCommand.ExecuteReader();
 
             if (readerLookup.Read())
@@ -2798,8 +2799,8 @@ namespace EVE_Isk_per_Hour
                 // Select all materials now
                 SQL = "Select ITEM_ID, ITEM_NAME, ITEM_GROUP FROM ALL_BLUEPRINTS WHERE BLUEPRINT_ID =" + T1BPID;
 
-                DBCommand = new SQLiteCommand(SQL, EVEDB.DBREf());
-                readerLookup = DBCommand.ExecuteReader();
+                var DBCommand2 = new SQLiteCommand(SQL, EVEDB.DBREf());
+                readerLookup = DBCommand2.ExecuteReader();
 
                 readerLookup.Read();
                 TempMat = new Material(readerLookup.GetInt64(0), readerLookup.GetString(1), readerLookup.GetString(2), 1L, 1d, 0d, "0", "0");
@@ -2833,7 +2834,7 @@ namespace EVE_Isk_per_Hour
                 SQL += " And typeName Like '%" + RelicName + "%'";
             }
 
-            DBCommand = new SQLiteCommand(SQL, EVEDB.DBREf());
+            var DBCommand = new SQLiteCommand(SQL, EVEDB.DBREf());
             rsCheck = DBCommand.ExecuteReader();
 
             if (rsCheck.Read())
@@ -2852,7 +2853,7 @@ namespace EVE_Isk_per_Hour
         {
             SQLiteDataReader rsLookup;
 
-            DBCommand = new SQLiteCommand("SELECT RACE FROM RACE_IDS WHERE ID = " + RaceID.ToString(), EVEDB.DBREf());
+            var DBCommand = new SQLiteCommand("SELECT RACE FROM RACE_IDS WHERE ID = " + RaceID.ToString(), EVEDB.DBREf());
             rsLookup = DBCommand.ExecuteReader();
 
             if (rsLookup.Read())
@@ -3027,8 +3028,8 @@ namespace EVE_Isk_per_Hour
             }
             else
             {
-                DBCommand = new SQLiteCommand("SELECT MAX_PRODUCTION_LIMIT FROM ALL_BLUEPRINTS WHERE BLUEPRINT_ID = " + BPID.ToString(), EVEDB.DBREf());
-                rsMaxRuns = DBCommand.ExecuteReader();
+                var DBCommand4 = new SQLiteCommand("SELECT MAX_PRODUCTION_LIMIT FROM ALL_BLUEPRINTS WHERE BLUEPRINT_ID = " + BPID.ToString(), EVEDB.DBREf());
+                rsMaxRuns = DBCommand4.ExecuteReader();
                 if (rsMaxRuns.Read())
                 {
                     UserRuns = rsMaxRuns.GetInt32(0);
@@ -3041,7 +3042,7 @@ namespace EVE_Isk_per_Hour
             }
 
             // Look BP Name and group up
-            DBCommand = new SQLiteCommand("SELECT typeName, groupID FROM INVENTORY_TYPES WHERE typeID = " + BPID.ToString(), EVEDB.DBREf());
+            var DBCommand = new SQLiteCommand("SELECT typeName, groupID FROM INVENTORY_TYPES WHERE typeID = " + BPID.ToString(), EVEDB.DBREf());
             readerBP = DBCommand.ExecuteReader();
             if (readerBP.Read())
             {
@@ -3073,8 +3074,8 @@ namespace EVE_Isk_per_Hour
                 SQL += "WHERE (USER_ID =" + CharID.ToString() + " Or USER_ID =" + SelectedCharacter.CharacterCorporation.CorporationID + ") ";
                 SQL += "AND BLUEPRINT_ID =" + BPID.ToString() + " AND SCANNED <> 0";
 
-                DBCommand = new SQLiteCommand(SQL, EVEDB.DBREf());
-                readerBP = DBCommand.ExecuteReader();
+                var DBCommand2 = new SQLiteCommand(SQL, EVEDB.DBREf());
+                readerBP = DBCommand2.ExecuteReader();
                 readerBP.Read();
 
                 // If Found then update then just reset the owned flag - might be scanned
@@ -3141,8 +3142,8 @@ namespace EVE_Isk_per_Hour
                 SQL = "SELECT TE FROM OWNED_BLUEPRINTS WHERE (USER_ID =" + CharID.ToString() + " OR USER_ID =" + SelectedCharacter.CharacterCorporation.CorporationID + ") ";
                 SQL += "AND BLUEPRINT_ID =" + BPID.ToString();
 
-                DBCommand = new SQLiteCommand(SQL, EVEDB.DBREf());
-                readerBP = DBCommand.ExecuteReader();
+                var DBCommand5 = new SQLiteCommand(SQL, EVEDB.DBREf());
+                readerBP = DBCommand5.ExecuteReader();
                 readerBP.Read();
 
                 if (!readerBP.HasRows)
@@ -3282,7 +3283,7 @@ namespace EVE_Isk_per_Hour
             SQL = "SELECT typeName, quantity FROM INVENTORY_TYPES, INDUSTRY_ACTIVITY_PRODUCTS ";
             SQL += "WHERE typeID = blueprintTypeID AND activityID = 8 AND productTypeID = " + BPID.ToString() + " AND quantity <= " + BaseRuns;
 
-            DBCommand = new SQLiteCommand(SQL, EVEDB.DBREf());
+            var DBCommand = new SQLiteCommand(SQL, EVEDB.DBREf());
             readerBP = DBCommand.ExecuteReader();
 
             if (readerBP.Read())
@@ -3430,7 +3431,7 @@ namespace EVE_Isk_per_Hour
 
             SQL = "SELECT typeName FROM INVENTORY_TYPES WHERE typeID = " + TypeID.ToString();
 
-            DBCommand = new SQLiteCommand(SQL, EVEDB.DBREf());
+            var DBCommand = new SQLiteCommand(SQL, EVEDB.DBREf());
             readerIT = DBCommand.ExecuteReader();
 
             if (readerIT.Read())
@@ -3457,7 +3458,7 @@ namespace EVE_Isk_per_Hour
 
             SQL = "SELECT groupName FROM INVENTORY_CATEGORIES WHERE groupID = " + groupID.ToString();
 
-            DBCommand = new SQLiteCommand(SQL, EVEDB.DBREf());
+            var DBCommand = new SQLiteCommand(SQL, EVEDB.DBREf());
             readerIT = DBCommand.ExecuteReader();
 
             if (readerIT.Read())
@@ -3484,7 +3485,7 @@ namespace EVE_Isk_per_Hour
 
             SQL = "SELECT categoryName FROM INVENTORY_CATEGORIES WHERE categoryID = " + categoryID.ToString();
 
-            DBCommand = new SQLiteCommand(SQL, EVEDB.DBREf());
+            var DBCommand = new SQLiteCommand(SQL, EVEDB.DBREf());
             readerIT = DBCommand.ExecuteReader();
 
             if (readerIT.Read())
@@ -3511,7 +3512,7 @@ namespace EVE_Isk_per_Hour
 
             SQL = "SELECT typeID FROM INVENTORY_TYPES WHERE typeName = '" + FormatDBString(TypeName) + "'";
 
-            DBCommand = new SQLiteCommand(SQL, EVEDB.DBREf());
+            var DBCommand = new SQLiteCommand(SQL, EVEDB.DBREf());
             readerIT = DBCommand.ExecuteReader();
 
             if (readerIT.Read())
@@ -3545,7 +3546,7 @@ namespace EVE_Isk_per_Hour
             SQL += "AND INVENTORY_TYPES.groupID Not In (1,1218) And categoryID <> 6 ";
             SQL += "AND TYPE_ATTRIBUTES.typeID = " + TypeID.ToString();
 
-            DBCommand = new SQLiteCommand(SQL, EVEDB.DBREf());
+            var DBCommand = new SQLiteCommand(SQL, EVEDB.DBREf());
             readerBonus = DBCommand.ExecuteReader();
 
             if (readerBonus.Read())

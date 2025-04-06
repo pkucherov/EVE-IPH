@@ -221,8 +221,8 @@ namespace EVE_Isk_per_Hour
             // Load the standings
             SQL = "SELECT NPC_TYPE_ID, NPC_TYPE, NPC_NAME, STANDING FROM CHARACTER_STANDINGS WHERE CHARACTER_ID=" + CharacterID;
 
-            Public_Variables.DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
-            readerStandings = Public_Variables.DBCommand.ExecuteReader();
+            var DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+            readerStandings = DBCommand.ExecuteReader();
 
             while (readerStandings.Read())
                 // Insert standing
@@ -319,8 +319,6 @@ namespace EVE_Isk_per_Hour
                                 SQL += "'," + TempStandings.GetStandingsList()[i].Standing + ")";
                                 Public_Variables.EVEDB.ExecuteNonQuerySQL(SQL);
                             }
-
-                            Public_Variables.DBCommand = null;
 
                             Public_Variables.EVEDB.CommitSQLiteTransaction();
                         }

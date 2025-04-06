@@ -23,8 +23,8 @@ namespace EVE_Isk_per_Hour
 
             SQL = "SELECT typeName, groupID FROM INVENTORY_TYPES WHERE groupID = 1304"; // Only one Decryptor Group with Pheobe
 
-            Public_Variables.DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
-            readerDecryptor = Public_Variables.DBCommand.ExecuteReader();
+            var DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+            readerDecryptor = DBCommand.ExecuteReader();
 
             while (readerDecryptor.Read())
                 LoadRacialDecryptor(readerDecryptor.GetString(0));
@@ -159,8 +159,8 @@ namespace EVE_Isk_per_Hour
             SQL += "WHERE TYPE_ATTRIBUTES.typeID = INVENTORY_TYPES.typeID ";
             SQL += "AND INVENTORY_TYPES.typeName = '" + DecryptorName + "'";
 
-            Public_Variables.DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
-            readerDecryptor = Public_Variables.DBCommand.ExecuteReader();
+            var DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+            readerDecryptor = DBCommand.ExecuteReader();
 
             if (!(readerDecryptor == null))
             {

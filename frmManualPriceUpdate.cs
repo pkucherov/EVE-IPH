@@ -81,8 +81,8 @@ namespace EVE_Isk_per_Hour
             SQL += "FROM ITEM_PRICES ";
             SQL += "WHERE ITEM_PRICES.ITEM_NAME IN ('Tritanium','Pyerite','Mexallon','Nocxium','Isogen','Zydrine','Megacyte','Morphite')";
 
-            Public_Variables.DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
-            readerMinerals = Public_Variables.DBCommand.ExecuteReader();
+            var DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+            readerMinerals = DBCommand.ExecuteReader();
 
             while (readerMinerals.Read())
             {
@@ -102,7 +102,7 @@ namespace EVE_Isk_per_Hour
 
             readerMinerals.Close();
             readerMinerals = null;
-            Public_Variables.DBCommand = null;
+            DBCommand = null;
 
             MineralPricesUpdated = false;
 
@@ -374,8 +374,8 @@ namespace EVE_Isk_per_Hour
             SQL += "('Ferrogel','Crystalline Carbonide','Fermionic Condensates','Titanium Carbide','Fullerides',";
             SQL += "'Hypersynaptic Fibers','Nanotransistors','Phenolic Composites','Tungsten Carbide','Sylramic Fibers','Fernite Carbide')";
 
-            Public_Variables.DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
-            readerMoon = Public_Variables.DBCommand.ExecuteReader();
+            var DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+            readerMoon = DBCommand.ExecuteReader();
 
             while (readerMoon.Read())
             {
@@ -395,7 +395,7 @@ namespace EVE_Isk_per_Hour
 
             readerMoon.Close();
             readerMoon = null;
-            Public_Variables.DBCommand = null;
+            DBCommand = null;
 
             MoonPricesUpdated = false;
 
@@ -727,8 +727,8 @@ namespace EVE_Isk_per_Hour
 
             SQL = "SELECT ITEM_NAME, PRICE FROM ITEM_PRICES WHERE ITEM_NAME LIKE '%" + Public_Variables.FormatDBString(ItemText) + "%'";
 
-            Public_Variables.DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
-            readerLookup = Public_Variables.DBCommand.ExecuteReader();
+            var DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+            readerLookup = DBCommand.ExecuteReader();
 
             while (readerLookup.Read())
             {
@@ -741,7 +741,7 @@ namespace EVE_Isk_per_Hour
 
             readerLookup.Close();
             readerLookup = null;
-            Public_Variables.DBCommand = null;
+            DBCommand = null;
 
         }
 

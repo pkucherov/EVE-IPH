@@ -20,8 +20,8 @@ namespace EVE_Isk_per_Hour
             SQL += "AND TYPE_ATTRIBUTES.typeID = INVENTORY_TYPES.typeID ";
             SQL += "AND attributeID = " + ((int)AttributeCode).ToString();
 
-            Public_Variables.DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
-            readerSearch = Public_Variables.DBCommand.ExecuteReader();
+            var DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+            readerSearch = DBCommand.ExecuteReader();
 
             if (readerSearch.Read())
             {
@@ -50,8 +50,8 @@ namespace EVE_Isk_per_Hour
             SQL += "WHERE typeID = " + TypeID + " ";
             SQL += "AND attributeID = " + ((int)AttributeCode).ToString();
 
-            Public_Variables.DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
-            readerAttribute = Public_Variables.DBCommand.ExecuteReader();
+            var DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+            readerAttribute = DBCommand.ExecuteReader();
 
             if (readerAttribute.Read())
             {
@@ -78,8 +78,8 @@ namespace EVE_Isk_per_Hour
 
             SQL = "SELECT typeID FROM INVENTORY_TYPES WHERE typeName = '" + Public_Variables.FormatDBString(TypeName) + "'";
 
-            Public_Variables.DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
-            readerSearch = Public_Variables.DBCommand.ExecuteReader();
+            var DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+            readerSearch = DBCommand.ExecuteReader();
 
             if (readerSearch.Read())
             {
@@ -107,8 +107,8 @@ namespace EVE_Isk_per_Hour
             SQL = "SELECT ATTRIBUTE_TYPES.attributeID, attributeName, value FROM TYPE_ATTRIBUTES, ATTRIBUTE_TYPES ";
             SQL += "WHERE TYPE_ATTRIBUTES.typeID = " + TypeID + " AND ATTRIBUTE_TYPES.attributeID = TYPE_ATTRIBUTES.attributeID";
 
-            Public_Variables.DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
-            readerAttribute = Public_Variables.DBCommand.ExecuteReader();
+            var DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+            readerAttribute = DBCommand.ExecuteReader();
 
             while (readerAttribute.Read())
             {

@@ -476,8 +476,6 @@ namespace EVE_Isk_per_Hour
                 Application.DoEvents();
             }
 
-            Public_Variables.DBCommand = null;
-
             // ESI Market Data
             if (SettingsVariables.UserApplicationSettings.LoadESIMarketDataonStartup)
             {
@@ -1106,8 +1104,8 @@ namespace EVE_Isk_per_Hour
             var CharacterTokenData = Public_Variables.SelectedCharacter.CharacterTokenData;
 
             SQL = "SELECT scope, status, purpose FROM ESI_STATUS_ITEMS, ESI_ENDPOINT_ROUTE_TO_SCOPE WHERE route = endpoint_route";
-            Public_Variables.DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
-            rsStatus = Public_Variables.DBCommand.ExecuteReader();
+            var DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+            rsStatus = DBCommand.ExecuteReader();
 
             while (rsStatus.Read())
             {
@@ -1345,8 +1343,8 @@ namespace EVE_Isk_per_Hour
             SQL += "AND DATETIME(PRICE_HISTORY_DATE) < " + " DateTime('" + Strings.Format(DateTime.UtcNow.Date, Public_Variables.SQLiteDateFormat) + "') ";
             SQL += "AND TOTAL_VOLUME_FILLED IS NOT NULL ";
 
-            Public_Variables.DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
-            readerAverage = Public_Variables.DBCommand.ExecuteReader();
+            var DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+            readerAverage = DBCommand.ExecuteReader();
 
             readerAverage.Read();
 
@@ -1417,8 +1415,8 @@ namespace EVE_Isk_per_Hour
             SQLiteDataReader rsCharacters;
             string SQL = "SELECT CHARACTER_NAME, CASE WHEN GENDER IS NULL THEN 'male' ELSE GENDER END AS GENDER ";
             SQL += "FROM ESI_CHARACTER_DATA ORDER BY CHARACTER_NAME";
-            Public_Variables.DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
-            rsCharacters = Public_Variables.DBCommand.ExecuteReader();
+            var DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+            rsCharacters = DBCommand.ExecuteReader();
 
             int Counter = 0;
 
@@ -1800,8 +1798,8 @@ namespace EVE_Isk_per_Hour
 
             SQL = "SELECT BLUEPRINT_NAME, TECH_LEVEL, PORTION_SIZE FROM ALL_BLUEPRINTS WHERE BLUEPRINT_ID = " + BPID;
 
-            Public_Variables.DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
-            readerBP = Public_Variables.DBCommand.ExecuteReader();
+            var DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+            readerBP = DBCommand.ExecuteReader();
 
             readerBP.Read();
             cmbBPBlueprintSelection.TextChanged -= cmbBPBlueprintSelection_TextChanged;
@@ -1863,9 +1861,9 @@ namespace EVE_Isk_per_Hour
                     SQL = "SELECT typeName FROM INVENTORY_TYPES, INDUSTRY_ACTIVITY_PRODUCTS WHERE productTypeID =" + BPID + " ";
                     SQL += "And typeID = blueprintTypeID And activityID = 8 And typeName Like '%" + TempRelic + "%'";
 
-                    Public_Variables.DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+                    var DBCommand2 = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
                     SQLiteDataReader readerRelic;
-                    readerRelic = Public_Variables.DBCommand.ExecuteReader();
+                    readerRelic = DBCommand2.ExecuteReader();
                     readerRelic.Read();
                     cmbBPRelic.Items.Clear();
                     cmbBPRelic.Text = readerRelic.GetString(0);
@@ -3507,8 +3505,8 @@ namespace EVE_Isk_per_Hour
                         SQL += "FROM ALL_BLUEPRINTS LEFT JOIN OWNED_BLUEPRINTS ON ALL_BLUEPRINTS.BLUEPRINT_ID = OWNED_BLUEPRINTS.BLUEPRINT_ID  ";
                         SQL += "WHERE ITEM_NAME = '" + Public_Variables.RemoveItemNameRuns(CurrentRow.SubItems[0].Text) + "'";
 
-                        Public_Variables.DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
-                        rsData = Public_Variables.DBCommand.ExecuteReader();
+                        var DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+                        rsData = DBCommand.ExecuteReader();
                         rsData.Read();
 
                         // If they update the ME of the blueprint, then we mark it as Owned and a 0 for TE value, but set the type depending on the bp loaded
@@ -3604,8 +3602,8 @@ namespace EVE_Isk_per_Hour
                     SQL += "AND GROUP_NAME = '" + CurrentRow.SubItems[0].Text + "' ";
                     SQL += "AND RAW_MATERIAL = " + RawMat;
 
-                    Public_Variables.DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
-                    rsData = Public_Variables.DBCommand.ExecuteReader();
+                    var DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+                    rsData = DBCommand.ExecuteReader();
 
                     if (rsData.Read())
                     {
@@ -4024,8 +4022,8 @@ namespace EVE_Isk_per_Hour
                             SQL += "WHERE SOLAR_SYSTEMS.regionID = REGIONS.regionID ";
                             SQL += "AND REGIONS.regionName = '" + PreviousCell.Text + "' ";
                             SQL += "ORDER BY solarSystemName";
-                            Public_Variables.DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
-                            rsData = Public_Variables.DBCommand.ExecuteReader();
+                            var DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+                            rsData = DBCommand.ExecuteReader();
 
                             // Add all systems if it's the system
                             withBlock1.Items.Add(Public_Variables.AllSystems);
@@ -5210,8 +5208,8 @@ namespace EVE_Isk_per_Hour
             SQL = "SELECT typeName FROM INVENTORY_TYPES, INDUSTRY_ACTIVITY_PRODUCTS WHERE productTypeID =" + BPID + " ";
             SQL += "AND typeID = blueprintTypeID AND activityID = 8";
 
-            Public_Variables.DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
-            readerRelic = Public_Variables.DBCommand.ExecuteReader();
+            var DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+            readerRelic = DBCommand.ExecuteReader();
 
             if (!string.IsNullOrEmpty(SettingsVariables.UserBPTabSettings.RelicType))
             {
@@ -5252,7 +5250,7 @@ namespace EVE_Isk_per_Hour
             readerRelic.Close();
 
             readerRelic = null;
-            Public_Variables.DBCommand = null;
+            DBCommand = null;
 
             LoadingRelics = false;
             RelicsLoaded = true;
@@ -5670,8 +5668,8 @@ namespace EVE_Isk_per_Hour
                 SQLiteDataReader readerIT;
 
                 SQL = "SELECT 'X' FROM ALL_BLUEPRINTS WHERE ITEM_ID = " + CheckedItem.ItemID;
-                Public_Variables.DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
-                readerIT = Public_Variables.DBCommand.ExecuteReader();
+                var DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+                readerIT = DBCommand.ExecuteReader();
 
                 if (readerIT.Read())
                 {
@@ -5943,8 +5941,8 @@ namespace EVE_Isk_per_Hour
                     SQL = "SELECT BLUEPRINT_ID, PORTION_SIZE, ITEM_GROUP_ID, ITEM_CATEGORY_ID, BLUEPRINT_NAME FROM ALL_BLUEPRINTS WHERE ITEM_NAME =";
                     SQL += "'" + TempItemName + "'";
 
-                    Public_Variables.DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
-                    rsBP = Public_Variables.DBCommand.ExecuteReader();
+                    var DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+                    rsBP = DBCommand.ExecuteReader();
                     rsBP.Read();
 
                     if (chkBPBuildBuy.Checked)
@@ -6305,8 +6303,8 @@ namespace EVE_Isk_per_Hour
 
                 SQL += " ORDER BY X";
 
-                Public_Variables.DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
-                readerBPs = Public_Variables.DBCommand.ExecuteReader();
+                var DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+                readerBPs = DBCommand.ExecuteReader();
 
                 while (readerBPs.Read())
                 {
@@ -6318,7 +6316,7 @@ namespace EVE_Isk_per_Hour
                 readerBPs.Close();
 
                 readerBPs = null;
-                Public_Variables.DBCommand = null;
+                DBCommand = null;
 
                 cmbBPBlueprintSelection.EndUpdate();
 
@@ -6355,8 +6353,8 @@ namespace EVE_Isk_per_Hour
 
             // query = "SELECT BLUEPRINT_NAME AS bpName FROM ALL_BLUEPRINTS b, INVENTORY_TYPES t WHERE b.ITEM_ID = t.typeID AND bpName LIKE '%" & bpName & "%'"
 
-            Public_Variables.DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
-            readerBP = Public_Variables.DBCommand.ExecuteReader();
+            var DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+            readerBP = DBCommand.ExecuteReader();
             lstBPList.BeginUpdate();
 
             while (readerBP.Read())
@@ -7378,8 +7376,8 @@ namespace EVE_Isk_per_Hour
 
             SQL += "'" + Public_Variables.FormatDBString(SelectedBPText) + "'";
 
-            Public_Variables.DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
-            readerBP = Public_Variables.DBCommand.ExecuteReader();
+            var DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+            readerBP = DBCommand.ExecuteReader();
 
             if (readerBP.Read())
             {
@@ -7560,8 +7558,8 @@ namespace EVE_Isk_per_Hour
             SQL += " FROM OWNED_BLUEPRINTS WHERE USER_ID =" + Public_Variables.GetBPUserID(Public_Variables.SelectedCharacter.ID);
             SQL += " AND BLUEPRINT_ID = " + BlueprintID + " AND OWNED <> 0 "; // Only load user or api owned bps
 
-            Public_Variables.DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
-            readerBP = Public_Variables.DBCommand.ExecuteReader();
+            var DBCommand8 = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+            readerBP = DBCommand8.ExecuteReader();
 
             if (NewBP)
             {
@@ -7586,8 +7584,8 @@ namespace EVE_Isk_per_Hour
                 SQL += " FROM OWNED_BLUEPRINTS WHERE USER_ID =" + Public_Variables.SelectedCharacter.CharacterCorporation.CorporationID;
                 SQL += " AND BLUEPRINT_ID = " + BlueprintID + " AND SCANNED <> 0 AND OWNED <> 0 ";
 
-                Public_Variables.DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
-                readerBP = Public_Variables.DBCommand.ExecuteReader();
+                var DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+                readerBP = DBCommand.ExecuteReader();
 
                 if (readerBP.Read())
                 {
@@ -9008,8 +9006,8 @@ namespace EVE_Isk_per_Hour
             {
                 SQL = "SELECT MAX_PRODUCTION_LIMIT FROM ALL_BLUEPRINTS WHERE BLUEPRINT_ID =" + BlueprintTypeID.ToString();
 
-                Public_Variables.DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
-                readerOwned = Public_Variables.DBCommand.ExecuteReader();
+                var DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+                readerOwned = DBCommand.ExecuteReader();
                 readerOwned.Read();
 
                 MaxProductionRuns = readerOwned.GetInt32(0);
@@ -9025,8 +9023,8 @@ namespace EVE_Isk_per_Hour
                 SQL = "SELECT quantity FROM INVENTORY_TYPES, INDUSTRY_ACTIVITY_PRODUCTS ";
                 SQL += "WHERE typeID = blueprintTypeID AND productTypeID = " + BlueprintTypeID.ToString() + " AND typeName = '" + cmbBPRelic.Text + "'";
 
-                Public_Variables.DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
-                readerBP = Public_Variables.DBCommand.ExecuteReader();
+                var DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+                readerBP = DBCommand.ExecuteReader();
 
                 if (readerBP.Read())
                 {
@@ -9188,8 +9186,8 @@ namespace EVE_Isk_per_Hour
 
             SQL = "SELECT * FROM INDUSTRY_SYSTEMS_COST_INDICIES WHERE SOLAR_SYSTEM_ID = " + SSID + " ";
             SQL += "AND ACTIVITY_ID = " + SelectedActivityID;
-            Public_Variables.DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
-            rsCheck = Public_Variables.DBCommand.ExecuteReader();
+            var DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+            rsCheck = DBCommand.ExecuteReader();
             rsCheck.Read();
 
             // See if the Current facility data exists, and update it. If not, then insert a new record
@@ -10619,8 +10617,8 @@ namespace EVE_Isk_per_Hour
                 SQL += "WHERE SOLAR_SYSTEMS.regionID = REGIONS.regionID ";
                 SQL += "AND REGIONS.regionName = '" + Region + "' ORDER BY solarSystemName";
 
-                Public_Variables.DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
-                rsData = Public_Variables.DBCommand.ExecuteReader();
+                var DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+                rsData = DBCommand.ExecuteReader();
                 SystemCombo.BeginUpdate();
                 SystemCombo.Items.Clear();
                 // Add the all systems item
@@ -10653,8 +10651,8 @@ namespace EVE_Isk_per_Hour
 
             SQL = "SELECT GROUP_NAME, PRICE_TYPE, REGION_NAME, SOLAR_SYSTEM_NAME, PRICE_MODIFIER, RAW_MATERIAL ";
             SQL += "FROM PRICE_PROFILES WHERE ID = " + Public_Variables.SelectedCharacter.ID.ToString();
-            Public_Variables.DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
-            rsPP = Public_Variables.DBCommand.ExecuteReader();
+            var DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+            rsPP = DBCommand.ExecuteReader();
 
             while (rsPP.Read())
             {
@@ -10675,8 +10673,8 @@ namespace EVE_Isk_per_Hour
             // Now get everything we don't have
             SQL = "SELECT GROUP_NAME, PRICE_TYPE, REGION_NAME, SOLAR_SYSTEM_NAME, PRICE_MODIFIER, RAW_MATERIAL ";
             SQL += "FROM PRICE_PROFILES WHERE ID = 0 " + GroupRawFlagList + "";
-            Public_Variables.DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
-            rsPP = Public_Variables.DBCommand.ExecuteReader();
+            var DBCommand2 = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+            rsPP = DBCommand2.ExecuteReader();
 
             while (rsPP.Read())
             {
@@ -10886,8 +10884,8 @@ namespace EVE_Isk_per_Hour
                     SQL = "SELECT regionID FROM REGIONS ";
                     SQL += "WHERE regionName = '" + cmbPriceRegions.Text + "'";
 
-                    Public_Variables.DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
-                    readerSystems = Public_Variables.DBCommand.ExecuteReader();
+                    var DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+                    readerSystems = DBCommand.ExecuteReader();
                     if (readerSystems.Read())
                     {
                         SearchRegion = Conversions.ToString(readerSystems.GetValue(0));
@@ -10912,8 +10910,8 @@ namespace EVE_Isk_per_Hour
                     SQL = "SELECT solarSystemID, regionName FROM SOLAR_SYSTEMS, REGIONS ";
                     SQL += "WHERE REGIONS.regionID = SOLAR_SYSTEMS.regionID AND solarSystemName = '" + SearchSystem + "'";
 
-                    Public_Variables.DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
-                    readerSystems = Public_Variables.DBCommand.ExecuteReader();
+                    var DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+                    readerSystems = DBCommand.ExecuteReader();
                     if (readerSystems.Read())
                     {
                         SearchSystem = Conversions.ToString(readerSystems.GetValue(0));
@@ -10976,8 +10974,8 @@ namespace EVE_Isk_per_Hour
                                 SQL += "ORDER BY ID";
                             }
 
-                            Public_Variables.DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
-                            rsPP = Public_Variables.DBCommand.ExecuteReader();
+                            var DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+                            rsPP = DBCommand.ExecuteReader();
 
                             if (rsPP.Read())
                             {
@@ -11120,12 +11118,12 @@ namespace EVE_Isk_per_Hour
                     // Look up regionID since we can only look up regions in ESI
                     if (!string.IsNullOrEmpty(SentItems[i].SystemID))
                     {
-                        Public_Variables.DBCommand = new SQLiteCommand("SELECT regionID FROM SOLAR_SYSTEMS WHERE solarsystemID = '" + SentItems[i].SystemID + "'", Public_Variables.EVEDB.DBREf());
-                        readerPrices = Public_Variables.DBCommand.ExecuteReader();
+                        var DBCommand = new SQLiteCommand("SELECT regionID FROM SOLAR_SYSTEMS WHERE solarsystemID = '" + SentItems[i].SystemID + "'", Public_Variables.EVEDB.DBREf());
+                        readerPrices = DBCommand.ExecuteReader();
                         readerPrices.Read();
                         RegionID = readerPrices.GetInt64(0).ToString();
                         readerPrices.Close();
-                        Public_Variables.DBCommand = null;
+                        DBCommand = null;
                         SystemRegionData.SystemID = SentItems[i].SystemID;
                         SystemRegionData.RegionID = RegionID;
                     }
@@ -11521,8 +11519,8 @@ namespace EVE_Isk_per_Hour
 
                 }
 
-                Public_Variables.DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
-                readerPrices = Public_Variables.DBCommand.ExecuteReader();
+                var DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+                readerPrices = DBCommand.ExecuteReader();
 
                 double DownloadedPrice;
                 string DownloadedLocation;
@@ -11612,8 +11610,8 @@ namespace EVE_Isk_per_Hour
             }
 
             // Look up the min sell price
-            Public_Variables.DBCommand = new SQLiteCommand(SQL + SellOrderSQL, Public_Variables.EVEDB.DBREf());
-            rsData = Public_Variables.DBCommand.ExecuteReader();
+            var DBCommand = new SQLiteCommand(SQL + SellOrderSQL, Public_Variables.EVEDB.DBREf());
+            rsData = DBCommand.ExecuteReader();
             rsData.Read();
 
             if (rsData.HasRows)
@@ -11645,8 +11643,8 @@ namespace EVE_Isk_per_Hour
             }
 
             // Look up the max buy order
-            Public_Variables.DBCommand = new SQLiteCommand(SQL + BuyOrderSQL, Public_Variables.EVEDB.DBREf());
-            rsData = Public_Variables.DBCommand.ExecuteReader();
+            var DBCommand2 = new SQLiteCommand(SQL + BuyOrderSQL, Public_Variables.EVEDB.DBREf());
+            rsData = DBCommand2.ExecuteReader();
             rsData.Read();
 
             if (rsData.HasRows)
@@ -11758,8 +11756,8 @@ namespace EVE_Isk_per_Hour
 
             SQL += "ORDER BY PRICE ASC";
 
-            Public_Variables.DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
-            rsData = Public_Variables.DBCommand.ExecuteReader();
+            var DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+            rsData = DBCommand.ExecuteReader();
 
             while (rsData.Read())
                 PriceList.Add(rsData.GetDouble(0));
@@ -11780,8 +11778,8 @@ namespace EVE_Isk_per_Hour
             string CN = "";
             string ITN = "";
 
-            Public_Variables.DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
-            rsGroup = Public_Variables.DBCommand.ExecuteReader();
+            var DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+            rsGroup = DBCommand.ExecuteReader();
 
             if (rsGroup.Read())
             {
@@ -12089,8 +12087,8 @@ namespace EVE_Isk_per_Hour
                 // See if the record is in the cache first
                 SQL = "SELECT * FROM ITEM_PRICES_CACHE WHERE TYPEID = " + CacheItems[i].TypeID.ToString() + " AND RegionOrSystem = " + RegionSystem + " AND PRICE_SOURCE = " + UpdatePricesDataSource;
 
-                Public_Variables.DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
-                readerPriceCheck = Public_Variables.DBCommand.ExecuteReader();
+                var DBCommand5 = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+                readerPriceCheck = DBCommand5.ExecuteReader();
 
                 if (!readerPriceCheck.HasRows)
                 {
@@ -12102,8 +12100,8 @@ namespace EVE_Isk_per_Hour
                     readerPriceCheck.Close();
                     // There is a record, see if it needs to be updated
                     SQL = "SELECT UPDATEDATE FROM ITEM_PRICES_CACHE WHERE TYPEID = " + CacheItems[i].TypeID.ToString() + " AND RegionOrSystem = " + RegionSystem + " AND PRICE_SOURCE = " + UpdatePricesDataSource;
-                    Public_Variables.DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
-                    readerPriceCheck = Public_Variables.DBCommand.ExecuteReader();
+                    var DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+                    readerPriceCheck = DBCommand.ExecuteReader();
 
                     // If no record or the max date
                     if (readerPriceCheck.Read())
@@ -12670,8 +12668,8 @@ namespace EVE_Isk_per_Hour
 
                 SQL += "ORDER BY ITEM_GROUP, ITEM_CATEGORY, ITEM_NAME";
 
-                Public_Variables.DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
-                readerMats = Public_Variables.DBCommand.ExecuteReader();
+                var DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+                readerMats = DBCommand.ExecuteReader();
 
                 // Clear List
                 lstPricesView.Items.Clear();
@@ -12799,8 +12797,8 @@ namespace EVE_Isk_per_Hour
             SQL += "AND inventory_types.published <> 0  ";
             SQL += "GROUP BY groupName ";
 
-            Public_Variables.DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
-            readerShipType = Public_Variables.DBCommand.ExecuteReader();
+            var DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+            readerShipType = DBCommand.ExecuteReader();
 
             cmbPriceShipTypes.Items.Add("All Ship Types");
 
@@ -12826,8 +12824,8 @@ namespace EVE_Isk_per_Hour
             SQL += "AND inventory_types.published <> 0 and inventory_groups.published <> 0 and inventory_categories.published <> 0 ";
             SQL += "GROUP BY groupName ";
 
-            Public_Variables.DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
-            readerChargeType = Public_Variables.DBCommand.ExecuteReader();
+            var DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+            readerChargeType = DBCommand.ExecuteReader();
 
             cmbPriceChargeTypes.Items.Add("All Charge Types");
 
@@ -17852,10 +17850,10 @@ namespace EVE_Isk_per_Hour
                 }
 
                 // Get data
-                Public_Variables.DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
-                Public_Variables.DBCommand.Parameters.AddWithValue("@USERBP_USERID", Public_Variables.GetBPUserID(Public_Variables.SelectedCharacter.ID)); // need to search for corp ID too
-                Public_Variables.DBCommand.Parameters.AddWithValue("@USERBP_CORPID", Public_Variables.SelectedCharacter.CharacterCorporation.CorporationID.ToString());
-                readerBPs = Public_Variables.DBCommand.ExecuteReader();
+                var DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+                DBCommand.Parameters.AddWithValue("@USERBP_USERID", Public_Variables.GetBPUserID(Public_Variables.SelectedCharacter.ID)); // need to search for corp ID too
+                DBCommand.Parameters.AddWithValue("@USERBP_CORPID", Public_Variables.SelectedCharacter.CharacterCorporation.CorporationID.ToString());
+                readerBPs = DBCommand.ExecuteReader();
 
                 if (!readerBPs.HasRows)
                 {
@@ -18431,8 +18429,8 @@ namespace EVE_Isk_per_Hour
                         // Format string
                         TypeIDCheck = "(" + TypeIDCheck.Substring(0, Strings.Len(TypeIDCheck) - 1) + ")";
                         SQL = "SELECT typeID FROM INVENTORY_TYPES WHERE typeID IN " + TypeIDCheck + " AND marketGroupID IS NOT NULL";
-                        Public_Variables.DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
-                        readerIDs = Public_Variables.DBCommand.ExecuteReader();
+                        var DBCommand2 = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+                        readerIDs = DBCommand2.ExecuteReader();
 
                         // Now add these to the list
                         while (readerIDs.Read())
@@ -18490,32 +18488,50 @@ namespace EVE_Isk_per_Hour
                     ThreadPool.SetMinThreads(4, 4); // Set the minimum threads to 1
                     for (i = 0; i <= loopTo3; i++)
                     {
-                        var resStep = Task<(bool CancelProcess, List<ManufacturingItem> ManufacturingItems)>.Run(() =>
+                        var itemToCalculate = BaseItems[i];
+                        var t = Task.Run(() =>
                         {
-                            return ProcessCalculationStep(BaseItems[i], PolarizedWeapon, InventionDecryptors,
+                            var result = ProcessCalculationStep(itemToCalculate, PolarizedWeapon, InventionDecryptors,
                                 MarketRegionID, AveragePriceDays, SVRThresholdValue, OptimalDecryptorItems);
+                            result.ManufacturingItems.ForEach(ManufacturingList.Add);
                         });
 
-                        if (resStep.Result.CancelProcess)
-                        {
-                            ExitCalculation(Calculate);
-                            return;
-                        }
-                        else
-                        {
-                            resStep.Result.ManufacturingItems.ForEach(ManufacturingList.Add);
-                            // For each record, update the progress bar
-                            var argPG1 = pnlProgressBar;
-                            Public_Variables.IncrementToolStripProgressBar(ref argPG1);
-                            pnlProgressBar = argPG1;
-                        }
+                        CalculationTasks.Add(t);
+                        //if (resStep.Result.CancelProcess)
+                        //{
+                        //    ExitCalculation(Calculate);
+                        //    return;
+                        //}
+                        //else
+                        //{
+                        //    resStep.Result.ManufacturingItems.ForEach(ManufacturingList.Add);
+                        //    // For each record, update the progress bar
+                        //    var argPG1 = pnlProgressBar;
+                        //    Public_Variables.IncrementToolStripProgressBar(ref argPG1);
+                        //    pnlProgressBar = argPG1;
+                        //}
+                        
                     }
+
+                    while (CalculationTasks.Count > 0)
+                    {
+                        var taskArray = CalculationTasks.ToArray();
+                        int taskIndex = Task.WaitAny(taskArray);
+                        var finishedTask = taskArray[taskIndex];
+                        CalculationTasks.Remove(finishedTask);
+
+                        // For each record, update the progress bar
+                        var argPG1 = pnlProgressBar;
+                        Public_Variables.IncrementToolStripProgressBar(ref argPG1);
+                        pnlProgressBar = argPG1;
+                    }
+
                     Task.WaitAll(CalculationTasks.ToArray());
 
                     // Done processing the blueprints
                     pnlProgressBar.Value = 0;
                     pnlProgressBar.Visible = false;
-                    // Me.Cursor = Cursors.Default
+                    //Cursor = Cursors.Default;
                     pnlStatus.Text = "";
 
                     // BPs were calcualted so enable it
@@ -19841,8 +19857,8 @@ namespace EVE_Isk_per_Hour
             SQL = "SELECT SUM(TOTAL_VOLUME_FILLED) FROM MARKET_HISTORY WHERE TYPE_ID = " + TypeID.ToString() + " AND REGION_ID = " + RegionID.ToString() + " ";
             SQL += "AND DATETIME(PRICE_HISTORY_DATE) >= " + " DateTime('" + Strings.Format(DateAndTime.DateAdd(DateInterval.Day, -(DaysfromToday + 1), DateTime.UtcNow.Date), Public_Variables.SQLiteDateFormat) + "') ";
             SQL += "AND DATETIME(PRICE_HISTORY_DATE) < " + " DateTime('" + Strings.Format(DateTime.UtcNow.Date, Public_Variables.SQLiteDateFormat) + "') ";
-            Public_Variables.DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
-            rsItems = Public_Variables.DBCommand.ExecuteReader();
+            var DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+            rsItems = DBCommand.ExecuteReader();
 
             if (rsItems.Read() & !(rsItems.GetValue(0) is DBNull))
             {
@@ -19865,8 +19881,8 @@ namespace EVE_Isk_per_Hour
             SQL = "SELECT SUM(TOTAL_ORDERS_FILLED) FROM MARKET_HISTORY WHERE TYPE_ID = " + TypeID.ToString() + " AND REGION_ID = " + RegionID.ToString() + " ";
             SQL += "AND DATETIME(PRICE_HISTORY_DATE) >= " + " DateTime('" + Strings.Format(DateAndTime.DateAdd(DateInterval.Day, -(DaysfromToday + 1), DateTime.UtcNow.Date), Public_Variables.SQLiteDateFormat) + "') ";
             SQL += "AND DATETIME(PRICE_HISTORY_DATE) < " + " DateTime('" + Strings.Format(DateTime.UtcNow.Date, Public_Variables.SQLiteDateFormat) + "') ";
-            Public_Variables.DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
-            rsItems = Public_Variables.DBCommand.ExecuteReader();
+            var DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+            rsItems = DBCommand.ExecuteReader();
 
             if (rsItems.Read() & !(rsItems.GetValue(0) is DBNull))
             {
@@ -19888,8 +19904,8 @@ namespace EVE_Isk_per_Hour
             SQL = "SELECT IS_BUY_ORDER, SUM(VOLUME_REMAINING) FROM (SELECT * FROM MARKET_ORDERS UNION ALL SELECT * FROM STRUCTURE_MARKET_ORDERS) ";
             SQL += "WHERE TYPE_ID = " + TypeID.ToString() + " And REGION_ID = " + RegionID.ToString() + " ";
             SQL += "GROUP BY IS_BUY_ORDER";
-            Public_Variables.DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
-            rsItems = Public_Variables.DBCommand.ExecuteReader();
+            var DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+            rsItems = DBCommand.ExecuteReader();
 
             while (rsItems.Read())
             {
@@ -19939,8 +19955,8 @@ namespace EVE_Isk_per_Hour
             var AssetLocationFlagList = new List<string>();
             // First look up the location and flagID pairs - unique ID of asset locations
             SQL = "SELECT LocationID, FlagID FROM ASSET_LOCATIONS WHERE EnumAssetType = " + ((int)AssetWindow.ManufacturingTab).ToString() + " And ID IN (" + IDString + ")";
-            Public_Variables.DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
-            readerAssets = Public_Variables.DBCommand.ExecuteReader();
+            var DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+            readerAssets = DBCommand.ExecuteReader();
 
             while (readerAssets.Read())
             {
@@ -19981,8 +19997,8 @@ namespace EVE_Isk_per_Hour
                 SQL = "SELECT SUM(Quantity) FROM ASSETS WHERE (" + TempAssetWhereList + ") ";
                 SQL += " And ASSETS.TypeID = " + TypeID.ToString() + " And ID IN (" + IDString + ")";
 
-                Public_Variables.DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
-                readerAssets = Public_Variables.DBCommand.ExecuteReader();
+                var DBCommand2 = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+                readerAssets = DBCommand2.ExecuteReader();
                 readerAssets.Read();
 
                 if (readerAssets.HasRows & !(readerAssets.GetValue(0) is DBNull))
@@ -20007,8 +20023,8 @@ namespace EVE_Isk_per_Hour
             SQL += "And productTypeID = " + TypeID.ToString() + " And status = 'active' And activityID IN (1,11) ";
             // SQL &= "And installerID = " & CStr(SelectedCharacter.ID) & " "
 
-            Public_Variables.DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
-            rsItems = Public_Variables.DBCommand.ExecuteReader();
+            var DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+            rsItems = DBCommand.ExecuteReader();
 
             if (rsItems.Read() & !(rsItems.GetValue(0) is DBNull))
             {
@@ -20069,10 +20085,10 @@ namespace EVE_Isk_per_Hour
 
             SQL += WhereClause + "GROUP BY ITEM_GROUP";
 
-            Public_Variables.DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
-            Public_Variables.DBCommand.Parameters.AddWithValue("@USERBP_USERID", Public_Variables.GetBPUserID(Public_Variables.SelectedCharacter.ID)); // need to search for corp ID too
-            Public_Variables.DBCommand.Parameters.AddWithValue("@USERBP_CORPID", Public_Variables.SelectedCharacter.CharacterCorporation.CorporationID.ToString());
-            readerTypes = Public_Variables.DBCommand.ExecuteReader();
+            var DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+            DBCommand.Parameters.AddWithValue("@USERBP_USERID", Public_Variables.GetBPUserID(Public_Variables.SelectedCharacter.ID)); // need to search for corp ID too
+            DBCommand.Parameters.AddWithValue("@USERBP_CORPID", Public_Variables.SelectedCharacter.CharacterCorporation.CorporationID.ToString());
+            readerTypes = DBCommand.ExecuteReader();
 
             cmbCalcBPTypeFilter.Items.Clear();
 
@@ -20645,10 +20661,10 @@ namespace EVE_Isk_per_Hour
                         }
                         SQL += "X.ITEM_TYPE = 1) GROUP BY productTypeID";
 
-                        Public_Variables.DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
-                        Public_Variables.DBCommand.Parameters.AddWithValue("@USERBP_USERID", Public_Variables.GetBPUserID(Public_Variables.SelectedCharacter.ID)); // need to search for corp ID too
-                        Public_Variables.DBCommand.Parameters.AddWithValue("@USERBP_CORPID", Public_Variables.SelectedCharacter.CharacterCorporation.CorporationID.ToString());
-                        readerT1s = Public_Variables.DBCommand.ExecuteReader();
+                        var DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+                        DBCommand.Parameters.AddWithValue("@USERBP_USERID", Public_Variables.GetBPUserID(Public_Variables.SelectedCharacter.ID)); // need to search for corp ID too
+                        DBCommand.Parameters.AddWithValue("@USERBP_CORPID", Public_Variables.SelectedCharacter.CharacterCorporation.CorporationID.ToString());
+                        readerT1s = DBCommand.ExecuteReader();
 
                         while (readerT1s.Read())
                         {
@@ -21442,8 +21458,8 @@ namespace EVE_Isk_per_Hour
             SQL += "AND DATETIME(PRICE_HISTORY_DATE) >= " + " DateTime('" + Strings.Format(DateAndTime.DateAdd(DateInterval.Day, -(DaysfromToday + 1), DateTime.UtcNow.Date), Public_Variables.SQLiteDateFormat) + "') ";
             SQL += "AND DATETIME(PRICE_HISTORY_DATE) < " + " DateTime('" + Strings.Format(DateTime.UtcNow.Date, Public_Variables.SQLiteDateFormat) + "') ";
             SQL += "ORDER BY PRICE_HISTORY_DATE ASC";
-            Public_Variables.DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
-            rsMarketHistory = Public_Variables.DBCommand.ExecuteReader();
+            var DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+            rsMarketHistory = DBCommand.ExecuteReader();
 
             while (rsMarketHistory.Read())
             {
@@ -22691,8 +22707,8 @@ namespace EVE_Isk_per_Hour
                 SQL += " AND regionName = '" + cmbDCRegions.Text + "'";
             }
 
-            Public_Variables.DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
-            readerDC = Public_Variables.DBCommand.ExecuteReader();
+            var DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+            readerDC = DBCommand.ExecuteReader();
 
             if (!readerDC.HasRows)
             {
@@ -22850,8 +22866,8 @@ namespace EVE_Isk_per_Hour
 
                 SQL = "SELECT typeID FROM INVENTORY_TYPES WHERE typeName = 'Datacore - " + TempCoreName + "'";
 
-                Public_Variables.DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
-                readerDC2 = Public_Variables.DBCommand.ExecuteReader();
+                var DBCommand4 = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+                readerDC2 = DBCommand4.ExecuteReader();
                 if (readerDC2.Read())
                 {
                     DCAgentRecord.DataCoreID = readerDC2.GetInt64(0);
@@ -22949,8 +22965,8 @@ namespace EVE_Isk_per_Hour
                 {
                     SQL = "SELECT buyMax FROM ITEM_PRICES_CACHE WHERE typeID =" + DCAgentList[i].DataCoreID + " AND RegionOrSystem =" + DCAgentList[i].RegionID + " AND PRICE_SOURCE = " + UpdatePricesDataSource;
 
-                    Public_Variables.DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
-                    readerDC2 = Public_Variables.DBCommand.ExecuteReader();
+                    var DBCommand3 = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+                    readerDC2 = DBCommand3.ExecuteReader();
 
                     DCAgentRecord = DCAgentList[i];
 
@@ -23012,8 +23028,8 @@ namespace EVE_Isk_per_Hour
                 {
                     SQL = "SELECT buyMax FROM ITEM_PRICES_CACHE WHERE typeID =" + DCAgentList[i].DataCoreID + " AND RegionOrSystem =" + DCAgentList[i].SystemID + " AND PRICE_SOURCE = " + UpdatePricesDataSource;
 
-                    Public_Variables.DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
-                    readerDC2 = Public_Variables.DBCommand.ExecuteReader();
+                    var DBCommand2 = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+                    readerDC2 = DBCommand2.ExecuteReader();
 
                     DCAgentRecord = DCAgentList[i];
 
@@ -23387,8 +23403,8 @@ namespace EVE_Isk_per_Hour
                 SQL = "SELECT regionName FROM RESEARCH_AGENTS, REGIONS WHERE RESEARCH_AGENTS.REGION_ID = REGIONS.regionID ";
                 SQL += "GROUP BY regionName";
 
-                Public_Variables.DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
-                readerReg = Public_Variables.DBCommand.ExecuteReader();
+                var DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+                readerReg = DBCommand.ExecuteReader();
 
                 cmbDCRegions.Items.Add("All Regions");
 
@@ -23891,8 +23907,8 @@ namespace EVE_Isk_per_Hour
             SQL = "SELECT 'X' FROM ATTRIB_LOOKUP WHERE typeName = '" + Public_Variables.FormatDBString(cmbMineMiningLaser.Text) + "' ";
             SQL += "AND attributeID IN (604,605) AND value IN (663,482)"; // 604 and 605 are used with charge groups...and the values returned are groupIDs for mercoxit mining crystal or mining crystal resp
 
-            Public_Variables.DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
-            rsLookup = Public_Variables.DBCommand.ExecuteReader();
+            var DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+            rsLookup = DBCommand.ExecuteReader();
 
             if (rsLookup.HasRows)
             {
@@ -24999,8 +25015,8 @@ namespace EVE_Isk_per_Hour
             if (OreTypes != 0)
             {
                 // Get the count of all non-compressed items 
-                Public_Variables.DBCommand = new SQLiteCommand("SELECT COUNT(*) FROM (SELECT DISTINCT ORE_NAME FROM ORES, ORE_LOCATIONS " + SQL + " AND COMPRESSED = 0)", Public_Variables.EVEDB.DBREf());
-                readerMine = Public_Variables.DBCommand.ExecuteReader();
+                var DBCommand4 = new SQLiteCommand("SELECT COUNT(*) FROM (SELECT DISTINCT ORE_NAME FROM ORES, ORE_LOCATIONS " + SQL + " AND COMPRESSED = 0)", Public_Variables.EVEDB.DBREf());
+                readerMine = DBCommand4.ExecuteReader();
                 readerMine.Read();
 
                 // Set the initial max value without compressed ores taken into account
@@ -25011,8 +25027,8 @@ namespace EVE_Isk_per_Hour
             // Get the count of all compressed items if checked
             if (chkMineCompressedOre.Checked)
             {
-                Public_Variables.DBCommand = new SQLiteCommand("SELECT COUNT(*) FROM (SELECT DISTINCT ORE_NAME FROM ORES, ORE_LOCATIONS " + SQL + " AND COMPRESSED = 1)", Public_Variables.EVEDB.DBREf());
-                readerMine = Public_Variables.DBCommand.ExecuteReader();
+                var DBCommand2 = new SQLiteCommand("SELECT COUNT(*) FROM (SELECT DISTINCT ORE_NAME FROM ORES, ORE_LOCATIONS " + SQL + " AND COMPRESSED = 1)", Public_Variables.EVEDB.DBREf());
+                readerMine = DBCommand2.ExecuteReader();
                 readerMine.Read();
                 // Add the count and adjust for crystals
                 pnlProgressBar.Maximum += readerMine.GetInt32(0) * CrystalList.Count;
@@ -25029,8 +25045,8 @@ namespace EVE_Isk_per_Hour
             Application.DoEvents();
 
             // Run for main query - Only get the ore list of base ores and add compressed values later
-            Public_Variables.DBCommand = new SQLiteCommand(SQLMain + SQL + " AND COMPRESSED = 0 " + SQLGroup, Public_Variables.EVEDB.DBREf());
-            readerMine = Public_Variables.DBCommand.ExecuteReader();
+            var DBCommand = new SQLiteCommand(SQLMain + SQL + " AND COMPRESSED = 0 " + SQLGroup, Public_Variables.EVEDB.DBREf());
+            readerMine = DBCommand.ExecuteReader();
 
             double CrystalYieldModifier;
             double CrystalAsteroidDurationMultiplier;
@@ -25084,8 +25100,8 @@ namespace EVE_Isk_per_Hour
                         CSQL += "WHERE TA.typeID = IT.typeID And attributeID = 790 And typeName = '" + TempOre.OreName + "') ";
                         CSQL += "AND TA.typeID = IT.typeID AND attributeID = 182 AND IT.typeName LIKE '%" + Crystal + "') ";
                         CSQL += "AND attributeID IN (782,3159,3160,3161)";
-                        Public_Variables.DBCommand = new SQLiteCommand(CSQL, Public_Variables.EVEDB.DBREf());
-                        readerCrystal = Public_Variables.DBCommand.ExecuteReader();
+                        var DBCommand2 = new SQLiteCommand(CSQL, Public_Variables.EVEDB.DBREf());
+                        readerCrystal = DBCommand2.ExecuteReader();
 
                         while (readerCrystal.Read())
                         {
@@ -25407,8 +25423,8 @@ namespace EVE_Isk_per_Hour
                     {
                         // First, get the unit price and volume for the compressed ore
                         SQL = "SELECT PRICE FROM ITEM_PRICES WHERE ITEM_NAME LIKE 'Compressed " + TempOre.OreName + "'";
-                        Public_Variables.DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
-                        readerOre = Public_Variables.DBCommand.ExecuteReader();
+                        var DBCommand3 = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+                        readerOre = DBCommand3.ExecuteReader();
 
                         if (readerOre.Read())
                         {
@@ -25445,8 +25461,8 @@ namespace EVE_Isk_per_Hour
                     {
                         // First, get the unit price for the ore
                         SQL = "SELECT PRICE FROM ITEM_PRICES WHERE ITEM_NAME = '" + TempOre.OreName + "'";
-                        Public_Variables.DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
-                        readerOre = Public_Variables.DBCommand.ExecuteReader();
+                        var DBCommand3 = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+                        readerOre = DBCommand3.ExecuteReader();
 
                         if (readerOre.Read())
                         {
@@ -27137,8 +27153,8 @@ namespace EVE_Isk_per_Hour
                             }
                             SQL += "ORDER BY typeName";
 
-                            Public_Variables.DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
-                            rsMiners = Public_Variables.DBCommand.ExecuteReader();
+                            var DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+                            rsMiners = DBCommand.ExecuteReader();
 
                             while (rsMiners.Read())
                             {
@@ -27176,8 +27192,8 @@ namespace EVE_Isk_per_Hour
                             }
                             SQL += "ORDER BY typeName";
 
-                            Public_Variables.DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
-                            rsMiners = Public_Variables.DBCommand.ExecuteReader();
+                            var DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+                            rsMiners = DBCommand.ExecuteReader();
 
                             while (rsMiners.Read())
                             {
@@ -27216,8 +27232,8 @@ namespace EVE_Isk_per_Hour
                             }
                             SQL += "ORDER BY typeName";
 
-                            Public_Variables.DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
-                            rsMiners = Public_Variables.DBCommand.ExecuteReader();
+                            var DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+                            rsMiners = DBCommand.ExecuteReader();
 
                             while (rsMiners.Read())
                             {
@@ -27318,8 +27334,8 @@ namespace EVE_Isk_per_Hour
                             }
                             SQL += "ORDER BY typeName";
 
-                            Public_Variables.DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
-                            rsMiners = Public_Variables.DBCommand.ExecuteReader();
+                            var DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+                            rsMiners = DBCommand.ExecuteReader();
 
                             while (rsMiners.Read())
                             {
@@ -27352,8 +27368,8 @@ namespace EVE_Isk_per_Hour
                             }
                             SQL += "ORDER BY typeName";
 
-                            Public_Variables.DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
-                            rsMiners = Public_Variables.DBCommand.ExecuteReader();
+                            var DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+                            rsMiners = DBCommand.ExecuteReader();
 
                             while (rsMiners.Read())
                             {
@@ -27385,8 +27401,8 @@ namespace EVE_Isk_per_Hour
                             }
                             SQL += "ORDER BY typeName";
 
-                            Public_Variables.DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
-                            rsMiners = Public_Variables.DBCommand.ExecuteReader();
+                            var DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+                            rsMiners = DBCommand.ExecuteReader();
 
                             while (rsMiners.Read())
                             {
@@ -27642,8 +27658,8 @@ namespace EVE_Isk_per_Hour
                     }
             }
 
-            Public_Variables.DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
-            rsEq = Public_Variables.DBCommand.ExecuteReader();
+            var DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+            rsEq = DBCommand.ExecuteReader();
 
             while (rsEq.Read())
                 cmbMineMiningUpgrade.Items.Add(rsEq.GetString(0) + " (" + Conversions.ToString(rsEq.GetValue(1)) + "%)");
@@ -28696,8 +28712,8 @@ namespace EVE_Isk_per_Hour
 
             // Look up the cost for Heavy Water
             SQL = "SELECT PRICE FROM ITEM_PRICES WHERE ITEM_NAME = 'Heavy Water'";
-            Public_Variables.DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
-            readerHW = Public_Variables.DBCommand.ExecuteReader();
+            var DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+            readerHW = DBCommand.ExecuteReader();
 
             double ReturnValue = 0d;
 

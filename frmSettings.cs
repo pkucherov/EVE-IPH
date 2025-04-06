@@ -818,8 +818,8 @@ namespace EVE_Isk_per_Hour
 
                         // Need to reload the blueprints for all characters
                         SQLiteDataReader rsChar;
-                        Public_Variables.DBCommand = new SQLiteCommand("SELECT CHARACTER_ID, ACCESS_TOKEN, TOKEN_TYPE, ACCESS_TOKEN_EXPIRE_DATE_TIME, REFRESH_TOKEN, SCOPES FROM ESI_CHARACTER_DATA WHERE CHARACTER_ID <> " + Public_Variables.DummyCharacterID.ToString(), Public_Variables.EVEDB.DBREf());
-                        rsChar = Public_Variables.DBCommand.ExecuteReader();
+                        var DBCommand = new SQLiteCommand("SELECT CHARACTER_ID, ACCESS_TOKEN, TOKEN_TYPE, ACCESS_TOKEN_EXPIRE_DATE_TIME, REFRESH_TOKEN, SCOPES FROM ESI_CHARACTER_DATA WHERE CHARACTER_ID <> " + Public_Variables.DummyCharacterID.ToString(), Public_Variables.EVEDB.DBREf());
+                        rsChar = DBCommand.ExecuteReader();
                         while (rsChar.Read())
                         {
                             var TempToken = new SavedTokenData();

@@ -287,8 +287,8 @@ namespace EVE_Isk_per_Hour
             }
 
             // Add sorting options here
-            Public_Variables.DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
-            rsJobs = Public_Variables.DBCommand.ExecuteReader();
+            var DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+            rsJobs = DBCommand.ExecuteReader();
 
             lstIndustryJobs.BeginUpdate();
             RefreshColumns();
@@ -588,8 +588,8 @@ namespace EVE_Isk_per_Hour
             SQL = string.Format(SQL, SkillLevelField);
 
             // Get all the characters and store them regardless so we only need to do one look up
-            Public_Variables.DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
-            rsJobs = Public_Variables.DBCommand.ExecuteReader();
+            var DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+            rsJobs = DBCommand.ExecuteReader();
 
             LoadedCharacters = new List<IndyCharacter>();
 
@@ -693,8 +693,8 @@ namespace EVE_Isk_per_Hour
             PauseScreenUpdate = true;
 
             SQL = "SELECT CHARACTER_ID FROM ESI_CHARACTER_DATA WHERE CHARACTER_ID <> " + Public_Variables.DummyCharacterID.ToString();
-            Public_Variables.DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
-            rsCharacters = Public_Variables.DBCommand.ExecuteReader();
+            var DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+            rsCharacters = DBCommand.ExecuteReader();
 
             // Get all the character ids loaded and refresh them on skills and jobs
             while (rsCharacters.Read())

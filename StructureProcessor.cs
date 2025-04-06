@@ -151,8 +151,8 @@ namespace EVE_Isk_per_Hour
             {
                 // Get the cache date of the facility ID
                 SQL = "SELECT CACHE_DATE, STATION_NAME FROM STATIONS WHERE STATION_ID = " + StructureID.ToString();
-                Public_Variables.DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
-                rsData = Public_Variables.DBCommand.ExecuteReader();
+                var DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+                rsData = DBCommand.ExecuteReader();
 
                 if (rsData.Read())
                 {
@@ -189,8 +189,8 @@ namespace EVE_Isk_per_Hour
 
                 // Look up the manual saved code and save it if we update the data
                 SQL = "SELECT MANUAL_ENTRY FROM STATIONS WHERE STATION_ID = " + StructureID.ToString();
-                Public_Variables.DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
-                rsData = Public_Variables.DBCommand.ExecuteReader();
+                var DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+                rsData = DBCommand.ExecuteReader();
 
                 // Reset the data if it's in the table and we aren't setting to true in this call
                 if (rsData.Read() & ManuallyAddedCode == 0)
@@ -207,8 +207,8 @@ namespace EVE_Isk_per_Hour
                 {
                     // Lookup the data for the upwell structure from static tables
                     SQL = "SELECT solarSystemID, security, regionID FROM SOLAR_SYSTEMS WHERE solarSystemID = " + EVEStructure.solar_system_id.ToString();
-                    Public_Variables.DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
-                    rsData = Public_Variables.DBCommand.ExecuteReader();
+                    var DBCommand4 = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+                    rsData = DBCommand4.ExecuteReader();
                     rsData.Read();
 
                     if (rsData.HasRows)
@@ -259,8 +259,8 @@ namespace EVE_Isk_per_Hour
 
             // Get the region and system id from the location of the station or structure
             SQL = "SELECT STATION_ID, STATION_NAME, SOLAR_SYSTEM_ID, REGION_ID FROM STATIONS WHERE STATION_ID = " + StructureID.ToString();
-            Public_Variables.DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
-            rsStations = Public_Variables.DBCommand.ExecuteReader();
+            var DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+            rsStations = DBCommand.ExecuteReader();
 
             while (rsStations.Read())
             {

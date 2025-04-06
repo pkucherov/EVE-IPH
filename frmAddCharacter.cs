@@ -87,16 +87,16 @@ namespace EVE_Isk_per_Hour
                 {
                     // See if only one other character exists in db (the one we just added)
                     SQLiteDataReader rsCheck;
-                    Public_Variables.DBCommand = new SQLiteCommand("SELECT COUNT(*) FROM ESI_CHARACTER_DATA WHERE CHARACTER_ID <> " + Public_Variables.DummyCharacterID, Public_Variables.EVEDB.DBREf());
-                    rsCheck = Public_Variables.DBCommand.ExecuteReader();
+                    var DBCommand = new SQLiteCommand("SELECT COUNT(*) FROM ESI_CHARACTER_DATA WHERE CHARACTER_ID <> " + Public_Variables.DummyCharacterID, Public_Variables.EVEDB.DBREf());
+                    rsCheck = DBCommand.ExecuteReader();
                     rsCheck.Read();
 
                     if (rsCheck.GetInt32(0) == 1)
                     {
                         // They only have one other character in the db and the selected is dummy, so set this to the default
                         rsCheck.Close();
-                        Public_Variables.DBCommand = new SQLiteCommand("SELECT CHARACTER_NAME FROM ESI_CHARACTER_DATA WHERE CHARACTER_ID <> " + Public_Variables.DummyCharacterID, Public_Variables.EVEDB.DBREf());
-                        rsCheck = Public_Variables.DBCommand.ExecuteReader();
+                        var DBCommand2 = new SQLiteCommand("SELECT CHARACTER_NAME FROM ESI_CHARACTER_DATA WHERE CHARACTER_ID <> " + Public_Variables.DummyCharacterID, Public_Variables.EVEDB.DBREf());
+                        rsCheck = DBCommand2.ExecuteReader();
                         rsCheck.Read();
                         Cursor = Cursors.WaitCursor;
                         Application.DoEvents();

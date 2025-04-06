@@ -51,8 +51,8 @@ namespace EVE_Isk_per_Hour
             // Find the units to refine for ore
             SQL = "SELECT UNITS_TO_REFINE FROM ORES WHERE ORE_ID =" + ItemID;
 
-            Public_Variables.DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
-            readerRefine = Public_Variables.DBCommand.ExecuteReader();
+            var DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+            readerRefine = DBCommand.ExecuteReader();
 
             if (readerRefine.Read())
             {
@@ -70,8 +70,8 @@ namespace EVE_Isk_per_Hour
                 // Not an ore or ice, so must be scrapmetal processing
                 SQL = "SELECT UNITS_TO_REPROCESS FROM REPROCESSING WHERE ITEM_ID =" + ItemID;
                 readerRefine.Close();
-                Public_Variables.DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
-                readerRefine = Public_Variables.DBCommand.ExecuteReader();
+                var DBCommand2 = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+                readerRefine = DBCommand2.ExecuteReader();
 
                 if (readerRefine.Read())
                 {
@@ -118,8 +118,8 @@ namespace EVE_Isk_per_Hour
                 SQL += "AND REPROCESSING.ITEM_ID = " + ItemID + " WHERE INVENTORY_TYPES.groupID IN (18,423) AND INVENTORY_TYPES.typeID = ITEM_PRICES.ITEM_ID ";
                 SQL += "AND typeID NOT IN (27029,48927) AND INVENTORY_TYPES.groupID = INVENTORY_GROUPS.groupID ORDER BY typeID";
 
-                Public_Variables.DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
-                readerRefine = Public_Variables.DBCommand.ExecuteReader();
+                var DBCommand2 = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+                readerRefine = DBCommand2.ExecuteReader();
 
                 while (readerRefine.Read())
                 {
@@ -147,8 +147,8 @@ namespace EVE_Isk_per_Hour
                 SQL += "WHERE REPROCESSING.ITEM_ID= " + ItemID + " ";
                 SQL += "AND REPROCESSING.REFINED_MATERIAL_ID = ITEM_PRICES.ITEM_ID ";
 
-                Public_Variables.DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
-                readerRefine = Public_Variables.DBCommand.ExecuteReader();
+                var DBCommand2 = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+                readerRefine = DBCommand2.ExecuteReader();
 
                 while (readerRefine.Read())
                 {
@@ -182,8 +182,8 @@ namespace EVE_Isk_per_Hour
                 foreach (var RefinedMaterial in RefinedMats.GetMaterialList())
                 {
                     SQL = "SELECT ADJUSTED_PRICE FROM ITEM_PRICES WHERE ITEM_ID = " + RefinedMaterial.GetMaterialTypeID();
-                    Public_Variables.DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
-                    readerRefine = Public_Variables.DBCommand.ExecuteReader();
+                    var DBCommand3 = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+                    readerRefine = DBCommand3.ExecuteReader();
                     readerRefine.Read();
                     if (MintoOreFormat)
                     {

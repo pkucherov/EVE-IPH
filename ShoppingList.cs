@@ -305,8 +305,8 @@ namespace EVE_Isk_per_Hour
                             SQL = "SELECT 'X' FROM ALL_BLUEPRINT_MATERIALS ";
                             SQL += "WHERE PRODUCT_ID = " + FoundItem.ItemTypeID + " AND MATERIAL_ID = " + withBlock.GetMaterialList()[i].GetMaterialTypeID() + " AND ACTIVITY IN (1,11)";
 
-                            Public_Variables.DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
-                            rsMatCheck = Public_Variables.DBCommand.ExecuteReader();
+                            var DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+                            rsMatCheck = DBCommand.ExecuteReader();
 
                             if (rsMatCheck.HasRows)
                             {
@@ -393,8 +393,8 @@ namespace EVE_Isk_per_Hour
                         SQL += " AND ACTIVITY IN (1,11)";
                         SQL += " AND MATERIAL_ID = " + FoundItem.ComponentBuildList[i].ItemTypeID;
 
-                        Public_Variables.DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
-                        rsMatCheck = Public_Variables.DBCommand.ExecuteReader();
+                        var DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+                        rsMatCheck = DBCommand.ExecuteReader();
 
                         if (rsMatCheck.Read())
                         {
@@ -633,8 +633,8 @@ namespace EVE_Isk_per_Hour
             SQL += "WHERE PRODUCT_ID = " + ProductIDSQL + " AND MATERIAL_ID = " + UpdateMaterial.GetMaterialTypeID();
             SQL += ActivitySQL;
 
-            Public_Variables.DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
-            rsMatQuantity = Public_Variables.DBCommand.ExecuteReader();
+            var DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+            rsMatQuantity = DBCommand.ExecuteReader();
 
             if (rsMatQuantity.Read())
             {
@@ -885,8 +885,8 @@ namespace EVE_Isk_per_Hour
                 SQL += " AND ACTIVITY IN (1,11)";
             }
 
-            Public_Variables.DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
-            rsMatQuantity = Public_Variables.DBCommand.ExecuteReader();
+            var DBCommand = new SQLiteCommand(SQL, Public_Variables.EVEDB.DBREf());
+            rsMatQuantity = DBCommand.ExecuteReader();
             rsMatQuantity.Read();
 
             SingleRunQuantity = rsMatQuantity.GetInt64(0);
